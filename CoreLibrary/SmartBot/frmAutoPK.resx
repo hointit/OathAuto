@@ -1,0 +1,910 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="btnGroupBlacklistExpand.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAADAAAA/f///ws=</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="PKPlayerList.TabIndex" type="System.Int32, mscorlib">
+    <value>63</value>
+  </data>
+  <data name="lvPlayers.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAGAAAAJwAAAAs=</value>
+  </data>
+  <data name="btnPKHotKey.ImeMode" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAABxTeXN0ZW0uV2luZG93cy5Gb3Jtcy5JbWVNb2RlAQAAAAd2YWx1ZV9fAAgCAAAAAAAAAAs=</value>
+  </data>
+  <data name="PKBangList.TabIndex" type="System.Int32, mscorlib">
+    <value>62</value>
+  </data>
+  <data name="PKBangList.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAIAAAAHgAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;btnBangExpand.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="PKThieuLamLast.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAJUAAAARAAAACw==</value>
+  </data>
+  <data name="PKThieuLamLast.Text" xml:space="preserve">
+    <value>Đánh Thiếu Lâm sau cùng</value>
+  </data>
+  <data name="&gt;&gt;btnAddPlayerList.Parent" xml:space="preserve">
+    <value>groupPlayers</value>
+  </data>
+  <data name="&gt;&gt;label5.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="btnGroupPlayerExpand.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;btnBlacklistAdd.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnBlacklistAdd.Name" xml:space="preserve">
+    <value>btnBlacklistAdd</value>
+  </data>
+  <data name="&gt;&gt;btnAddPlayerList.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;columnHeader1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader1.Name" xml:space="preserve">
+    <value>columnHeader1</value>
+  </data>
+  <data name="&gt;&gt;label5.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;PKThieuLamLast.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;columnHeader3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader3.Name" xml:space="preserve">
+    <value>columnHeader3</value>
+  </data>
+  <data name="&gt;&gt;columnHeader2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader2.Name" xml:space="preserve">
+    <value>columnHeader2</value>
+  </data>
+  <data name="PKPlayerList.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="groupIDBang.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAADEAAAAIAAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;btnBlacklist.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnBlacklist.Name" xml:space="preserve">
+    <value>btnBlacklist</value>
+  </data>
+  <data name="&gt;&gt;groupPlayers.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;txtIDBang.Parent" xml:space="preserve">
+    <value>groupIDBang</value>
+  </data>
+  <data name="$this.Icon" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5JY29uAgAAAAhJY29uRGF0YQhJY29uU2l6ZQcEAhNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAIAAAAJAwAAAAX8////E1N5c3RlbS5EcmF3aW5nLlNpemUCAAAABXdpZHRoBmhlaWdodAAACAgCAAAAAAAAAAAAAAAPAwAAAD4WAAACAAABAAEAQEAAAAEACAAoFgAAFgAAACgAAABAAAAAgAAAAAEACAAAAAAAABAAAMMOAADDDgAAAAEAAAABAAD///8A0dz3AIGk7gBypvMAtb7mAPPz8wDb29sA09PTAMvLywDDw8MAu7u7ALOztACrq6sAo6OjAJycnAB0n+wAsMzxAI2c4wAjKqoA4+jqAGme6wBmmOgAcIPdAExZsgAxO54AzM/UAMnZ9QBfkOcAN0vHAA0TqAAbKZQANViYANba5gDs8PMAoaWoAJSUlAClq7YAOEuVAAsRkwDE098AWonNAFaM1QArQcQAICiQAEtWjQAuRJkAi5KXAIyMjACEhIQAlJedABQiiQArRKwAydjoAGmHuQBPbq8AJTmYAAoPiQA8VJ0AChSFABw2kgBBaJ4AfHx8AGaLnQBSlq4AVZq0AE2UtACHs8sAeKjGAG+ivACJl6EAiYyaAAgPhQAcK6kAIzSMACM7egAXJ4kAXdD5AH7Z/wCN4f8AhNr/AHbY/wBl0/8AW8T9AILV/wB71P8Aecz9AGzL/wBmyv8AZ6rTADxXoQAoRYkADBKcALW83wAkN3IAFSRbABAeYwB0lr0AW3ixAA4ZiQAZMIwARGinAJabqQBZiKQAm+H7AInH6QCXxuQAs+r/ALvs/wCo5/4AfMLoAHTS/wBmwOkAjNr/AJTd/gCL1fsAc7rnAG245gBmxPsAdIOSAA0XZgCpuMYAExpXABQmaQBahbMAVqvZAIe21ACYxN0AkqOsAHy72wDb5ewAjLDKAIi95ABvrNAATrHyAHV6hQCqs7oAM1N9ABs1dQAJDnoAaHiHAJmzxQDj4+MAU7/+ABIciAAGDWgAtbvJADpllwBhebQATXOrAJutuQBTqukAEBx9ADpzpgCl1e4Aqdn2AJjL9wCJyvUAeLHxAGzR/wBmvfQALnCuACIzkwA2U4cAtsnZAI+x8QAwSNAAmNz8AGui7gCBm8QAiLj0AElc1AANFLIAaqbzADJTtwAnQm0AaW16ACtTigBxjrwAWYfmAHnG9gBNUGEAVVpnACZIewAdLIUALUTMAEhMWwBcXFwAampqAFqbwwAjOmoAWHiTAFp4iQBnmrcASnSKAFNoiQBjY2MAVoGYAHPN/wAbJ3sAVldYACEtgABbYmwAdHR0AFJ91wAnPbcAISx/ACY6pwBocZEAa5LPAExzxQCpzN4ADBZ4AEpshwDr6+sARmJ+AFJtlQBZa3kAutDcAEmEqwAsaZEAKW2bAFqEmwB1lKcAKHCeANTX2QBZl7cAFITVABx5uwBjiqAAApb6ABt2uwBDhbAAJnKiAACT/gBFotkAB4XoAGudwgASheMAHni2AASL9ABsxv4AKnKqACyM0gAAhvQAAIz/AAiK8gAXecgAHne1ABuV9gAZesIAJHq7ABl3wQBEeqYAP2iIAAF+5wAnfMQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwsJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCQwLCwqNAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABMIDAwMDAwMCwmNAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADVAAAAAAAAAAAAAAAAAAAAAAAABgoMDAwNDQ0NDAwMDAoGBQAAAAAAAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAACQ4HAAAAAAAAAAAAAAAAAAUIDAwNDQ0ODg4jDg4ODAwMDAsI1QAAAAAAAAAAAAAAAAcOCQAAAAAAAAAAAAAAANUJyi8K1QAAAAAAAAAAEwkNDQ0ODg4jIy8vPS8vIw4ODQwMDAsKjQAAAAAAAACNCi/KCNUAAAAAAAAAAAAAAAAABgnKPS8MBwUAAAAFCy8vDg4jIyMjLzDKysK7yjAvIyMNDQ0MIyMMEwAABQcMLz3KCAYAAAAAAAAAAAAAAAAAAAaNCD09MCMMCQYHDi8vMC8jIy8vPcq7w9T1/8O7yjAvIyMOLy8jIyMJCgwjMD0wCI0GAAAAAAAAAAAAAAAAAAAFCNUILz0wLyMNDCMvPTA9PT09ysO6yfrz9PT+1LrDuz0wMDAwMA4MDSMvLzAjGY0HBQAAAAAAAAAAAAAAAAAAAAcGjQcNLy8vIyMMIz3Ku7vDw7rU//P08+vz9PTtPMnDw7vKPSMMIyMjLzANB40GBwAAAAAAAAAAAAAAAAAAAAATCAeNCAsvLyMjDgsvw8PHx9Tt9PT08/wu7P709PT1mLW6wzAMDiMjIy8LCI0HCNUAAAAAAAAAAAAAAAAAAAAAAAgIB40JCSMjDg4NC8rH/eb56/T09OsZCiP+9PT07fv73K8LDQ4OIyMJCY0GCAgAAAAAAAAAAAAAAAAAAAAAAAAGCQgHjQsZDg4NDgwL5/n5+/nr9Onzg41h8/T06/vm8ecLDQ4ODg4HC43gCAqNAAAAAAAAAAAAAAAAAAAAAAAAAAgLCAeNDQYNDg0NDIeYvvzm+fXp9PXr6/T06/v723YLDA0NDgwGDY0HCAoJAAAAAAAAAAAAAAAAAAAAAAAAAAAGCwsIBwYOBgwNDQwLCzCG8eP59enp9On09fv75t4KCw0MDQyNIwYHCAoKCAAAAAAAAAAAAAAAAAAAAAAAAAAA1QgMCggHBiONCwwMDAoKPfHm4/bv6enp9ebm5vqVCwwMDAuNIwYHCAsMCAyNAAAAAAAAAAAAAAAAAAAAAAAAAAYMCAwLCQcGI40LDAwLCZX37uPj+e/p7/nm5uaMCgsLDAuNIwYHCAsLCAwMCQAAAAAAAAAAAAAAAAAAAAAAAAAKDAwHCwsJBwcjBgoLCwsIguPj4+P29fnm5uOMCQoLCwqNIwYHCAsLBw0ODQsAAAAAAAAAAAAAAAAAAAAAAAAADQ0NDQcLCwkHBiONCgsKCgiC9/f34+b39/eoCAoKCgqNIwYHCQsLBy8jIw0M1QAAAAAAAAAAAAAAAAAAAAAA1QwNDQ4OBwsLCQcGI40KCgoKCEP34/fm9/dDBwoKCgqNIwYHCQsKJ4vKLyMNDQYAAAAAAAAAAAAAAAAAAAAAAI0MDQ4OLy4gkQsJGQYjjQkKCQkH7Pf39/fsGQgJCgmNIwYHCAsKJ/iYuzAjDg0IAAAAAAAAAAAAAAAAAAAAAAAHDQ0ODi9EnzQJCwkH4CONCQkICAra7vfhBwgICQmNDgYHCQsJB+Hz8rswIw4NCQAAAAAAAAAAAAAAAAAAAAAACA0ODiMvhJ90IAgLCQcGDo0JCAkODdrh4BkHCAiNDgYHCQsIIJX26e27MC8ODQoAAAAAAAAAAAAAAAAAAAAAAAowIw4jI1jw8J80CAsJCAcOBgkOIyMiBwcHGQgGIwYHCQsZmvXz9PT1uz0vDg4LAAAAAAAAAAAAAAAAAAAAAAALPT0jIy908PDw8DQHCwkHBg4MLy8xBgYHBwiNIwYHCQsHmeXp6enp9MM9Lw4NCwAAAAAAAAAAAAAAAAAAAAAACTA9PTAjdMVVVcVWmgYLCgcHwy8wBwYGBgeNDgYHCQsGaOnp6enp6em7PS8jDgsAAAAAAAAAAAAAAAAAAAAAAAkwMD27ynPFVVXFxfCaBgsKLzDDB42NBgcGDgYHCguNs+Xp6enl6enpwz0vIw4LAAAAAAAAAAAAAAAAAAAAAAAKMDAwysN8xbODgLNWxZkGPbvKCNWNjQYGDgYICQuNQ+Xl6fPi8u/p6bs9MCMOCwAAAAAAAAAAAAAAAAAAAAAACTAwhsrD6o5CDAuDbvBm3j3DCdUTjQYGDQYHCQuNRPHu5eXyLiPq6enDPS8jDgsAAAAAAAAAAAAAAAAAAAAAAAkwMDDKw+qOfgWRgrPA5OQ+CtXV1QYGDgYHCguNwOjo6O7lfCEMe+/puz0wIyMMAAAAAAAAAAAAAAAAAAAAAAAJLzA9u8PqjpbSfnNE5ORmeAUF1QYGDgYHCguNIYLf6Ojo4+to7O3p6cO7MCMjDAAAAAAAAAAAAAAAAAAAAAAACS8vw8O651JSUnVEPuTkeAUF1QYGDQYICgoG1QUFQujf3+jj5eXl6ePHw7svIwsAAAAAAAAAAAAAAAAAAAAAAAkvMLvDusHhV1fA3T7klQUF1Y0GDgYICgoHBwbVBQVE39/f3+Ll5ebcusPDLyMMAAAAAAAAAAAAAAAAAAAAAAAJIy+7w7rBxLxYxMTdfyEFBY3gDQYICgoHBg4HBtUFIeHc3N/c4uPc3Me6yi8jDAAAAAAAAAAAAAAAAAAAAAAACSMjL7u6wcTd3d3d3tUF1Y0HDQYICgoZCggHDQcGEwUhZtzf39/f3Ny6wzAvIwwAAAAAAAAAAAAAAAAAAAAAAAgjI88stcHEv7+LPtUFE40HDQcICwon2QsKCAcNBwYTIRPa29bW29zcotgwMCMMAAAAAAAAAAAAAAAAAAAAAAAIMYbIJs7Xvr+7yo0hEwYHDQYICgqjnlajCgsIBw4HBo3VBr+7u9iSEiYrzy8jDAAAAAAAAAAAAAAAAAAAAAAACCO+JcaKzr6LIwkTjQYHDQcICwrSVMVWVtILCwkHDQgGjdUII8rWzDjGJb8vLw0AAAAAAAAAAAAAAAAAAAAAAAgOdpRkY4o3vi8MBgcHDQcJCwrSU1RuxZ5WfgoLCQcOBwcGIiPUN4q3ZJSLLy8MAAAAAAAAAAAAAAAAAAAAAAAIDmXP0NHOikmGMAgHDQcJCwrSclNTVG7FVld+CwsJBw4ICDCGN9M70SjChi8vDAAAAAAAAAAAAAAAAAAAAAAACA0ju8Iby8xHza8wDgcJCwponnBwT1RUbsWeV2kLCwkZIzCvt0fOyxXCusMvLw0AAAAAAAAAAAAAAAAAAAAAAAgOPbvDwhXLzCbNtS8ODQt/UZ5ucHJTU1RuxVZXgwsNDjC1tzjMyxSYx8e6uy8NAAAAAAAAAAAAAAAAAAAAAAAJu7vDw7ktFLIqW8jJu8p2v8DFnlNwclNTVG5uVkB2ysPJyCYqshQttsfHusO7DQAAAAAAAAAAAAAAAAAAAAAADLu7u7V6kDMUsiodt7WLxL8+bp6ecnByU01UVcW+v7+1xlsqshQzkHq5x7rDujAAAAAAAAAAAAAAAAAAAAAAAAu7u7S9tjdHM6eyuB2hvr+LRFBQnlBxcHBTVFRuwMHCtx24sqczR0m2vbm6usMwAAAAAAAAAAAAAAAAAAAAAAAMu7VfkFqxOUczrLK4q6FEgE9NTVCeTXFwU3JUVG68tx24sgMzRzlgWpB6tLq6PQAAAAAAAAAAAAAAAAAAAAAADLWutrc6Wag5R62ssrirN21PT01Ubm5wcXBwT010Hqu4sgOtRzlDWUdLtq65uj0AAAAAAAAAAAAAAAAAAAAAAGV3kLCxLUcflDebqayypas3nE5PTVRQVHFxcHCzSR2lGwOsljeUOUctsbCQX7Q9AAAAAAAAAAAAAAAAAAAAADSIXUtiNqg3R2SZa2qpAw+qqylxcE9NUG5wcXFwKB2qAwOsV1aWrUc3qDY6S0qurwAAAAAAAAAAAAAAAAAAAKNfXx81oTo8Njtpa2trapsapKWdcXBwT09UbqamcaelpBqdblFWV5ZjNjw6oTUfd1+jAAAAAAAAAAAAAAAAACCIiZcyYWArOphoa5mZa2trmpucZ2icTnBPTVRPZ3KcnZxyU1RVnm+fhaA6oWBhMpddoiAAAAAAAAAAAAAAAJF3X5KTMjKUZEt8bH0uJH5ra2psbEMulW1wcE9NVGiHkWlyclNUVXSVh3SWHmSUjzKTknp3kQAAAAAAAAAAACCIiYpLNTUyMjyLb2d4GSOMa2tramd4CC9CcXBPT02AjQp4cnByclR+BoeCjoU8jzI1NUuQiYggAAAAAAAAAHh5eiw2YmN7WUtlL3xOaSEMfWtra2psfiF/gHFOcE9TdIEGgnFwcFNTgyEIhFKFhktkYWNiNjx6eYcAAABcEhxdXl9JYGFiY2RlDCNmUWdoaWprbGxsZ05tbU5OTk1UVG5vaHBxcHJTU1RzdHVSWC92PEtiYWBJd15dHBIENjcmSElKOjc1OUskCgwNMEBMTU5OTk5OT05QUFBQUVFRUVFSTE1OT1NNVFVUVldSWC4jI0YyWTU7OkpaEls3NjU2NzgeJTk6OzwkCQoLDA0uPT4/QEBAQEA/QEBAP0A/QUFBQUFAQkNCQ0NDQ0NERQ4jDg4ORjw7RzklEiYYNjUnKCkqJissLSsHCQoJCgsMIg0NDQ4NDg4ODg4jIyMuIyMjLy8vMAwMDAwMDA0NDQ4ODg4ODQ4xMi0sHiYzKSk0ABoVGxwdHh8gIQkJCQkKCgsLCwwLDAwMDAwNIg0NDg4ODg4jIyMOCwsLDAwMDCINDQ0NDg4NDSQlHiYcGxQaAAAAARQVFhcYAAAZCQkJCQkJCgoKCwsLCwsMDAwMDQ0NDQ4ODg4ODgsLCwsLDAwMDA0NDQ4ODQwFGBcWFRQBAAAAAAABAxAREgAABQcJCAgICAkJCgkKCgoLCwsMDAwMDQwNDQ0ODg4MCgsLCwwLDAwNDQ0NDQwTABIREAMBAAAAAAAAAAECAwQAAAAABQYHCAgJCQkKCgoLCgsLCwsMDAwNDQ0ODg4ODgoLCwsLDAwMDAwMCgYAAAAEDwIBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACw==</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Auto PK</value>
+  </data>
+  <data name="&gt;&gt;PKThieuLamLast.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="btnIDBangAdd.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAACGAAAADwAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;txtBlacklistName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtBlacklistName.Name" xml:space="preserve">
+    <value>txtBlacklistName</value>
+  </data>
+  <data name="PKEnable.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAIAAAABwAAAAs=</value>
+  </data>
+  <data name="btnBangExpand.TabIndex" type="System.Int32, mscorlib">
+    <value>22</value>
+  </data>
+  <data name="&gt;&gt;btnIDBangAdd.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="PKThieuLamLast.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;btnIDBangAdd.Name" xml:space="preserve">
+    <value>btnIDBangAdd</value>
+  </data>
+  <data name="&gt;&gt;timer1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Timer, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;timer1.Name" xml:space="preserve">
+    <value>timer1</value>
+  </data>
+  <data name="&gt;&gt;btnBangExpand.Parent" xml:space="preserve">
+    <value>groupIDBang</value>
+  </data>
+  <data name="&gt;&gt;btnIDBangAdd.Parent" xml:space="preserve">
+    <value>groupIDBang</value>
+  </data>
+  <data name="lvPlayers.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAKsAAACSAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;txtIDBang.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="btnBlacklistAdd.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="cboxBlacklist.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="btnBlacklist.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;groupPlayers.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupPlayers.Name" xml:space="preserve">
+    <value>groupPlayers</value>
+  </data>
+  <data name="&gt;&gt;PKThieuLamLast.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;PKThieuLamLast.Name" xml:space="preserve">
+    <value>PKThieuLamLast</value>
+  </data>
+  <data name="btnAddPlayerList.TabIndex" type="System.Int32, mscorlib">
+    <value>52</value>
+  </data>
+  <data name="$this.ClientSize" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAIIBAAAGAQAACw==</value>
+  </data>
+  <data name="PKThieuLamLast.TabIndex" type="System.Int32, mscorlib">
+    <value>77</value>
+  </data>
+  <data name="lvBlacklist.TabIndex" type="System.Int32, mscorlib">
+    <value>19</value>
+  </data>
+  <data name="PKEnable.TabIndex" type="System.Int32, mscorlib">
+    <value>61</value>
+  </data>
+  <data name="btnBangExpand.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;groupPlayers.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;lvIDBang.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lvIDBang.Name" xml:space="preserve">
+    <value>lvIDBang</value>
+  </data>
+  <data name="btnBlacklist.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+  <data name="lvBlacklist.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAKsAAACLAAAACw==</value>
+  </data>
+  <data name="columnHeader1.Text" xml:space="preserve">
+    <value>Tên</value>
+  </data>
+  <data name="PKBangList.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAIEAAAARAAAACw==</value>
+  </data>
+  <data name="PKBangList.Text" xml:space="preserve">
+    <value>Đánh danh sách bang</value>
+  </data>
+  <data name="PKPlayerList.Text" xml:space="preserve">
+    <value>Đánh danh sách người</value>
+  </data>
+  <data name="PKPlayerList.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAIMAAAARAAAACw==</value>
+  </data>
+  <data name="btnAddPlayerList.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="columnHeader3.Text" xml:space="preserve">
+    <value>Tên</value>
+  </data>
+  <data name="columnHeader2.Text" xml:space="preserve">
+    <value>ID Bang</value>
+  </data>
+  <data name="&gt;&gt;lvIDBang.Parent" xml:space="preserve">
+    <value>groupIDBang</value>
+  </data>
+  <data name="PKAnyOne.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAIAAAAYwAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;btnIDBangAdd.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="btnBlacklist.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAABUAAAAVAAAACw==</value>
+  </data>
+  <data name="PKNgaMyFirst.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="btnPKHotKey.Text" xml:space="preserve">
+    <value>PK Hotkey</value>
+  </data>
+  <data name="btnPKHotKey.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAEUAAAAXAAAACw==</value>
+  </data>
+  <data name="label5.Text" xml:space="preserve">
+    <value>Chỉnh hot key Tuyên Chiến Nhanh và Cả PT Dồn Dame ở phần Hotkey</value>
+  </data>
+  <data name="label5.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAL4AAAAgAAAACw==</value>
+  </data>
+  <data name="PKAnyOne.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="btnGroupBlacklistExpand.Margin" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAABxTeXN0ZW0uV2luZG93cy5Gb3Jtcy5QYWRkaW5nBQAAAARfYWxsBF90b3AFX2xlZnQGX3JpZ2h0B19ib3R0b20AAAAAAAEICAgIAgAAAAEAAAAAAAAAAAAAAAAAAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;PKNgaMyFirst.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;PKNgaMyFirst.Name" xml:space="preserve">
+    <value>PKNgaMyFirst</value>
+  </data>
+  <data name="&gt;&gt;lvIDBang.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="txtBlacklistName.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAGcAAAAUAAAACw==</value>
+  </data>
+  <data name="btnAddPlayerList.ImeMode" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAABxTeXN0ZW0uV2luZG93cy5Gb3Jtcy5JbWVNb2RlAQAAAAd2YWx1ZV9fAAgCAAAAAAAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;btnPKHotKey.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="btnBlacklistAdd.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAACsAAAAVAAAACw==</value>
+  </data>
+  <data name="btnBlacklistAdd.Text" xml:space="preserve">
+    <value>Thêm</value>
+  </data>
+  <data name="&gt;&gt;btnGroupBlacklistExpand.Name" xml:space="preserve">
+    <value>btnGroupBlacklistExpand</value>
+  </data>
+  <data name="&gt;&gt;btnGroupBlacklistExpand.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="groupIDBang.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAALYAAAATAAAACw==</value>
+  </data>
+  <data name="groupIDBang.Text" xml:space="preserve">
+    <value>     Danh sách ID bang</value>
+  </data>
+  <data name="PKNgaMyFirst.TabIndex" type="System.Int32, mscorlib">
+    <value>65</value>
+  </data>
+  <data name="btnAddPlayer.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAABvAAAADwAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;groupBlackList.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cboxBlacklist.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="txtBlacklistName.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;lvPlayers.Parent" xml:space="preserve">
+    <value>groupPlayers</value>
+  </data>
+  <data name="&gt;&gt;btnAddPlayer.Parent" xml:space="preserve">
+    <value>groupPlayers</value>
+  </data>
+  <data name="PKPlayerList.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAIAAAANQAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;PKNgaMyFirst.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cboxBlacklist.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="txtIDBang.TabIndex" type="System.Int32, mscorlib">
+    <value>52</value>
+  </data>
+  <data name="btnGroupPlayerExpand.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAABMAAAATAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;groupBlackList.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;btnPKHotKey.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="btnBlacklistAdd.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAABvAAAADwAAAAs=</value>
+  </data>
+  <data name="btnIDBangAdd.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="btnBangExpand.ImeMode" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAABxTeXN0ZW0uV2luZG93cy5Gb3Jtcy5JbWVNb2RlAQAAAAd2YWx1ZV9fAAgCAAAAAAAAAAs=</value>
+  </data>
+  <data name="txtPlayerName.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;btnGroupPlayerExpand.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="PKBangList.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;PKNgaMyFirst.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;PKBangList.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="PKNgaMyFirst.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAH0AAAARAAAACw==</value>
+  </data>
+  <data name="PKNgaMyFirst.Text" xml:space="preserve">
+    <value>Ưu tiên đánh Nga My</value>
+  </data>
+  <data name="&gt;&gt;btnGroupPlayerExpand.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnGroupPlayerExpand.Name" xml:space="preserve">
+    <value>btnGroupPlayerExpand</value>
+  </data>
+  <data name="btnAddPlayerList.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+  <data name="PKEnable.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="columnHeader3.Width" type="System.Int32, mscorlib">
+    <value>165</value>
+  </data>
+  <data name="&gt;&gt;PKBangList.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;lvPlayers.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;btnAddPlayer.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;lvPlayers.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lvPlayers.Name" xml:space="preserve">
+    <value>lvPlayers</value>
+  </data>
+  <data name="PKThieuLamLast.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAIAAAAkQAAAAs=</value>
+  </data>
+  <data name="btnPKHotKey.TabIndex" type="System.Int32, mscorlib">
+    <value>74</value>
+  </data>
+  <data name="btnBlacklist.ImeMode" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAABxTeXN0ZW0uV2luZG93cy5Gb3Jtcy5JbWVNb2RlAQAAAAd2YWx1ZV9fAAgCAAAAAAAAAAs=</value>
+  </data>
+  <data name="PKBangList.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lvIDBang.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAFAAAAJwAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;lvBlacklist.Parent" xml:space="preserve">
+    <value>groupBlackList</value>
+  </data>
+  <data name="&gt;&gt;btnGroupPlayerExpand.Parent" xml:space="preserve">
+    <value>groupPlayers</value>
+  </data>
+  <data name="&gt;&gt;btnBangExpand.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnBangExpand.Name" xml:space="preserve">
+    <value>btnBangExpand</value>
+  </data>
+  <data name="btnGroupPlayerExpand.Image" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABVTeXN0ZW0uRHJhd2luZy5CaXRtYXABAAAABERhdGEHAgIAAAAJAwAAAA8DAAAA+QEAAAKJUE5HDQoaCgAAAA1JSERSAAAAEAAAABAIBgAAAB/z/2EAAAAEZ0FNQQAAsY8L/GEFAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAYtJREFUOE+lzr1LAnEYB/BnlQajoaCxwKaaeiFoERRq6mVoiYqQ6h+o1oiGlgLpH2iOgpaGppraQtTMV8wE5e4879Q8tFPh6b4HJ94NVvSDD9x9n+f740fM/C+0fSLQzqnk3j1TggbRwD/AThAddGnzuADBy2uVS5WOcWn/gx3sooMurR2kQBTLOrfb7V8R5C9GB13y77+AOWg2mzbIwZm3Wi1rRjS/8Qis6zrX63Ub5ODMG42GNSOaWrkHM6xWq12yLDNyiESiHAqFTPjOZt+tGZFn8RZY0zRWVZXx3U84HOV4PGH9E435bsB8WrEosG9P7UIOvVksluRkMmPNiMb9d8ClksLpdJ4VpdaFHHqzVOqDM5m8NSOaWHoALhRkzuUEG+TgzHtmRJPLz8CCUDMuqdhYz3bmgA66NL0eBfE1UWdRbNpoWsfkzCNvn4wOuuQemaOFrVzw6ELieFrncrnTF3YOzyVGB12coYFBz+zM6tOVNyBK3oDE/YkSdtFBFxe4DMOG0T8yOuT6BqGOvoONNyNhAAAAAElFTkSuQmCCCw==</value>
+  </data>
+  <data name="btnGroupPlayerExpand.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAADAAAA/f///ws=</value>
+  </data>
+  <data name="btnIDBangAdd.ImeMode" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAABxTeXN0ZW0uV2luZG93cy5Gb3Jtcy5JbWVNb2RlAQAAAAd2YWx1ZV9fAAgCAAAAAAAAAAs=</value>
+  </data>
+  <data name="PKEnable.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+  <data name="lvBlacklist.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAGAAAAJwAAAAs=</value>
+  </data>
+  <data name="btnGroupPlayerExpand.TabIndex" type="System.Int32, mscorlib">
+    <value>22</value>
+  </data>
+  <data name="groupPlayers.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAADEAAAANwAAAAs=</value>
+  </data>
+  <data name="PKAnyOne.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAF0AAAARAAAACw==</value>
+  </data>
+  <data name="PKAnyOne.Text" xml:space="preserve">
+    <value>Đánh bất cứ ai</value>
+  </data>
+  <data name="&gt;&gt;PKAnyOne.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="groupBlackList.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAADEAAAATQAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;txtIDBang.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtIDBang.Name" xml:space="preserve">
+    <value>txtIDBang</value>
+  </data>
+  <data name="&gt;&gt;txtBlacklistName.Parent" xml:space="preserve">
+    <value>groupBlackList</value>
+  </data>
+  <data name="&gt;&gt;txtPlayerName.Name" xml:space="preserve">
+    <value>txtPlayerName</value>
+  </data>
+  <data name="&gt;&gt;txtPlayerName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="btnAddPlayerList.Image" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABVTeXN0ZW0uRHJhd2luZy5CaXRtYXABAAAABERhdGEHAgIAAAAJAwAAAA8DAAAA3gIAAAKJUE5HDQoaCgAAAA1JSERSAAAAEAAAABAIBgAAAB/z/2EAAAAEZ0FNQQAAsY8L/GEFAAAClUlEQVQ4T42OW0jTYRjG542RZmjmYVTT0GLqpjVnmXnYdDPdUAuPEWpgQUlkQtRFIN7oxOM03YVuyxAMtiwQp62pqTTUlZtYtuVp0zk3B2oYo4uop2n/iBBZP3huvufwfqT98PQ46OZ92OuEU8cPeXi4Ec//h5/vkZMUsv+nILI/dkQhB3wMOOobRNiuSU1hSzlJ8eBxU5DOSQY/lQNuMquDsF0jFXfMWFZXIWysh7ChHvNzcxBUVekI2zXaqSmjw+HA5uYmrFYrTCYTnnV3zxO2awwGg257ext2ux0ry8vQ6/WQy2SThO0apVLZsrW1hbW1NSwsLGBap4Oora2OsF1TVHw9xGazfXUKxqUlvNNovmRfLcyLZqXnM1lp+ZSgYC8iupdAJscnsbzxocFoXt/c2IDFYoFqVG1LrZDMnxYMg1ajQkTkGSoR/5fgrFJOUq3CniWZhHzKhPHZRQxqZvBU/RnZra/AbNXgomgCtKizewf8EnLCWQ2vHQnNY2CLxpHZqUWReBiXm3rBb1IgrWkAbOkHZHTrwbtX1cO6XSlNKLhVS9RJpPC7bbJ44QgYDSNIdF5Jk2qRKVQgvOYNzj8eB69rFrk9SyjoNSNfYcOl52ZwBXLjbtmTEubOrO7/FlEzCHrdKGJbJ8AWa52X+xHb/Ba8Jzpce7GI4r4VlCituKGyI6/Pioz6nj8DVHfqI7k5tGoQ1NoxMFomENeuA7tdA75oBDkSNUokQyhVWVGmcv5A0PmeEZcYTQ0Lo+0O7OBNi/elFFbeP/WgS0mvHrBcaJ/+kdxlAF+2iCsvV36WdKm/3xlaR/nQGmKSuH+L++ETQj8QyGAFHItJIZNp5zxzyyrEJWKV/WbHgJ0eGRX6O0Ui/QLalVgoeRfaMgAAAABJRU5ErkJgggs=</value>
+  </data>
+  <data name="&gt;&gt;PKAnyOne.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="btnIDBangAdd.Text" xml:space="preserve">
+    <value>Thêm</value>
+  </data>
+  <data name="btnIDBangAdd.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAACsAAAAVAAAACw==</value>
+  </data>
+  <data name="txtPlayerName.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAGcAAAAUAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;PKEnable.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="btnAddPlayer.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="btnPKHotKey.Margin" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAABxTeXN0ZW0uV2luZG93cy5Gb3Jtcy5QYWRkaW5nBQAAAARfYWxsBF90b3AFX2xlZnQGX3JpZ2h0B19ib3R0b20AAAAAAAEICAgIAgAAAAEAAAAAAAAAAAAAAAAAAAAACw==</value>
+  </data>
+  <data name="PKThieuLamLast.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="btnBangExpand.Margin" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAABxTeXN0ZW0uV2luZG93cy5Gb3Jtcy5QYWRkaW5nBQAAAARfYWxsBF90b3AFX2xlZnQGX3JpZ2h0B19ib3R0b20AAAAAAAEICAgIAgAAAAEAAAAAAAAAAAAAAAAAAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;lvBlacklist.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="groupBlackList.TabIndex" type="System.Int32, mscorlib">
+    <value>75</value>
+  </data>
+  <data name="btnPKHotKey.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAB+AAAAyQAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;txtBlacklistName.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="label5.TabIndex" type="System.Int32, mscorlib">
+    <value>66</value>
+  </data>
+  <data name="PKAnyOne.TabIndex" type="System.Int32, mscorlib">
+    <value>64</value>
+  </data>
+  <data name="&gt;&gt;groupIDBang.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;PKPlayerList.Name" xml:space="preserve">
+    <value>PKPlayerList</value>
+  </data>
+  <data name="&gt;&gt;PKPlayerList.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="groupPlayers.Text" xml:space="preserve">
+    <value>     Danh sách tên người</value>
+  </data>
+  <data name="lvIDBang.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAKsAAACSAAAACw==</value>
+  </data>
+  <data name="groupPlayers.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAALYAAAATAAAACw==</value>
+  </data>
+  <data name="cboxBlacklist.TabIndex" type="System.Int32, mscorlib">
+    <value>76</value>
+  </data>
+  <data name="&gt;&gt;btnGroupBlacklistExpand.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="cboxBlacklist.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAIAAAATAAAAAs=</value>
+  </data>
+  <data name="txtBlacklistName.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAGAAAAEAAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;PKEnable.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="btnAddPlayer.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAACsAAAAVAAAACw==</value>
+  </data>
+  <data name="btnAddPlayer.Text" xml:space="preserve">
+    <value>Thêm</value>
+  </data>
+  <data name="&gt;&gt;btnBlacklistAdd.Parent" xml:space="preserve">
+    <value>groupBlackList</value>
+  </data>
+  <data name="&gt;&gt;groupIDBang.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;groupIDBang.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupIDBang.Name" xml:space="preserve">
+    <value>groupIDBang</value>
+  </data>
+  <data name="&gt;&gt;txtPlayerName.Parent" xml:space="preserve">
+    <value>groupPlayers</value>
+  </data>
+  <data name="btnBlacklist.TabIndex" type="System.Int32, mscorlib">
+    <value>52</value>
+  </data>
+  <data name="btnBangExpand.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAADAAAA/f///ws=</value>
+  </data>
+  <data name="txtPlayerName.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAGAAAAEAAAAAs=</value>
+  </data>
+  <data name="btnBlacklistAdd.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="txtPlayerName.TabIndex" type="System.Int32, mscorlib">
+    <value>51</value>
+  </data>
+  <data name="&gt;&gt;txtPlayerName.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="btnBangExpand.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAABMAAAATAAAACw==</value>
+  </data>
+  <data name="cboxBlacklist.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAIkAAAARAAAACw==</value>
+  </data>
+  <data name="cboxBlacklist.Text" xml:space="preserve">
+    <value>Lọc danh sách ko đánh</value>
+  </data>
+  <data name="btnGroupBlacklistExpand.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAABMAAAATAAAACw==</value>
+  </data>
+  <data name="btnGroupPlayerExpand.Margin" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAABxTeXN0ZW0uV2luZG93cy5Gb3Jtcy5QYWRkaW5nBQAAAARfYWxsBF90b3AFX2xlZnQGX3JpZ2h0B19ib3R0b20AAAAAAAEICAgIAgAAAAEAAAAAAAAAAAAAAAAAAAAACw==</value>
+  </data>
+  <data name="btnIDBangAdd.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="lvPlayers.TabIndex" type="System.Int32, mscorlib">
+    <value>19</value>
+  </data>
+  <data name="btnAddPlayerList.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAABUAAAAVAAAACw==</value>
+  </data>
+  <data name="txtIDBang.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAGAAAAEAAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;PKBangList.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;PKBangList.Name" xml:space="preserve">
+    <value>PKBangList</value>
+  </data>
+  <data name="&gt;&gt;btnBlacklist.Parent" xml:space="preserve">
+    <value>groupBlackList</value>
+  </data>
+  <data name="PKPlayerList.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+  <data name="txtBlacklistName.TabIndex" type="System.Int32, mscorlib">
+    <value>51</value>
+  </data>
+  <data name="&gt;&gt;btnBlacklist.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>frmAutoPK</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="PKThieuLamLast.ImeMode" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAABxTeXN0ZW0uV2luZG93cy5Gb3Jtcy5JbWVNb2RlAQAAAAd2YWx1ZV9fAAgCAAAAAAAAAAs=</value>
+  </data>
+  <data name="btnBangExpand.Image" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABVTeXN0ZW0uRHJhd2luZy5CaXRtYXABAAAABERhdGEHAgIAAAAJAwAAAA8DAAAA+QEAAAKJUE5HDQoaCgAAAA1JSERSAAAAEAAAABAIBgAAAB/z/2EAAAAEZ0FNQQAAsY8L/GEFAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAYtJREFUOE+lzr1LAnEYB/BnlQajoaCxwKaaeiFoERRq6mVoiYqQ6h+o1oiGlgLpH2iOgpaGppraQtTMV8wE5e4879Q8tFPh6b4HJ94NVvSDD9x9n+f740fM/C+0fSLQzqnk3j1TggbRwD/AThAddGnzuADBy2uVS5WOcWn/gx3sooMurR2kQBTLOrfb7V8R5C9GB13y77+AOWg2mzbIwZm3Wi1rRjS/8Qis6zrX63Ub5ODMG42GNSOaWrkHM6xWq12yLDNyiESiHAqFTPjOZt+tGZFn8RZY0zRWVZXx3U84HOV4PGH9E435bsB8WrEosG9P7UIOvVksluRkMmPNiMb9d8ClksLpdJ4VpdaFHHqzVOqDM5m8NSOaWHoALhRkzuUEG+TgzHtmRJPLz8CCUDMuqdhYz3bmgA66NL0eBfE1UWdRbNpoWsfkzCNvn4wOuuQemaOFrVzw6ELieFrncrnTF3YOzyVGB12coYFBz+zM6tOVNyBK3oDE/YkSdtFBFxe4DMOG0T8yOuT6BqGOvoONNyNhAAAAAElFTkSuQmCCCw==</value>
+  </data>
+  <data name="columnHeader2.Width" type="System.Int32, mscorlib">
+    <value>165</value>
+  </data>
+  <data name="&gt;&gt;btnBlacklistAdd.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;PKPlayerList.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="btnAddPlayerList.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAACcAAAADwAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;PKAnyOne.Name" xml:space="preserve">
+    <value>PKAnyOne</value>
+  </data>
+  <data name="&gt;&gt;PKAnyOne.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnGroupBlacklistExpand.Parent" xml:space="preserve">
+    <value>groupBlackList</value>
+  </data>
+  <data name="&gt;&gt;btnPKHotKey.Name" xml:space="preserve">
+    <value>btnPKHotKey</value>
+  </data>
+  <data name="&gt;&gt;btnPKHotKey.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;PKEnable.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;PKEnable.Name" xml:space="preserve">
+    <value>PKEnable</value>
+  </data>
+  <data name="txtIDBang.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;btnAddPlayer.Name" xml:space="preserve">
+    <value>btnAddPlayer</value>
+  </data>
+  <data name="&gt;&gt;btnAddPlayer.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="btnAddPlayer.ImeMode" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAABxTeXN0ZW0uV2luZG93cy5Gb3Jtcy5JbWVNb2RlAQAAAAd2YWx1ZV9fAAgCAAAAAAAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;label5.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label5.Name" xml:space="preserve">
+    <value>label5</value>
+  </data>
+  <data name="&gt;&gt;PKPlayerList.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;cboxBlacklist.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cboxBlacklist.Name" xml:space="preserve">
+    <value>cboxBlacklist</value>
+  </data>
+  <data name="btnBlacklist.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAACcAAAADwAAAAs=</value>
+  </data>
+  <data name="btnGroupBlacklistExpand.ImeMode" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAABxTeXN0ZW0uV2luZG93cy5Gb3Jtcy5JbWVNb2RlAQAAAAd2YWx1ZV9fAAgCAAAAAAAAAAs=</value>
+  </data>
+  <data name="txtIDBang.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAH0AAAAUAAAACw==</value>
+  </data>
+  <data name="PKNgaMyFirst.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+  <data name="groupPlayers.TabIndex" type="System.Int32, mscorlib">
+    <value>73</value>
+  </data>
+  <data name="PKAnyOne.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+  <data name="PKNgaMyFirst.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAIAAAAegAAAAs=</value>
+  </data>
+  <data name="PKEnable.Text" xml:space="preserve">
+    <value>Bật auto PK</value>
+  </data>
+  <data name="PKEnable.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAFAAAAARAAAACw==</value>
+  </data>
+  <data name="columnHeader1.Width" type="System.Int32, mscorlib">
+    <value>165</value>
+  </data>
+  <data name="btnGroupBlacklistExpand.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+  <data name="btnGroupBlacklistExpand.TabIndex" type="System.Int32, mscorlib">
+    <value>22</value>
+  </data>
+  <data name="$this.AutoScaleDimensions" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5TaXplRgIAAAAFd2lkdGgGaGVpZ2h0AAALCwIAAAAAAMBAAABQQQs=</value>
+  </data>
+  <data name="&gt;&gt;btnAddPlayerList.Name" xml:space="preserve">
+    <value>btnAddPlayerList</value>
+  </data>
+  <data name="&gt;&gt;btnAddPlayerList.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="cboxBlacklist.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+  <data name="groupBlackList.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAALYAAAATAAAACw==</value>
+  </data>
+  <data name="groupBlackList.Text" xml:space="preserve">
+    <value>     Danh sách không đánh</value>
+  </data>
+  <data name="groupIDBang.TabIndex" type="System.Int32, mscorlib">
+    <value>72</value>
+  </data>
+  <data name="btnBlacklistAdd.ImeMode" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAABxTeXN0ZW0uV2luZG93cy5Gb3Jtcy5JbWVNb2RlAQAAAAd2YWx1ZV9fAAgCAAAAAAAAAAs=</value>
+  </data>
+  <data name="btnBlacklist.Image" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABVTeXN0ZW0uRHJhd2luZy5CaXRtYXABAAAABERhdGEHAgIAAAAJAwAAAA8DAAAA3gIAAAKJUE5HDQoaCgAAAA1JSERSAAAAEAAAABAIBgAAAB/z/2EAAAAEZ0FNQQAAsY8L/GEFAAAClUlEQVQ4T42OW0jTYRjG542RZmjmYVTT0GLqpjVnmXnYdDPdUAuPEWpgQUlkQtRFIN7oxOM03YVuyxAMtiwQp62pqTTUlZtYtuVp0zk3B2oYo4uop2n/iBBZP3huvufwfqT98PQ46OZ92OuEU8cPeXi4Ec//h5/vkZMUsv+nILI/dkQhB3wMOOobRNiuSU1hSzlJ8eBxU5DOSQY/lQNuMquDsF0jFXfMWFZXIWysh7ChHvNzcxBUVekI2zXaqSmjw+HA5uYmrFYrTCYTnnV3zxO2awwGg257ext2ux0ry8vQ6/WQy2SThO0apVLZsrW1hbW1NSwsLGBap4Oora2OsF1TVHw9xGazfXUKxqUlvNNovmRfLcyLZqXnM1lp+ZSgYC8iupdAJscnsbzxocFoXt/c2IDFYoFqVG1LrZDMnxYMg1ajQkTkGSoR/5fgrFJOUq3CniWZhHzKhPHZRQxqZvBU/RnZra/AbNXgomgCtKizewf8EnLCWQ2vHQnNY2CLxpHZqUWReBiXm3rBb1IgrWkAbOkHZHTrwbtX1cO6XSlNKLhVS9RJpPC7bbJ44QgYDSNIdF5Jk2qRKVQgvOYNzj8eB69rFrk9SyjoNSNfYcOl52ZwBXLjbtmTEubOrO7/FlEzCHrdKGJbJ8AWa52X+xHb/Ba8Jzpce7GI4r4VlCituKGyI6/Pioz6nj8DVHfqI7k5tGoQ1NoxMFomENeuA7tdA75oBDkSNUokQyhVWVGmcv5A0PmeEZcYTQ0Lo+0O7OBNi/elFFbeP/WgS0mvHrBcaJ/+kdxlAF+2iCsvV36WdKm/3xlaR/nQGmKSuH+L++ETQj8QyGAFHItJIZNp5zxzyyrEJWKV/WbHgJ0eGRX6O0Ui/QLalVgoeRfaMgAAAABJRU5ErkJgggs=</value>
+  </data>
+  <data name="btnAddPlayer.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="label5.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAFAAAAqQAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;lvBlacklist.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lvBlacklist.Name" xml:space="preserve">
+    <value>lvBlacklist</value>
+  </data>
+  <data name="btnGroupBlacklistExpand.Image" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABVTeXN0ZW0uRHJhd2luZy5CaXRtYXABAAAABERhdGEHAgIAAAAJAwAAAA8DAAAA+QEAAAKJUE5HDQoaCgAAAA1JSERSAAAAEAAAABAIBgAAAB/z/2EAAAAEZ0FNQQAAsY8L/GEFAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAYtJREFUOE+lzr1LAnEYB/BnlQajoaCxwKaaeiFoERRq6mVoiYqQ6h+o1oiGlgLpH2iOgpaGppraQtTMV8wE5e4879Q8tFPh6b4HJ94NVvSDD9x9n+f740fM/C+0fSLQzqnk3j1TggbRwD/AThAddGnzuADBy2uVS5WOcWn/gx3sooMurR2kQBTLOrfb7V8R5C9GB13y77+AOWg2mzbIwZm3Wi1rRjS/8Qis6zrX63Ub5ODMG42GNSOaWrkHM6xWq12yLDNyiESiHAqFTPjOZt+tGZFn8RZY0zRWVZXx3U84HOV4PGH9E435bsB8WrEosG9P7UIOvVksluRkMmPNiMb9d8ClksLpdJ4VpdaFHHqzVOqDM5m8NSOaWHoALhRkzuUEG+TgzHtmRJPLz8CCUDMuqdhYz3bmgA66NL0eBfE1UWdRbNpoWsfkzCNvn4wOuuQemaOFrVzw6ELieFrncrnTF3YOzyVGB12coYFBz+zM6tOVNyBK3oDE/YkSdtFBFxe4DMOG0T8yOuT6BqGOvoONNyNhAAAAAElFTkSuQmCCCw==</value>
+  </data>
+  <data name="lvIDBang.TabIndex" type="System.Int32, mscorlib">
+    <value>53</value>
+  </data>
+  <data name="btnGroupPlayerExpand.ImeMode" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAABxTeXN0ZW0uV2luZG93cy5Gb3Jtcy5JbWVNb2RlAQAAAAd2YWx1ZV9fAAgCAAAAAAAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;groupBlackList.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBlackList.Name" xml:space="preserve">
+    <value>groupBlackList</value>
+  </data>
+</root>

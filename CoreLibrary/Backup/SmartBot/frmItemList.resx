@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="&gt;&gt;listRight.Name" xml:space="preserve">
+    <value>listRight</value>
+  </data>
+  <data name="&gt;&gt;listRight.Type" xml:space="preserve">
+    <value>BrightIdeasSoftware.ObjectListView, ObjectListView, Version=2.9.1.81, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="btnAdd.TabIndex" type="System.Int32, mscorlib">
+    <value>59</value>
+  </data>
+  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="txtBuffName.TabIndex" type="System.Int32, mscorlib">
+    <value>50</value>
+  </data>
+  <data name="btnRemove.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;colLeft_1.Type" xml:space="preserve">
+    <value>BrightIdeasSoftware.OLVColumn, ObjectListView, Version=2.9.1.81, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4</value>
+  </data>
+  <data name="&gt;&gt;colLeft_1.Name" xml:space="preserve">
+    <value>colLeft_1</value>
+  </data>
+  <data name="&gt;&gt;btnAdd.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnAdd.Name" xml:space="preserve">
+    <value>btnAdd</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="label12.Font" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5Gb250BAAAAAROYW1lBFNpemUFU3R5bGUEVW5pdAEABAQLGFN5c3RlbS5EcmF3aW5nLkZvbnRTdHlsZQIAAAAbU3lzdGVtLkRyYXdpbmcuR3JhcGhpY3NVbml0AgAAAAIAAAAGAwAAABRNaWNyb3NvZnQgU2FucyBTZXJpZgAA6EAF/P///xhTeXN0ZW0uRHJhd2luZy5Gb250U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAABfv///8bU3lzdGVtLkRyYXdpbmcuR3JhcGhpY3NVbml0AQAAAAd2YWx1ZV9fAAgCAAAAAwAAAAs=</value>
+  </data>
+  <data name="label12.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAKcAAAAbAAAACw==</value>
+  </data>
+  <data name="label12.Text" xml:space="preserve">
+    <value>Click chuột 2 cái vào tên để xóa khỏi danh sách</value>
+  </data>
+  <data name="&gt;&gt;label12.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;btnClose.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="btnAdd.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAABUAAAAiAAAACw==</value>
+  </data>
+  <data name="$this.Icon" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>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CwsMDAwNDQ0ODg4ODgoLCwsLDAwMDAwMCgYAAAAEDwIBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACw==</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Danh sách buff-item</value>
+  </data>
+  <data name="&gt;&gt;label12.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="cboxTuRefresh.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAxAQAALQAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;btnClose.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="&gt;&gt;txtBuffName.Name" xml:space="preserve">
+    <value>txtBuffName</value>
+  </data>
+  <data name="&gt;&gt;txtBuffName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+    <value>62</value>
+  </data>
+  <data name="&gt;&gt;timer1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Timer, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;timer1.Name" xml:space="preserve">
+    <value>timer1</value>
+  </data>
+  <data name="cboItemName.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAHYAAAAVAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;btnSaveList.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnSaveList.Name" xml:space="preserve">
+    <value>btnSaveList</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="btnClose.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAACCAAAAsQEAAAs=</value>
+  </data>
+  <data name="btnRemove.TabIndex" type="System.Int32, mscorlib">
+    <value>60</value>
+  </data>
+  <data name="&gt;&gt;btnSaveList.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="$this.ClientSize" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAALYAAADLAQAACw==</value>
+  </data>
+  <data name="btnClose.Text" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="btnClose.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAC0AAAAVAAAACw==</value>
+  </data>
+  <data name="label12.TabIndex" type="System.Int32, mscorlib">
+    <value>55</value>
+  </data>
+  <data name="label2.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAJMAAAANAAAACw==</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Danh sách người xung quanh</value>
+  </data>
+  <data name="&gt;&gt;lblTop.Name" xml:space="preserve">
+    <value>lblTop</value>
+  </data>
+  <data name="&gt;&gt;lblTop.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+    <value>Xuất</value>
+  </data>
+  <data name="label3.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAB0AAAANAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;btnSaveList.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="lblTop.TabIndex" type="System.Int32, mscorlib">
+    <value>53</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Nạp từ file</value>
+  </data>
+  <data name="label1.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAADcAAAANAAAACw==</value>
+  </data>
+  <data name="colRight_2.Text" xml:space="preserve">
+    <value>Level</value>
+  </data>
+  <data name="btnDanhSachBuff.TabIndex" type="System.Int32, mscorlib">
+    <value>52</value>
+  </data>
+  <data name="btnRemove.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="btnAdd.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;listRight.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="label12.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAIAAAAMAAAAAs=</value>
+  </data>
+  <data name="colRight_1.Text" xml:space="preserve">
+    <value>Tên nhân vật</value>
+  </data>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+    <value>58</value>
+  </data>
+  <data name="&gt;&gt;cboItemName.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="cboxTuRefresh.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+  <data name="cboxTuRefresh.TabIndex" type="System.Int32, mscorlib">
+    <value>64</value>
+  </data>
+  <data name="&gt;&gt;cboItemName.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="btnClose.TabIndex" type="System.Int32, mscorlib">
+    <value>54</value>
+  </data>
+  <data name="txtBuffName.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAIAAAAGQAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;listLeft.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cboxTuRefresh.Name" xml:space="preserve">
+    <value>cboxTuRefresh</value>
+  </data>
+  <data name="&gt;&gt;cboxTuRefresh.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;listRight.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="listRight.TabIndex" type="System.Int32, mscorlib">
+    <value>78</value>
+  </data>
+  <data name="btnRefresh.TabIndex" type="System.Int32, mscorlib">
+    <value>63</value>
+  </data>
+  <data name="&gt;&gt;listLeft.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="cboxTuRefresh.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAEoAAAARAAAACw==</value>
+  </data>
+  <data name="cboxTuRefresh.Text" xml:space="preserve">
+    <value>Tự làm mới</value>
+  </data>
+  <data name="&gt;&gt;txtBuffName.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="cboItemName.TabIndex" type="System.Int32, mscorlib">
+    <value>65</value>
+  </data>
+  <data name="btnRefresh.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAIAQAAGAAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;btnRemove.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="colRight_2.Width" type="System.Int32, mscorlib">
+    <value>45</value>
+  </data>
+  <data name="&gt;&gt;cboxTuRefresh.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="btnRefresh.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAG8AAAAVAAAACw==</value>
+  </data>
+  <data name="btnRefresh.Text" xml:space="preserve">
+    <value>Làm mới danh sách</value>
+  </data>
+  <data name="&gt;&gt;label12.Name" xml:space="preserve">
+    <value>label12</value>
+  </data>
+  <data name="&gt;&gt;label12.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="btnRemove.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAC1AAAA0QAAAAs=</value>
+  </data>
+  <data name="btnAddName.Text" xml:space="preserve">
+    <value>Thêm</value>
+  </data>
+  <data name="btnAddName.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAC0AAAAVAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;txtBuffName.ZOrder" xml:space="preserve">
+    <value>16</value>
+  </data>
+  <data name="&gt;&gt;btnRemove.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="btnSaveList.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAABMAAAAsgEAAAs=</value>
+  </data>
+  <data name="listRight.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAKcAAABdAQAACw==</value>
+  </data>
+  <data name="&gt;&gt;btnRemove.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnRemove.Name" xml:space="preserve">
+    <value>btnRemove</value>
+  </data>
+  <data name="&gt;&gt;btnAddName.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="label2.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAADQAAAAPQAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;btnRefresh.Name" xml:space="preserve">
+    <value>btnRefresh</value>
+  </data>
+  <data name="&gt;&gt;btnRefresh.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="colLeft_1.Text" xml:space="preserve">
+    <value>Tên nhân vật</value>
+  </data>
+  <data name="&gt;&gt;listLeft.Type" xml:space="preserve">
+    <value>BrightIdeasSoftware.ObjectListView, ObjectListView, Version=2.9.1.81, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4</value>
+  </data>
+  <data name="&gt;&gt;listLeft.Name" xml:space="preserve">
+    <value>listLeft</value>
+  </data>
+  <data name="label1.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAaAAAAtgEAAAs=</value>
+  </data>
+  <data name="btnAddName.TabIndex" type="System.Int32, mscorlib">
+    <value>51</value>
+  </data>
+  <data name="&gt;&gt;btnDanhSachBuff.ZOrder" xml:space="preserve">
+    <value>14</value>
+  </data>
+  <data name="btnSaveList.TabIndex" type="System.Int32, mscorlib">
+    <value>61</value>
+  </data>
+  <data name="&gt;&gt;btnAddName.ZOrder" xml:space="preserve">
+    <value>15</value>
+  </data>
+  <data name="btnRemove.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAABUAAAAiAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;cboxTuRefresh.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;lblTop.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnDanhSachBuff.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="listLeft.TabIndex" type="System.Int32, mscorlib">
+    <value>77</value>
+  </data>
+  <data name="&gt;&gt;lblTop.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <data name="btnSaveList.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;btnClose.Name" xml:space="preserve">
+    <value>btnClose</value>
+  </data>
+  <data name="&gt;&gt;btnClose.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="btnAdd.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label3.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAABlAAAAtgEAAAs=</value>
+  </data>
+  <data name="lblTop.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAK4AAAANAAAACw==</value>
+  </data>
+  <data name="lblTop.Text" xml:space="preserve">
+    <value>Thêm tên người chơi cần được buff</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>frmItemList</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="btnAdd.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAC1AAAA+QAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cboItemName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cboItemName.Name" xml:space="preserve">
+    <value>cboItemName</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+    <value>label2</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+    <value>label3</value>
+  </data>
+  <data name="listLeft.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAIAAAATwAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <value>label1</value>
+  </data>
+  <data name="btnDanhSachBuff.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAABgAAAAVAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="listRight.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAADQAAAATwAAAAs=</value>
+  </data>
+  <data name="cboxTuRefresh.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="&gt;&gt;colRight_2.Name" xml:space="preserve">
+    <value>colRight_2</value>
+  </data>
+  <data name="&gt;&gt;colRight_2.Type" xml:space="preserve">
+    <value>BrightIdeasSoftware.OLVColumn, ObjectListView, Version=2.9.1.81, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4</value>
+  </data>
+  <data name="$this.StartPosition" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0ZW0uV2luZG93cy5Gb3Jtcy5Gb3JtU3RhcnRQb3NpdGlvbgEAAAAHdmFsdWVfXwAIAgAAAAQAAAAL</value>
+  </data>
+  <data name="&gt;&gt;btnAdd.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnAdd.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="listLeft.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAKcAAABdAQAACw==</value>
+  </data>
+  <data name="&gt;&gt;btnRefresh.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+    <value>56</value>
+  </data>
+  <data name="lblTop.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAFAAAACQAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;colRight_1.Name" xml:space="preserve">
+    <value>colRight_1</value>
+  </data>
+  <data name="&gt;&gt;colRight_1.Type" xml:space="preserve">
+    <value>BrightIdeasSoftware.OLVColumn, ObjectListView, Version=2.9.1.81, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4</value>
+  </data>
+  <data name="btnDanhSachBuff.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAEAAAAswEAAAs=</value>
+  </data>
+  <data name="lblTop.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="txtBuffName.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;btnDanhSachBuff.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnDanhSachBuff.Name" xml:space="preserve">
+    <value>btnDanhSachBuff</value>
+  </data>
+  <data name="btnSaveList.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAABgAAAAVAAAACw==</value>
+  </data>
+  <data name="txtBuffName.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAHQAAAAUAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;btnRefresh.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnAddName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnAddName.Name" xml:space="preserve">
+    <value>btnAddName</value>
+  </data>
+  <data name="btnAddName.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAACCAAAAGQAAAAs=</value>
+  </data>
+  <data name="colRight_1.Width" type="System.Int32, mscorlib">
+    <value>50</value>
+  </data>
+  <data name="$this.AutoScaleDimensions" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5TaXplRgIAAAAFd2lkdGgGaGVpZ2h0AAALCwIAAAAAAMBAAABQQQs=</value>
+  </data>
+  <data name="cboItemName.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAIAAAAGQAAAAs=</value>
+  </data>
+  <data name="btnDanhSachBuff.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+</root>

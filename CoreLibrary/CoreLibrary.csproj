@@ -1,0 +1,368 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--Project was exported from assembly: E:\LMTK\Auto Game\GAUTOFREE\Release\GAuto_Auto_None.exe-->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5AB0D16C-322A-4979-8CA8-E7F74C8A83E1}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>CoreLibrary</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <ApplicationVersion>2.4.3.8</ApplicationVersion>
+    <FileAlignment>512</FileAlignment>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net35\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="ObjectListView">
+      <HintPath>lib\ObjectListView.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>lib\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\Resources.Designer.cs" />
+    <Compile Include="Properties\Settings.Designer.cs" />
+    <Compile Include="SmartBot\AccountBalance.cs" />
+    <Compile Include="SmartBot\ActionLogClass.cs" />
+    <Compile Include="SmartBot\ActiveBocItems.cs" />
+    <Compile Include="SmartBot\AdvancedPath.cs" />
+    <Compile Include="SmartBot\AdvancedPathElement.cs" />
+    <Compile Include="SmartBot\AESKeyset.cs" />
+    <Compile Include="SmartBot\AllEnums.cs" />
+    <Compile Include="SmartBot\ArmyClass.cs" />
+    <Compile Include="SmartBot\AutoAccount.cs" />
+    <Compile Include="SmartBot\AutoSettings.cs" />
+    <Compile Include="SmartBot\BaseInfo.cs" />
+    <Compile Include="SmartBot\BGMessageButtons.cs" />
+    <Compile Include="SmartBot\BocClass.cs" />
+    <Compile Include="SmartBot\BuffedPlayer.cs" />
+    <Compile Include="SmartBot\BuyItem.cs" />
+    <Compile Include="SmartBot\DBInfoClass.cs" />
+    <Compile Include="SmartBot\DuaHauDBElement.cs" />
+    <Compile Include="SmartBot\F.cs" />
+    <Compile Include="SmartBot\ForwardInfo.cs" />
+    <Compile Include="SmartBot\frmAbout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmAutoPK.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmBuffList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmGLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmHashPick.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmHotKeys.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmItemList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmLiteBuy.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmLiteVersion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmNapThe.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmNewUserInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmPickSession.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmPlayerPick.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmProfileManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmReg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmSupport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmThongBao_FW.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmUserInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\frmVersions_FW.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\GA.cs" />
+    <Compile Include="SmartBot\GABitConverter.cs" />
+    <Compile Include="SmartBot\GADB.cs" />
+    <Compile Include="SmartBot\GameHash.cs" />
+    <Compile Include="SmartBot\GAutoList.cs" />
+    <Compile Include="SmartBot\GAutoServer.cs" />
+    <Compile Include="SmartBot\GEventClass.cs" />
+    <Compile Include="SmartBot\GGameMemory.cs" />
+    <Compile Include="SmartBot\GlobalSettings.cs" />
+    <Compile Include="SmartBot\GMemBase.cs" />
+    <Compile Include="SmartBot\GOpcode.cs" />
+    <Compile Include="SmartBot\GPattern.cs" />
+    <Compile Include="SmartBot\GReadMem.cs" />
+    <Compile Include="SmartBot\GScript.cs" />
+    <Compile Include="SmartBot\GScriptCommand.cs" />
+    <Compile Include="SmartBot\GScriptEngine.cs" />
+    <Compile Include="SmartBot\GUITranslation.cs" />
+    <Compile Include="SmartBot\HashAddressPatch.cs" />
+    <Compile Include="SmartBot\HashDBElement.cs" />
+    <Compile Include="SmartBot\HistoryItem.cs" />
+    <Compile Include="SmartBot\HookProc.cs" />
+    <Compile Include="SmartBot\HotKeyElement.cs" />
+    <Compile Include="SmartBot\IgnoredAreaDBElement.cs" />
+    <Compile Include="SmartBot\IgnoredProcess.cs" />
+    <Compile Include="SmartBot\InMapPoint.cs" />
+    <Compile Include="SmartBot\INPUT.cs" />
+    <Compile Include="SmartBot\InventoryClass.cs" />
+    <Compile Include="SmartBot\InventoryItem.cs" />
+    <Compile Include="SmartBot\ItemDBElement.cs" />
+    <Compile Include="SmartBot\ItemNhiemVuElement.cs" />
+    <Compile Include="SmartBot\ItemToBuy.cs" />
+    <Compile Include="SmartBot\ItemToUse.cs" />
+    <Compile Include="SmartBot\ItemTrongBoc.cs" />
+    <Compile Include="SmartBot\KhoangDuocDBElement.cs" />
+    <Compile Include="SmartBot\KhoangDuocEntry.cs" />
+    <Compile Include="SmartBot\LicenseManager.cs" />
+    <Compile Include="SmartBot\LicenseSlot.cs" />
+    <Compile Include="SmartBot\ListViewEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SmartBot\LoginParams.cs" />
+    <Compile Include="SmartBot\LoginProfileClass.cs" />
+    <Compile Include="SmartBot\LoginResult.cs" />
+    <Compile Include="SmartBot\LoginSettingsClass.cs" />
+    <Compile Include="SmartBot\MainPlayerClass.cs" />
+    <Compile Include="SmartBot\MapDBElement.cs" />
+    <Compile Include="SmartBot\MEMORY_BASIC_INFORMATION.cs" />
+    <Compile Include="SmartBot\MessageFunc.cs" />
+    <Compile Include="SmartBot\MOUSEINPUT.cs" />
+    <Compile Include="SmartBot\MOUSEKEYBDHARDWAREINPUT.cs" />
+    <Compile Include="SmartBot\MovingPath.cs" />
+    <Compile Include="SmartBot\MovingPoint.cs" />
+    <Compile Include="SmartBot\MyControlClass.cs" />
+    <Compile Include="SmartBot\MyDLL.cs" />
+    <Compile Include="SmartBot\MyFlagClass.cs" />
+    <Compile Include="SmartBot\MyParamsClass.cs" />
+    <Compile Include="SmartBot\NapTheClass.cs" />
+    <Compile Include="SmartBot\NewBoc.cs" />
+    <Compile Include="SmartBot\PartyClass.cs" />
+    <Compile Include="SmartBot\PartyMember.cs" />
+    <Compile Include="SmartBot\PetClass.cs" />
+    <Compile Include="SmartBot\PetSkillPlay.cs" />
+    <Compile Include="SmartBot\PhuBanPath.cs" />
+    <Compile Include="SmartBot\PhuBanPathDBNewElement.cs" />
+    <Compile Include="SmartBot\PlayerIndividual.cs" />
+    <Compile Include="SmartBot\PlayerInfo.cs" />
+    <Compile Include="SmartBot\PlayerListItem.cs" />
+    <Compile Include="SmartBot\PlayerVIP.cs" />
+    <Compile Include="SmartBot\PriceItem.cs" />
+    <Compile Include="SmartBot\Program.cs" />
+    <Compile Include="SmartBot\QuaiClass.cs" />
+    <Compile Include="SmartBot\QuaiIndividual.cs" />
+    <Compile Include="SmartBot\QuangCaoMessage.cs" />
+    <Compile Include="SmartBot\ReadMemEntry.cs" />
+    <Compile Include="SmartBot\RingBocBuffer.cs" />
+    <Compile Include="SmartBot\RingHKBuffer.cs" />
+    <Compile Include="SmartBot\RingMsgBuffer.cs" />
+    <Compile Include="SmartBot\RingNguoiBuffer.cs" />
+    <Compile Include="SmartBot\RingQuaiBuffer.cs" />
+    <Compile Include="SmartBot\RunningApp.cs" />
+    <Compile Include="SmartBot\SavedAI.cs" />
+    <Compile Include="SmartBot\SecurityHelper.cs" />
+    <Compile Include="SmartBot\SessionPick.cs" />
+    <Compile Include="SmartBot\SinglePetClass.cs" />
+    <Compile Include="SmartBot\SingleSkill.cs" />
+    <Compile Include="SmartBot\SkillBookElement.cs" />
+    <Compile Include="SmartBot\SkillBufferItem.cs" />
+    <Compile Include="SmartBot\SkillDBElement.cs" />
+    <Compile Include="SmartBot\SkillItemDelay.cs" />
+    <Compile Include="SmartBot\SkillPlayItem.cs" />
+    <Compile Include="SmartBot\SkillsClass.cs" />
+    <Compile Include="SmartBot\SkillTransItem.cs" />
+    <Compile Include="SmartBot\SmartClass.cs" />
+    <Compile Include="SmartBot\TargetProcess.cs" />
+    <Compile Include="SmartBot\TcpForwarderSlim.cs" />
+    <Compile Include="SmartBot\TinhNang.cs" />
+    <Compile Include="SmartBot\TinhNangElement.cs" />
+    <Compile Include="SmartBot\TLBBServer.cs" />
+    <Compile Include="SmartBot\TNItemDBElement.cs" />
+    <Compile Include="SmartBot\TNNPCShopClass.cs" />
+    <Compile Include="SmartBot\TNNPCShopItem.cs" />
+    <Compile Include="SmartBot\TrongTrotDBElement.cs" />
+    <Compile Include="SmartBot\UserPathPoint.cs" />
+    <Compile Include="SmartBot\Class\Auto\LanguageTest.cs" />
+    <Compile Include="SmartBot\Forms\frmCheDo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\Forms\frmGGConfirm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\Forms\frmGiftCode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\Forms\frmMuaBlock.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\Forms\frmNVTanThu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\Forms\frmScheduler.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\Forms\frmScriptEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmartBot\Forms\frmUpdateNewVersion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CS2PHPCryptography\AEStoPHPCryptography.cs" />
+    <Compile Include="CS2PHPCryptography\AsyncHttpControl.cs" />
+    <Compile Include="CS2PHPCryptography\HttpAsyncInfo.cs" />
+    <Compile Include="CS2PHPCryptography\HttpControl.cs" />
+    <Compile Include="CS2PHPCryptography\OnConnectionEstablishedEventArgs.cs" />
+    <Compile Include="CS2PHPCryptography\OnHttpResponseEventArgs.cs" />
+    <Compile Include="CS2PHPCryptography\PostPackageBuilder.cs" />
+    <Compile Include="CS2PHPCryptography\ProxySettings.cs" />
+    <Compile Include="CS2PHPCryptography\RequestOption.cs" />
+    <Compile Include="CS2PHPCryptography\ResponseReceivedEventArgs.cs" />
+    <Compile Include="CS2PHPCryptography\RSAtoPHPCryptography.cs" />
+    <Compile Include="CS2PHPCryptography\SecurePHPConnection.cs" />
+    <Compile Include="CS2PHPCryptography\Utility.cs" />
+    <Compile Include="EXControls\EXColumnHeader.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="EXControls\EXBoolColumnHeader.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="EXControls\EXListViewSubItemAB.cs" />
+    <Compile Include="EXControls\EXBoolListViewSubItem.cs" />
+    <Compile Include="EXControls\EXComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="EXControls\EXControlListViewSubItem.cs" />
+    <Compile Include="EXControls\EXEditableColumnHeader.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="EXControls\EXListViewItem.cs" />
+    <Compile Include="EXControls\EXImageListViewItem.cs" />
+    <Compile Include="EXControls\EXImageListViewSubItem.cs" />
+    <Compile Include="EXControls\EXListView.Designer.cs" />
+    <Compile Include="EXControls\EXListViewSubItem.cs" />
+    <Compile Include="EXControls\EXMultipleImagesListViewItem.cs" />
+    <Compile Include="EXControls\EXMultipleImagesListViewSubItem.cs" />
+    <Compile Include="NotEncrypted\BlogServers.cs" />
+    <Compile Include="NotEncrypted\BlogSpotFun.cs" />
+    <Compile Include="NotEncrypted\BlogSpotLogin.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GAuto_Auto_None\EXControls\EXListView.resx" />
+    <EmbeddedResource Include="GAuto_Auto_None\Properties\Resources.resx" />
+    <EmbeddedResource Include="SmartBot\Forms\frmCheDo.resx" />
+    <EmbeddedResource Include="SmartBot\Forms\frmGGConfirm.resx" />
+    <EmbeddedResource Include="SmartBot\Forms\frmGiftCode.resx" />
+    <EmbeddedResource Include="SmartBot\Forms\frmMuaBlock.resx" />
+    <EmbeddedResource Include="SmartBot\Forms\frmNVTanThu.resx" />
+    <EmbeddedResource Include="SmartBot\Forms\frmScriptEditor.resx" />
+    <EmbeddedResource Include="SmartBot\Forms\frmScheduler.resx" />
+    <EmbeddedResource Include="SmartBot\Forms\frmUpdateNewVersion.resx" />
+    <EmbeddedResource Include="SmartBot\frmAbout.resx" />
+    <EmbeddedResource Include="SmartBot\frmAutoPK.resx" />
+    <EmbeddedResource Include="SmartBot\frmBuffList.resx" />
+    <EmbeddedResource Include="SmartBot\frmGLogin.resx" />
+    <EmbeddedResource Include="SmartBot\frmHashPick.resx" />
+    <EmbeddedResource Include="SmartBot\frmHotKeys.resx" />
+    <EmbeddedResource Include="SmartBot\frmItemList.resx" />
+    <EmbeddedResource Include="SmartBot\frmLiteBuy.resx" />
+    <EmbeddedResource Include="SmartBot\frmLiteVersion.resx" />
+    <EmbeddedResource Include="SmartBot\frmLogin.resx" />
+    <EmbeddedResource Include="SmartBot\frmMain.resx" />
+    <EmbeddedResource Include="SmartBot\frmNapThe.resx" />
+    <EmbeddedResource Include="SmartBot\frmNewUserInfo.resx" />
+    <EmbeddedResource Include="SmartBot\frmPickSession.resx" />
+    <EmbeddedResource Include="SmartBot\frmPlayerPick.resx" />
+    <EmbeddedResource Include="SmartBot\frmProfileManager.resx" />
+    <EmbeddedResource Include="SmartBot\frmReg.resx" />
+    <EmbeddedResource Include="SmartBot\frmSupport.resx" />
+    <EmbeddedResource Include="SmartBot\frmThongBao_FW.resx" />
+    <EmbeddedResource Include="SmartBot\frmUserInfo.resx" />
+    <EmbeddedResource Include="SmartBot\frmVersions_FW.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

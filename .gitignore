@@ -1,0 +1,30 @@
+# Visual Studio files
+.vs/
+*.suo
+*.user
+*.bak
+*.resharper
+
+# Build artifacts
+[Bb]in/
+[Oo]bj/
+*.pdb
+*.ilk
+*.log
+*.tlog
+*.trx
+*.sbr
+*.bsc
+*.lib
+*.ncb
+*.aps
+*.pch
+*.ipch
+
+# NuGet packages
+packages/
+*.nupkg
+
+# Miscellaneous
+*.cache
+*.designer.cs.user

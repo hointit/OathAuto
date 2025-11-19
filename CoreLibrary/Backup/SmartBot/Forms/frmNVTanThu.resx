@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="&gt;&gt;btnAcBa.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnAcBa.Name" xml:space="preserve">
+    <value>btnAcBa</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="btnDanhCo.TabIndex" type="System.Int32, mscorlib">
+    <value>63</value>
+  </data>
+  <data name="$this.Icon" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>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CwsMDAwNDQ0ODg4ODgoLCwsLDAwMDAwMCgYAAAAEDwIBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACw==</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>NV Tân Thủ</value>
+  </data>
+  <data name="&gt;&gt;btnDanhCo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnDanhCo.Name" xml:space="preserve">
+    <value>btnDanhCo</value>
+  </data>
+  <data name="&gt;&gt;timer1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Timer, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;timer1.Name" xml:space="preserve">
+    <value>timer1</value>
+  </data>
+  <data name="btnAcBa.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAEsAAAAXAAAACw==</value>
+  </data>
+  <data name="btnAcBa.Text" xml:space="preserve">
+    <value>Ác bá</value>
+  </data>
+  <data name="$this.ClientSize" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAOIAAACCAAAACw==</value>
+  </data>
+  <data name="cboxTanThu.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cboxTanThu.ImeMode" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAABxTeXN0ZW0uV2luZG93cy5Gb3Jtcy5JbWVNb2RlAQAAAAd2YWx1ZV9fAAgCAAAAAAAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;btnAcTac.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnAcTac.Name" xml:space="preserve">
+    <value>btnAcTac</value>
+  </data>
+  <data name="&gt;&gt;btnAcTac.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="btnAcTac.TabIndex" type="System.Int32, mscorlib">
+    <value>64</value>
+  </data>
+  <data name="&gt;&gt;btnAcTac.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;btnDanhCo.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;cboxTanThu.Name" xml:space="preserve">
+    <value>cboxTanThu</value>
+  </data>
+  <data name="&gt;&gt;cboxTanThu.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="cboxTanThu.FlatStyle" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB5TeXN0ZW0uV2luZG93cy5Gb3Jtcy5GbGF0U3R5bGUBAAAAB3ZhbHVlX18ACAIAAAAAAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;btnDanhCo.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="btnAcTac.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAEsAAAAXAAAACw==</value>
+  </data>
+  <data name="btnAcTac.Text" xml:space="preserve">
+    <value>Ác tặc</value>
+  </data>
+  <data name="btnDanhCo.Text" xml:space="preserve">
+    <value>Đánh cờ</value>
+  </data>
+  <data name="btnDanhCo.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAEsAAAAXAAAACw==</value>
+  </data>
+  <data name="&gt;&gt;btnAcBa.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnAcBa.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="cboxTanThu.Size" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAgAAAIkAAAARAAAACw==</value>
+  </data>
+  <data name="cboxTanThu.Text" xml:space="preserve">
+    <value>Chạy nhiệm vụ Tân Thủ</value>
+  </data>
+  <data name="btnAcBa.TabIndex" type="System.Int32, mscorlib">
+    <value>65</value>
+  </data>
+  <data name="cboxTanThu.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAMAAAACgAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>frmNVTanThu</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="btnDanhCo.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAMAAAAIwAAAAs=</value>
+  </data>
+  <data name="&gt;&gt;cboxTanThu.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;cboxTanThu.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="btnAcBa.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAMAAAAXQAAAAs=</value>
+  </data>
+  <data name="btnAcTac.Location" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5Qb2ludAIAAAABeAF5AAAICAIAAAAMAAAAQAAAAAs=</value>
+  </data>
+  <data name="$this.AutoScaleDimensions" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>AAEAAAD/////AQAAAAAAAAAMAgAAAFFTeXN0ZW0uRHJhd2luZywgVmVyc2lvbj0yLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAABRTeXN0ZW0uRHJhd2luZy5TaXplRgIAAAAFd2lkdGgGaGVpZ2h0AAALCwIAAAAAAMBAAABQQQs=</value>
+  </data>
+  <data name="cboxTanThu.TabIndex" type="System.Int32, mscorlib">
+    <value>62</value>
+  </data>
+</root>
