@@ -1240,7 +1240,7 @@ public class MainPlayerClass : INotifyPropertyChanged
         return 0.0;
       try
       {
-        return (double) this.CurentExp * 100.0 / (double) this.PlayerLvlExp[this.Level];
+        return this.CurentExp * 100.0 / this.PlayerLvlExp[this.Level];
       }
       catch (IndexOutOfRangeException ex)
       {

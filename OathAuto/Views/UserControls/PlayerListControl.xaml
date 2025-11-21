@@ -7,44 +7,20 @@
              d:DesignHeight="200" d:DesignWidth="800">
   <Grid>
     <Grid.RowDefinitions>
-      <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
-
-    <!-- Header with Buttons -->
-    <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="1" Padding="5">
-      <Grid>
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="*"/>
-          <ColumnDefinition Width="Auto"/>
-          <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-
-        <TextBlock Grid.Column="0"
-                           Text="Player List"
-                           VerticalAlignment="Center"
-                           Margin="5,0"/>
-
-        <Button Grid.Column="1"
-                        Content="Refresh"
-                        Margin="5"/>
-
-        <Button Grid.Column="2"
-                        Content="Settings"
-                        Margin="5"/>
-      </Grid>
-    </Border>
-
     <!-- Player ListView -->
-    <ListView Grid.Row="1"
-                  ItemsSource="{Binding Players}"
-                  SelectedItem="{Binding SelectedPlayer, Mode=TwoWay}">
+    <ListView x:Name="PlayerListView"
+              Grid.Row="1"
+              ItemsSource="{Binding Players}"
+              SelectedItem="{Binding SelectedPlayer, Mode=TwoWay}"
+              SizeChanged="PlayerListView_SizeChanged">
       <ListView.View>
-        <GridView>
+        <GridView x:Name="PlayerGridView">
           <GridViewColumn Header="Name" Width="120" DisplayMemberBinding="{Binding DisplayName}"/>
           <GridViewColumn Header="HP %" Width="60" DisplayMemberBinding="{Binding HPPercent, StringFormat={}{0:F1}%}"/>
           <GridViewColumn Header="MP %" Width="60" DisplayMemberBinding="{Binding MPPercent, StringFormat={}{0:F1}%}"/>
-          <GridViewColumn Header="Map" Width="120" DisplayMemberBinding="{Binding MapLocation}"/>
+          <GridViewColumn Header="Map" DisplayMemberBinding="{Binding MapLocation}"/>
         </GridView>
       </ListView.View>
     </ListView>

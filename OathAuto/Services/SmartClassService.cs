@@ -2,6 +2,7 @@
 using SmartBot;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading;
 
@@ -45,7 +46,7 @@ namespace OathAuto.Services
 
       // Importance Enable UI interactions to start BGThread
       _smartClassInstance.UIAvailable = true;
-
+      new Thread((ThreadStart)(() => frmMain.ReadDBInformation())).Start();
       _isInitialized = true;
     }
 
@@ -105,10 +106,23 @@ namespace OathAuto.Services
           ProcessID = account.Target?.ProcessID ?? 0,
           isTraining = account.Myself != null && !account.Myself.StopTrain,
           Monsters = account.MyQuai?.AllQuai,
-          InventoryItem = account.MyInventory?.AllItems,
           Menpai = (AllEnums.Menpais)(account.Myself?.Menpai),
+          ExpPercent = account.Myself?.ExpPercent ?? 0,
         };
-        Debug.WriteLine($"---UserName: {a.UserName}---Phái: {a.Menpai}---MapName: {a.MapName}---MapId: {a.MapID}");
+        // Update inventory items in place (don't replace collection)
+        a.UpdateInventoryItems(account.MyInventory?.AllItems);
+
+        GADB.LoadAllSettings(account);
+
+        // Không được set thằng IsInGame này thành true nếu không nó không load quái
+        //account.MyFlag.IsInGame = true;
+
+
+        // Set IsAIEnabled = true để nó tự train
+        account.IsAIEnabled = true;
+        //account.Settings.cboxDanhTheoAi = true;
+        //account.AttackQuai();
+        Debug.WriteLine($"---Name: {a.UserName}---Count Quai: {account.MyQuai?.AllQuai.Count}");
 
         return a;
       }

@@ -3755,6 +3755,7 @@ label_44:
           }
         }
         account.SaveWindowHandle();
+        Debug.WriteLine("AICreated HookToProcess");
         account.Target.AICreated = true;
         account.Target.IsReset = false;
       }
@@ -3822,6 +3823,8 @@ label_44:
     {
       int num = (int) MessageBox.Show(string.Format(frmMain.langInvalidVersionFull, (object) frmLogin.MyBases[0].myVersion), frmMain.langInvalidVersion, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
     }
+
+    Debug.WriteLine("RingQuaipView");
     account.Target._PlayerRef = (byte*) (void*) account.Target.PlayerpView;
     account.Target._RingRef = (byte*) (void*) account.Target.RingPacketpView;
     account.Target._RingQuaiRef = (byte*) (void*) account.Target.RingQuaipView;

@@ -286,7 +286,7 @@ public class GADB
     connection.Close();
   }
 
-  internal static void LoadAllSettings(AutoAccount account)
+  public static void LoadAllSettings(AutoAccount account)
   {
     string charTableName = GADB.GetCharTableName(account.Myself.DatabaseID);
     if (string.IsNullOrEmpty(charTableName) || !GADB.CheckAndCreateTable(charTableName))

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using SmartBot;
 using OathAuto.Services;
+using CoreInventoryItem = SmartBot.InventoryItem;
 
 namespace OathAuto.Models
 {
@@ -28,7 +30,20 @@ namespace OathAuto.Models
     private int _processID;
     private bool _isTraining;
     private object _monsters;
-    private object _inventoryItem;
+    private ObservableCollection<Models.InventoryItem> _inventoryItems;
+    private double _expPercent;
+
+    public Player()
+    {
+      // Initialize with 90 empty inventory slots
+      _inventoryItems = new ObservableCollection<InventoryItem>();
+      for (int i = 0; i < 90; i++)
+      {
+        var newItem = new InventoryItem();
+        newItem.ItemIndex = i;
+        _inventoryItems.Add(newItem);
+      }
+    }
 
     public string Name
     {
@@ -313,18 +328,88 @@ namespace OathAuto.Models
       }
     }
 
-    public object InventoryItem
+    public ObservableCollection<InventoryItem> InventoryItems
     {
-      get => _inventoryItem;
+      get => _inventoryItems;
+    }
+
+    /// <summary>
+    /// Update inventory items from CoreLibrary items without replacing the collection
+    /// </summary>
+    public void UpdateInventoryItems(List<CoreInventoryItem> sourceItems)
+    {
+      if (sourceItems == null) return;
+
+      // Update existing items in place
+      int count = System.Math.Min(sourceItems.Count, _inventoryItems.Count);
+      for (int i = 0; i < count; i++)
+      {
+        _inventoryItems[i].UpdateFrom(sourceItems[i]);
+      }
+
+      // Notify that inventory items have been updated
+      OnPropertyChanged(nameof(InventoryItems));
+    }
+
+    /// <summary>
+    /// Sync inventory items from another player's inventory without replacing the collection
+    /// </summary>
+    public void SyncInventoryFrom(Player otherPlayer)
+    {
+      if (otherPlayer == null || otherPlayer.InventoryItems == null) return;
+
+      // Copy properties from other player's items to this player's items
+      int count = System.Math.Min(otherPlayer.InventoryItems.Count, _inventoryItems.Count);
+      for (int i = 0; i < count; i++)
+      {
+        var source = otherPlayer.InventoryItems[i];
+        var target = _inventoryItems[i];
+
+        target.ItemId = source.ItemId;
+        target.NeedToWait = source.NeedToWait;
+        target.BuyingPrice = source.BuyingPrice;
+        target.SellingPrice = source.SellingPrice;
+        target.RealSpread = source.RealSpread;
+        target.MidSpread = source.MidSpread;
+        target.HighSpread = source.HighSpread;
+        target.LowSpread = source.LowSpread;
+        target.HasHistory = source.HasHistory;
+        target.ItemCount = source.ItemCount;
+        target.ItemName = source.ItemName;
+        target.SaveNameCode = source.SaveNameCode;
+        target.ItemGUID1 = source.ItemGUID1;
+        target.ItemGUID2 = source.ItemGUID2;
+        target.Lines = source.Lines;
+        target.LineValueArray = source.LineValueArray;
+        target.SavedCode = source.SavedCode;
+        target.ItemType = source.ItemType;
+        target.ItemStars = source.ItemStars;
+        target.ItemSource = source.ItemSource;
+        target.DinhViPhuTime = source.DinhViPhuTime;
+        target.ItemMapID = source.ItemMapID;
+        target.BTDMapID = source.BTDMapID;
+        target.BTDposX = source.BTDposX;
+        target.BTDposY = source.BTDposY;
+        target.LastTimeSeen = source.LastTimeSeen;
+      }
+
+      // Notify that inventory items have been updated
+      OnPropertyChanged(nameof(InventoryItems));
+    }
+
+    public double ExpPercent
+    {
+      get => _expPercent;
       set
       {
-        if (_inventoryItem != value)
+        if (_expPercent != value)
         {
-          _inventoryItem = value;
-          OnPropertyChanged("InventoryItem");
+          _expPercent = value;
+          OnPropertyChanged("ExpPercent");
         }
       }
     }
+
 
     public event PropertyChangedEventHandler PropertyChanged;
 

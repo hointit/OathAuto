@@ -159,7 +159,9 @@ namespace OathAuto.ViewModels
       existingPlayer.ProcessID = newData.ProcessID;
       existingPlayer.isTraining = newData.isTraining;
       existingPlayer.Monsters = newData.Monsters;
-      existingPlayer.InventoryItem = newData.InventoryItem;
+
+      // Sync inventory items in place without replacing the collection
+      existingPlayer.SyncInventoryFrom(newData);
     }
 
     #endregion

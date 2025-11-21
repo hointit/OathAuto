@@ -7,6 +7,7 @@
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 #nullable disable
@@ -147,6 +148,7 @@ public class F
       frmLogin.GAuto.AllAutoAccounts.Remove(account);
       account.Target.TempRemoved = true;
       account.IsAIEnabled = false;
+      Debug.WriteLine("AICreated UnhookProcess");
       account.Target.AICreated = false;
       MyDLL.PostMessage(account.Target.MainWindowHandle, frmLogin.GAuto.Settings.WM_PSEUDOCODE, (IntPtr) 0, (IntPtr) 0);
     }

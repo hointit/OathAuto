@@ -58,6 +58,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -73,6 +74,7 @@
     </ApplicationDefinition>
     <Compile Include="AppState\BaseHashState.cs" />
     <Compile Include="AppState\StringConverterState.cs" />
+    <Compile Include="Models\InventoryItem.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\Position.cs" />
@@ -157,6 +159,9 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="settings.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="TLBB.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

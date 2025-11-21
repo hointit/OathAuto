@@ -5,121 +5,76 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+  <GroupBox Margin="5">
+    <GroupBox.Header>
+      <CheckBox Content="Training"
+                IsChecked="{Binding isTraining, Mode=TwoWay}"
+                FontWeight="Bold"/>
+    </GroupBox.Header>
+    <Grid Margin="10">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
+      </Grid.ColumnDefinitions>
 
-        <!-- Header -->
-        <Border Grid.Row="0"
-                BorderBrush="Gray"
-                BorderThickness="0,0,0,1"
-                Padding="10">
-            <TextBlock Text="Training Controls"
-                       FontSize="14"
-                       FontWeight="Bold"/>
-        </Border>
+      <!-- LevelUp Checkbox -->
+      <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                Content="LevelUp"
+                IsChecked="{Binding CanLevelUp, Mode=TwoWay}"
+                Margin="0,5"/>
 
-        <!-- Content -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="10">
+      <!-- Max Level -->
+      <TextBlock Grid.Row="1" Grid.Column="0"
+                 Text="Max Level:"
+                 VerticalAlignment="Center"
+                 Margin="0,5,10,5"/>
+      <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+               Text="{Binding MaxLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+               VerticalAlignment="Center"
+               Margin="0,5"/>
 
-                <!-- Player Information Section -->
-                <Border BorderBrush="Gray"
-                        BorderThickness="1"
-                        Padding="10"
-                        Margin="0,0,0,10">
-                    <StackPanel>
-                        <TextBlock Text="Player Information"
-                                   FontSize="12"
-                                   FontWeight="Bold"
-                                   Margin="0,0,0,10"/>
+      <!-- Reset Level Item -->
+      <TextBlock Grid.Row="2" Grid.Column="0"
+                 Text="Reset Item:"
+                 VerticalAlignment="Center"
+                 Margin="0,5,10,5"/>
+      <ComboBox Grid.Row="2" Grid.Column="1"
+                ItemsSource="{Binding NonEmptyInventoryItems}"
+                SelectedItem="{Binding ResetLevelItem, Mode=TwoWay}"
+                DisplayMemberPath="ItemName"
+                VerticalAlignment="Center"
+                Margin="0,5,5,5"/>
+      <Button Grid.Row="2" Grid.Column="2"
+              Content="X"
+              Width="25"
+              Command="{Binding ClearResetLevelItemCommand}"
+              VerticalAlignment="Center"
+              Margin="0,5"/>
 
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock Grid.Row="0" Grid.Column="0"
-                                       Text="Name:"
-                                       Margin="0,0,10,5"/>
-                            <TextBlock Grid.Row="0" Grid.Column="1"
-                                       Text="{Binding Name}"
-                                       FontWeight="Bold"
-                                       Margin="0,0,0,5"/>
-
-                            <TextBlock Grid.Row="1" Grid.Column="0"
-                                       Text="Level:"
-                                       Margin="0,0,10,5"/>
-                            <TextBlock Grid.Row="1" Grid.Column="1"
-                                       Text="{Binding Level}"
-                                       Margin="0,0,0,5"/>
-
-                            <TextBlock Grid.Row="2" Grid.Column="0"
-                                       Text="Map:"
-                                       Margin="0,0,10,5"/>
-                            <TextBlock Grid.Row="2" Grid.Column="1"
-                                       Text="{Binding MapName}"
-                                       Margin="0,0,0,5"/>
-
-                            <TextBlock Grid.Row="3" Grid.Column="0"
-                                       Text="Status:"
-                                       Margin="0,0,10,5"/>
-                            <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
-                                <TextBlock Text="Training: "
-                                           Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding isTraining}"
-                                           FontWeight="Bold"
-                                           Margin="0,0,15,0"/>
-                                <TextBlock Text="In Combat: "
-                                           Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding InCombat}"
-                                           FontWeight="Bold"/>
-                            </StackPanel>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-                <!-- Training Actions Section -->
-                <Border BorderBrush="Gray"
-                        BorderThickness="1"
-                        Padding="10">
-                    <StackPanel>
-                        <TextBlock Text="Training Actions"
-                                   FontSize="12"
-                                   FontWeight="Bold"
-                                   Margin="0,0,0,10"/>
-
-                        <Button Content="Start Training"
-                                Command="{Binding StartTrainingCommand}"
-                                Margin="0,0,0,5"
-                                Padding="15,8"
-                                HorizontalAlignment="Left"
-                                MinWidth="150"/>
-
-                        <Button Content="Stop Training"
-                                Command="{Binding StopTrainingCommand}"
-                                Margin="0,0,0,5"
-                                Padding="15,8"
-                                HorizontalAlignment="Left"
-                                MinWidth="150"/>
-
-                        <Button Content="Use Item"
-                                Command="{Binding UseItemCommand}"
-                                Padding="15,8"
-                                HorizontalAlignment="Left"
-                                MinWidth="150"/>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-        </ScrollViewer>
+      <!-- Add Point Item -->
+      <TextBlock Grid.Row="3" Grid.Column="0"
+                 Text="Add Point Item:"
+                 VerticalAlignment="Center"
+                 Margin="0,5,10,5"/>
+      <ComboBox Grid.Row="3" Grid.Column="1"
+                ItemsSource="{Binding NonEmptyInventoryItems}"
+                SelectedItem="{Binding AddPointItem, Mode=TwoWay}"
+                DisplayMemberPath="ItemName"
+                VerticalAlignment="Center"
+                Margin="0,5,5,5"/>
+      <Button Grid.Row="3" Grid.Column="2"
+              Content="X"
+              Width="25"
+              Command="{Binding ClearAddPointItemCommand}"
+              VerticalAlignment="Center"
+              Margin="0,5"/>
     </Grid>
+  </GroupBox>
 </UserControl>

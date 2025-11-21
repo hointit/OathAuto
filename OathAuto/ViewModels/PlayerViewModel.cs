@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Input;
 using OathAuto.Models;
 using OathAuto.Services;
+using SmartBot;
 using static SmartBot.AllEnums;
 
 namespace OathAuto.ViewModels
@@ -12,6 +16,12 @@ namespace OathAuto.ViewModels
     private Player _player;
     private readonly SmartClassService _smartClassService;
     private readonly int _accountIndex;
+
+    // Training properties
+    private bool _canLevelUp;
+    private int _maxLevel = 120;
+    private Models.InventoryItem _resetLevelItem;
+    private Models.InventoryItem _addPointItem;
 
     public PlayerViewModel()
     {
@@ -36,6 +46,8 @@ namespace OathAuto.ViewModels
       StartTrainingCommand = new RelayCommand(ExecuteStartTraining, CanExecuteStartTraining);
       StopTrainingCommand = new RelayCommand(ExecuteStopTraining, CanExecuteStopTraining);
       UseItemCommand = new RelayCommand(ExecuteUseItem, CanExecuteUseItem);
+      ClearResetLevelItemCommand = new RelayCommand(ExecuteClearResetLevelItem);
+      ClearAddPointItemCommand = new RelayCommand(ExecuteClearAddPointItem);
     }
 
     public Player Player
@@ -78,13 +90,95 @@ namespace OathAuto.ViewModels
     public string MapName => _player?.MapName ?? string.Empty;
     public string MapLocation => _player?.MapLocation ?? string.Empty;
     public bool InCombat => _player?.InCombat ?? false;
-    public bool isTraining => _player?.isTraining ?? false;
+    public bool isTraining
+    {
+      get => _player?.isTraining ?? false;
+      set
+      {
+        if (_player != null && _player.isTraining != value)
+        {
+          _player.isTraining = value;
+          OnPropertyChanged(nameof(isTraining));
+        }
+      }
+    }
+    public double ExpPercent => _player?.ExpPercent ?? 0;
+    public ObservableCollection<Models.InventoryItem> InventoryItems => _player?.InventoryItems;
+
+    /// <summary>
+    /// Returns only non-empty inventory items for ComboBox display
+    /// </summary>
+    public IEnumerable<Models.InventoryItem> NonEmptyInventoryItems
+    {
+      get
+      {
+        if (_player?.InventoryItems == null)
+          return new List<Models.InventoryItem>();
+
+        return _player.InventoryItems.Where(item => item.CanDisplay);
+      }
+    }
+
+    // Training properties
+    public bool CanLevelUp
+    {
+      get => _canLevelUp;
+      set
+      {
+        if (_canLevelUp != value)
+        {
+          _canLevelUp = value;
+          OnPropertyChanged(nameof(CanLevelUp));
+        }
+      }
+    }
+
+    public int MaxLevel
+    {
+      get => _maxLevel;
+      set
+      {
+        if (_maxLevel != value)
+        {
+          _maxLevel = value;
+          OnPropertyChanged(nameof(MaxLevel));
+        }
+      }
+    }
+
+    public Models.InventoryItem ResetLevelItem
+    {
+      get => _resetLevelItem;
+      set
+      {
+        if (_resetLevelItem != value)
+        {
+          _resetLevelItem = value;
+          OnPropertyChanged(nameof(ResetLevelItem));
+        }
+      }
+    }
+
+    public Models.InventoryItem AddPointItem
+    {
+      get => _addPointItem;
+      set
+      {
+        if (_addPointItem != value)
+        {
+          _addPointItem = value;
+          OnPropertyChanged(nameof(AddPointItem));
+        }
+      }
+    }
 
     #region Commands
 
     public ICommand StartTrainingCommand { get; private set; }
     public ICommand StopTrainingCommand { get; private set; }
     public ICommand UseItemCommand { get; private set; }
+    public ICommand ClearResetLevelItemCommand { get; private set; }
+    public ICommand ClearAddPointItemCommand { get; private set; }
 
     private bool CanExecuteStartTraining()
     {
@@ -150,6 +244,16 @@ namespace OathAuto.ViewModels
       }
     }
 
+    private void ExecuteClearResetLevelItem()
+    {
+      ResetLevelItem = null;
+    }
+
+    private void ExecuteClearAddPointItem()
+    {
+      AddPointItem = null;
+    }
+
     #endregion
 
     private void OnPlayerPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -202,8 +306,16 @@ namespace OathAuto.ViewModels
         case nameof(Models.Player.InCombat):
           OnPropertyChanged(nameof(InCombat));
           break;
+          
         case nameof(Models.Player.isTraining):
           OnPropertyChanged(nameof(isTraining));
+          break;
+        case nameof(Models.Player.ExpPercent):
+          OnPropertyChanged(nameof(ExpPercent));
+          break;
+        case nameof(Models.Player.InventoryItems):
+          OnPropertyChanged(nameof(InventoryItems));
+          OnPropertyChanged(nameof(NonEmptyInventoryItems));
           break;
       }
     }

@@ -192,7 +192,10 @@ public class SmartClass
         {
           MessageFunc tempmsg = account.RingQuai[index2];
           if (tempmsg.Message == 100)
+          {
             SmartClass.UpdateQuaiData(account, tempmsg);
+          }
+            
         }
         ++account.Myself.QuaiReadIndex;
       }
@@ -6046,8 +6049,6 @@ public class SmartClass
         DanhHieu = myref3,
         HPPercent = num
       });
-
-      Debug.Write($"Tìm thấy quái: {myref1}----- Level: {(int)tempmsg.byte1} --- HP: {num}% \n");
     }
     if ((double) num <= 0.0 || tempmsg.int7 != account.MyQuai.TargetID)
       return;
@@ -7302,6 +7303,8 @@ label_330:
       }
       if (unhook && frmLogin.GAuto.AllAutoAccounts[i].BGThread != null && unhook)
         frmLogin.GAuto.AllAutoAccounts[i].BGThread.Abort();
+
+      Debug.WriteLine("AICreated 1");
       frmLogin.GAuto.AllAutoAccounts[i].Target.AICreated = false;
       if (!unhook)
       {
