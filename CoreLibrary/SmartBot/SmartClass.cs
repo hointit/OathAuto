@@ -6038,7 +6038,7 @@ public class SmartClass
         MapID = account.Myself.MapID,
         LastTimeSeen = account.nowStamp(),
         HPPointer = int3,
-        Level = (int) tempmsg.byte1,
+        Level = (int)tempmsg.byte1,
         QuaiType = (byte) 1,
         CanAttack = (byte) tempmsg.int5,
         IsBossValue = tempmsg.int6,
@@ -6046,6 +6046,8 @@ public class SmartClass
         DanhHieu = myref3,
         HPPercent = num
       });
+
+      Debug.Write($"Tìm thấy quái: {myref1}----- Level: {(int)tempmsg.byte1} --- HP: {num}% \n");
     }
     if ((double) num <= 0.0 || tempmsg.int7 != account.MyQuai.TargetID)
       return;

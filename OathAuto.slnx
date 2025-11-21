@@ -3,10 +3,10 @@
     <Platform Name="Any CPU" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="CoreLibrary/CoreLibrary.csproj">
+  <Project Path="CoreLibrary/CoreLibrary.csproj" Id="5ab0d16c-322a-4979-8ca8-e7f74c8a83e1">
     <Platform Solution="*|x86" Project="x86" />
   </Project>
-  <Project Path="OathAuto/OathAuto.csproj">
+  <Project Path="OathAuto/OathAuto.csproj" Id="547d87ae-3312-4240-bf09-195c1c4de7b0">
     <Platform Solution="*|x86" Project="x86" />
   </Project>
 </Solution>

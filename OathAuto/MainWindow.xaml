@@ -4,9 +4,26 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OathAuto"
+        xmlns:userControls="clr-namespace:OathAuto.Views.UserControls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="OathAuto - Game Automation"
+        Height="600"
+        Width="800">
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+    <!-- Player List Control -->
+    <userControls:PlayerListControl Grid.Row="0"
+                                        Height="200"
+                                        DataContext="{Binding}"/>
+
+    <!-- Tab Content Control -->
+    <userControls:TabContentControl Grid.Row="1"
+                                        Margin="0,5,0,0"
+                                        DataContext="{Binding}"/>
+  </Grid>
 </Window>
