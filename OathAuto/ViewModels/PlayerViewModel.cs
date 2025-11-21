@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows.Input;
 using OathAuto.Models;
 using OathAuto.Services;
+using static SmartBot.AllEnums;
 
 namespace OathAuto.ViewModels
 {
@@ -64,6 +65,9 @@ namespace OathAuto.ViewModels
 
     // Convenience properties for direct binding (optional)
     public string Name => _player?.Name ?? string.Empty;
+    public string UserName => _player?.UserName ?? string.Empty;
+    public Menpais Menpai => _player?.Menpai ?? Menpais.NOMENPAI;
+    public string DisplayName => _player?.DisplayName ?? string.Empty;
     public int Level => _player?.Level ?? 0;
     public int HP => _player?.HP ?? 0;
     public int MaxHP => _player?.MaxHP ?? 0;
@@ -72,6 +76,7 @@ namespace OathAuto.ViewModels
     public int MaxMP => _player?.MaxMP ?? 0;
     public double MPPercent => _player?.MPPercent ?? 0;
     public string MapName => _player?.MapName ?? string.Empty;
+    public string MapLocation => _player?.MapLocation ?? string.Empty;
     public bool InCombat => _player?.InCombat ?? false;
     public bool isTraining => _player?.isTraining ?? false;
 
@@ -158,6 +163,15 @@ namespace OathAuto.ViewModels
         case nameof(Models.Player.Name):
           OnPropertyChanged(nameof(Name));
           break;
+        case nameof(Models.Player.UserName):
+          OnPropertyChanged(nameof(UserName));
+          break;
+        case nameof(Models.Player.Menpai):
+          OnPropertyChanged(nameof(Menpai));
+          break;
+        case nameof(Models.Player.DisplayName):
+          OnPropertyChanged(nameof(DisplayName));
+          break;
         case nameof(Models.Player.Level):
           OnPropertyChanged(nameof(Level));
           break;
@@ -181,6 +195,9 @@ namespace OathAuto.ViewModels
           break;
         case nameof(Models.Player.MapName):
           OnPropertyChanged(nameof(MapName));
+          break;
+        case nameof(Models.Player.MapLocation):
+          OnPropertyChanged(nameof(MapLocation));
           break;
         case nameof(Models.Player.InCombat):
           OnPropertyChanged(nameof(InCombat));

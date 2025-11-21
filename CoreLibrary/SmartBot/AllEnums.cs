@@ -121,19 +121,46 @@ public abstract class AllEnums : INotifyPropertyChanged
 
   public enum Menpais
   {
+    [Description("Thiếu Lâm")]
     THIEULAM = 0,
-    [Description("Minh Giáo")] MINHGIAO = 1,
+
+    [Description("Minh Giáo")]
+    MINHGIAO = 1,
+
+    [Description("Cái Bang")]
     CAIBANG = 2,
+
+    [Description("Võ Đang")]
     VODANG = 3,
-    [Description("Nga My")] NGAMI = 4,
+
+    [Description("Nga My")]
+    NGAMI = 4,
+
+    [Description("Tinh Túc")]
     TINHTUC = 5,
+
+    [Description("Thiên Long")]
     THIENLONG = 6,
+
+    [Description("Thiên Sơn")]
     THIENSON = 7,
-    [Description("Tiêu Dao")] TIEUDAO = 8,
-    [Description("Chưa vào phái")] NOMENPAI = 9,
+
+    [Description("Tiêu Dao")]
+    TIEUDAO = 8,
+
+    [Description("Chưa vào phái")]
+    NOMENPAI = 9,
+
+    [Description("Mộ Dung")]
     MODUNG = 10, // 0x0000000A
+
+    [Description("Đường Môn")]
     DUONGMON = 11, // 0x0000000B
+
+    [Description("Quỷ Cốc")]
     QUYCOC = 12, // 0x0000000C
+
+    [Description("Toàn bộ phái")]
     ALLPHAI = 99, // 0x00000063
   }
 

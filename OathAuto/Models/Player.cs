@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using SmartBot;
+using OathAuto.Services;
 
 namespace OathAuto.Models
 {
   public class Player : INotifyPropertyChanged
   {
     private string _name = string.Empty;
+    private string _userName = string.Empty;
     private int _level;
+    private AllEnums.Menpais _menpai;
     private int _hp;
     private int _maxHP;
     private double _hpPercent;
@@ -35,6 +39,34 @@ namespace OathAuto.Models
         {
           _name = value;
           OnPropertyChanged("Name");
+          OnPropertyChanged("DisplayName");
+        }
+      }
+    }
+
+    public string UserName
+    {
+      get => _userName;
+      set
+      {
+        if (_userName != value)
+        {
+          _userName = value;
+          OnPropertyChanged("UserName");
+        }
+      }
+    }
+
+    public AllEnums.Menpais Menpai
+    {
+      get => _menpai;
+      set
+      {
+        if (_menpai != value)
+        {
+          _menpai = value;
+          OnPropertyChanged("Menpai");
+          OnPropertyChanged("DisplayName");
         }
       }
     }
@@ -48,7 +80,16 @@ namespace OathAuto.Models
         {
           _level = value;
           OnPropertyChanged("Level");
+          OnPropertyChanged("DisplayName");
         }
+      }
+    }
+
+    public string DisplayName
+    {
+      get
+      {
+        return string.Format("{0} ({1}/{2})", _name, CommonService.GetEnumDescription(_menpai), _level);
       }
     }
 
@@ -165,6 +206,7 @@ namespace OathAuto.Models
         {
           _mapName = value;
           OnPropertyChanged("MapName");
+          OnPropertyChanged("MapLocation");
         }
       }
     }
@@ -178,6 +220,7 @@ namespace OathAuto.Models
         {
           _mapID = value;
           OnPropertyChanged("MapID");
+          OnPropertyChanged("MapLocation");
         }
       }
     }
@@ -191,6 +234,7 @@ namespace OathAuto.Models
         {
           _posX = value;
           OnPropertyChanged("PosX");
+          OnPropertyChanged("MapLocation");
         }
       }
     }
@@ -204,7 +248,16 @@ namespace OathAuto.Models
         {
           _posY = value;
           OnPropertyChanged("PosY");
+          OnPropertyChanged("MapLocation");
         }
+      }
+    }
+
+    public string MapLocation
+    {
+      get
+      {
+        return string.Format("{0}({1}) [{2:F0}, {3:F0}]", _mapName, _mapID, _posX, _posY);
       }
     }
 

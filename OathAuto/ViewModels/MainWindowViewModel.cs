@@ -140,6 +140,8 @@ namespace OathAuto.ViewModels
     private void UpdatePlayerData(Player existingPlayer, Player newData)
     {
       existingPlayer.Name = newData.Name;
+      existingPlayer.UserName = newData.UserName;
+      existingPlayer.Menpai = newData.Menpai;
       existingPlayer.Level = newData.Level;
       existingPlayer.HP = newData.HP;
       existingPlayer.MaxHP = newData.MaxHP;

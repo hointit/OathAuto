@@ -1,9 +1,9 @@
-﻿using System;
+﻿using OathAuto.Models;
+using SmartBot;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using SmartBot;
-using OathAuto.Models;
 
 namespace OathAuto.Services
 {
@@ -84,9 +84,10 @@ namespace OathAuto.Services
 
       try
       {
-        return new Player
+        var a = new Player
         {
-          Name = account.Myself?.Username ?? "Unknown",
+          UserName = account.Myself?.Username ?? "Unknown",
+          Name = account.Myself?.Name ?? "Unknown",
           Level = account.Myself?.Level ?? 0,
           HP = account.Myself?.HP ?? 0,
           MaxHP = account.Myself?.MaxHP ?? 0,
@@ -105,7 +106,11 @@ namespace OathAuto.Services
           isTraining = account.Myself != null && !account.Myself.StopTrain,
           Monsters = account.MyQuai?.AllQuai,
           InventoryItem = account.MyInventory?.AllItems,
+          Menpai = (AllEnums.Menpais)(account.Myself?.Menpai),
         };
+        Debug.WriteLine($"---UserName: {a.UserName}---Phái: {a.Menpai}---MapName: {a.MapName}---MapId: {a.MapID}");
+
+        return a;
       }
       catch (Exception ex)
       {

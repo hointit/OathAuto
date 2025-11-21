@@ -24680,8 +24680,9 @@ label_104:
               {
                 if (this.Target.CyberStamp > 0L)
                   AutoAccount.CreatePseudo(this);
-                if (!(this.Myself.Name == "GAutoPR"))
-                  this.Myself.Name = "Bouya";
+                // hoint: no need to update Name to "Bouya"
+                //if (!(this.Myself.Name == "GAutoPR"))
+                //  this.Myself.Name = "Bouya";
                 if (this.MyFlag.IsInGame && this.Target.GLoginAIReady)
                 {
                   if (this.Myself.StartingStamp == 0L)
@@ -25096,7 +25097,8 @@ label_104:
                       }
                       if (this.Myself.Pass2BoxShow == 1 && frmLogin.GAuto.Settings.IsPro2)
                         this.CallMoPass2();
-                      this.Myself.Name = "GAutoPR";
+                      // hoint: update Name = SaveDisplayName
+                      this.Myself.Name = this.Myself.SavedDisplayName;
                       if (this.IsAIEnabled && this.Myself.ID > 0)
                       {
                         this.NhanQuaGame();

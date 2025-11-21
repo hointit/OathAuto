@@ -7,8 +7,8 @@
         xmlns:userControls="clr-namespace:OathAuto.Views.UserControls"
         mc:Ignorable="d"
         Title="OathAuto - Game Automation"
-        Height="600"
-        Width="800">
+        Height="700"
+        Width="450">
 
   <Grid>
     <Grid.RowDefinitions>

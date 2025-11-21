@@ -3,6 +3,8 @@ using OathAuto.AppState;
 using SmartBot;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 
@@ -120,6 +122,20 @@ namespace OathAuto.Services
           myInfo = XOREncrypt(dictionary2["addr"].ToString(), "TDTthangancap")
         });
       return lst;
-    } 
+    }
+
+    public static string GetEnumDescription(Enum value)
+    {
+      FieldInfo field = value.GetType().GetField(value.ToString());
+      if (field == null)
+        return value.ToString();
+
+      DescriptionAttribute[] attributes = (DescriptionAttribute[])field.GetCustomAttributes(typeof(DescriptionAttribute), false);
+
+      if (attributes != null && attributes.Length > 0)
+        return attributes[0].Description;
+
+      return value.ToString();
+    }
   }
 }
