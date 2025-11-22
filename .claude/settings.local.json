@@ -3,7 +3,8 @@
     "allow": [
       "Bash(dir:*)",
       "Bash(msbuild:*)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(cmd /c \"msbuild OathAuto\\OathAuto.csproj /p:Configuration=Debug /p:Platform=x86 /v:minimal /nologo\")"
     ],
     "deny": [],
     "ask": []

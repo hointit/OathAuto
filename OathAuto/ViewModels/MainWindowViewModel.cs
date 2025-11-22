@@ -118,7 +118,7 @@ namespace OathAuto.ViewModels
           {
             // Add new player
             var newPlayerViewModel = new PlayerViewModel(updatedPlayer, _smartClassService, i);
-            Players.Add(newPlayerViewModel);
+            this.Players.Add(newPlayerViewModel);
 
             // Auto-select first player if none selected
             if (SelectedPlayer == null && Players.Count == 1)
@@ -139,6 +139,7 @@ namespace OathAuto.ViewModels
     /// </summary>
     private void UpdatePlayerData(Player existingPlayer, Player newData)
     {
+      existingPlayer.Id = newData.Id;
       existingPlayer.Name = newData.Name;
       existingPlayer.UserName = newData.UserName;
       existingPlayer.Menpai = newData.Menpai;
@@ -159,6 +160,7 @@ namespace OathAuto.ViewModels
       existingPlayer.ProcessID = newData.ProcessID;
       existingPlayer.isTraining = newData.isTraining;
       existingPlayer.Monsters = newData.Monsters;
+      existingPlayer.DatabaseId = newData.DatabaseId;
 
       // Sync inventory items in place without replacing the collection
       existingPlayer.SyncInventoryFrom(newData);

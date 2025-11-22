@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Security.Principal;
 using System.Threading;
 
 namespace OathAuto.Services
@@ -22,7 +23,6 @@ namespace OathAuto.Services
       _smartClassInstance.UIAvailable = true;
       _isInitialized = true;
       Thread.Sleep(50);
-      this.GetAllAccountsData();
     }
 
     private void InitStateForCoreLibrary()
@@ -83,10 +83,16 @@ namespace OathAuto.Services
       if (account == null)
         return null;
 
+      if (account.Myself.ID == 0)
+      {
+        return null;
+      }
+
       try
       {
-        var a = new Player
+        var newPlayer = new Player
         {
+          Id = account.Myself.ID,
           UserName = account.Myself?.Username ?? "Unknown",
           Name = account.Myself?.Name ?? "Unknown",
           Level = account.Myself?.Level ?? 0,
@@ -108,23 +114,11 @@ namespace OathAuto.Services
           Monsters = account.MyQuai?.AllQuai,
           Menpai = (AllEnums.Menpais)(account.Myself?.Menpai),
           ExpPercent = account.Myself?.ExpPercent ?? 0,
+          DatabaseId = account.Myself.DatabaseID,
+          AutoAccount = account
         };
-        // Update inventory items in place (don't replace collection)
-        a.UpdateInventoryItems(account.MyInventory?.AllItems);
-
-        GADB.LoadAllSettings(account);
-
-        // Không được set thằng IsInGame này thành true nếu không nó không load quái
-        //account.MyFlag.IsInGame = true;
-
-
-        // Set IsAIEnabled = true để nó tự train
-        account.IsAIEnabled = true;
-        //account.Settings.cboxDanhTheoAi = true;
-        //account.AttackQuai();
-        Debug.WriteLine($"---Name: {a.UserName}---Count Quai: {account.MyQuai?.AllQuai.Count}");
-
-        return a;
+        newPlayer.UpdateInventoryItems(account.MyInventory?.AllItems);
+        return newPlayer;
       }
       catch (Exception ex)
       {

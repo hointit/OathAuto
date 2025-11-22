@@ -10,6 +10,8 @@ namespace OathAuto.Models
 {
   public class Player : INotifyPropertyChanged
   {
+    private int _id;
+    private int _targetId;
     private string _name = string.Empty;
     private string _userName = string.Empty;
     private int _level;
@@ -32,6 +34,10 @@ namespace OathAuto.Models
     private object _monsters;
     private ObservableCollection<Models.InventoryItem> _inventoryItems;
     private double _expPercent;
+    public bool _isLoadedOldSetting = false;
+    private int _databaseId = 0;
+
+    public AutoAccount AutoAccount { get; set; }
 
     public Player()
     {
@@ -42,6 +48,32 @@ namespace OathAuto.Models
         var newItem = new InventoryItem();
         newItem.ItemIndex = i;
         _inventoryItems.Add(newItem);
+      }
+    }
+
+    public int Id
+    {
+      get => _id;
+      set
+      {
+        if (_id != value)
+        {
+          _id = value;
+          OnPropertyChanged(nameof(Id));
+        }
+      }
+    }
+
+    public int TargetId
+    {
+      get => _targetId;
+      set
+      {
+        if (_targetId != value)
+        {
+          _targetId = value;
+          OnPropertyChanged(nameof(TargetId));
+        }
       }
     }
 
@@ -364,7 +396,6 @@ namespace OathAuto.Models
       {
         var source = otherPlayer.InventoryItems[i];
         var target = _inventoryItems[i];
-
         target.ItemId = source.ItemId;
         target.NeedToWait = source.NeedToWait;
         target.BuyingPrice = source.BuyingPrice;
@@ -392,7 +423,6 @@ namespace OathAuto.Models
         target.BTDposY = source.BTDposY;
         target.LastTimeSeen = source.LastTimeSeen;
       }
-
       // Notify that inventory items have been updated
       OnPropertyChanged(nameof(InventoryItems));
     }
@@ -410,6 +440,18 @@ namespace OathAuto.Models
       }
     }
 
+    public int DatabaseId
+    {
+      get => _databaseId;
+      set
+      {
+        if (_databaseId != value)
+        {
+          _databaseId = value;
+          OnPropertyChanged(nameof(DatabaseId));
+        }
+      }
+    }
 
     public event PropertyChangedEventHandler PropertyChanged;
 

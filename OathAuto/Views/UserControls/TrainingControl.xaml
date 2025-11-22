@@ -8,7 +8,7 @@
   <GroupBox Margin="5">
     <GroupBox.Header>
       <CheckBox Content="Training"
-                IsChecked="{Binding isTraining, Mode=TwoWay}"
+                IsChecked="{Binding TrainingOption.IsTraining, Mode=TwoWay}"
                 FontWeight="Bold"/>
     </GroupBox.Header>
     <Grid Margin="10">
@@ -17,64 +17,69 @@
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
 
-      <!-- LevelUp Checkbox -->
-      <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
-                Content="LevelUp"
-                IsChecked="{Binding CanLevelUp, Mode=TwoWay}"
-                Margin="0,5"/>
+      <StackPanel Grid.Row="0" Orientation="Horizontal" Grid.ColumnSpan="2">
+        <CheckBox Content="Tự động thăng cấp khi nhỏ hơn" IsChecked="{Binding TrainingOption.IsAutoUpLevel, Mode=TwoWay}"
+          Margin="0,5"/>
+        <TextBox Width="60"
+         Text="{Binding TrainingOption.MaxLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+         VerticalAlignment="Center"
+         Margin="10,0"/>
 
-      <!-- Max Level -->
-      <TextBlock Grid.Row="1" Grid.Column="0"
-                 Text="Max Level:"
-                 VerticalAlignment="Center"
-                 Margin="0,5,10,5"/>
-      <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
-               Text="{Binding MaxLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-               VerticalAlignment="Center"
-               Margin="0,5"/>
+        <CheckBox  Content="Tự dùng x2.5" IsChecked="{Binding TrainingOption.IsAutoUseX2Exp, Mode=TwoWay}" Margin="40,5"/>
+      </StackPanel>
 
-      <!-- Reset Level Item -->
-      <TextBlock Grid.Row="2" Grid.Column="0"
-                 Text="Reset Item:"
-                 VerticalAlignment="Center"
-                 Margin="0,5,10,5"/>
-      <ComboBox Grid.Row="2" Grid.Column="1"
-                ItemsSource="{Binding NonEmptyInventoryItems}"
-                SelectedItem="{Binding ResetLevelItem, Mode=TwoWay}"
-                DisplayMemberPath="ItemName"
-                VerticalAlignment="Center"
-                Margin="0,5,5,5"/>
-      <Button Grid.Row="2" Grid.Column="2"
-              Content="X"
-              Width="25"
-              Command="{Binding ClearResetLevelItemCommand}"
-              VerticalAlignment="Center"
-              Margin="0,5"/>
+      <TextBlock Grid.Row="1" Text="Vật phẩm reset:" VerticalAlignment="Center" />
+      <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+        <ComboBox
+          Width="150"
+          ItemsSource="{Binding NonEmptyInventoryItems}"
+          SelectedItem="{Binding TrainingOption.ResetLevelItem, Mode=TwoWay}"
+          DisplayMemberPath="ItemName"
+          VerticalAlignment="Center"
+          Margin="5, 0, 0 , 0"/>
+        <Button
+        Content="X"
+        Width="25"
+        Command="{Binding TrainingOption.ClearResetLevelItemCommand}"
+        VerticalAlignment="Center" />
+      </StackPanel>
 
-      <!-- Add Point Item -->
-      <TextBlock Grid.Row="3" Grid.Column="0"
-                 Text="Add Point Item:"
-                 VerticalAlignment="Center"
-                 Margin="0,5,10,5"/>
-      <ComboBox Grid.Row="3" Grid.Column="1"
-                ItemsSource="{Binding NonEmptyInventoryItems}"
-                SelectedItem="{Binding AddPointItem, Mode=TwoWay}"
-                DisplayMemberPath="ItemName"
-                VerticalAlignment="Center"
-                Margin="0,5,5,5"/>
-      <Button Grid.Row="3" Grid.Column="2"
-              Content="X"
-              Width="25"
-              Command="{Binding ClearAddPointItemCommand}"
-              VerticalAlignment="Center"
-              Margin="0,5"/>
+      <TextBlock Grid.Row="2" Grid.Column="0" Text="Vật Phẩm Cộng Point:" VerticalAlignment="Center"/>
+      <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0 5">
+        <ComboBox
+          Width="150"
+          ItemsSource="{Binding NonEmptyInventoryItems}"
+          SelectedItem="{Binding TrainingOption.AddPointItem, Mode=TwoWay}"
+          DisplayMemberPath="ItemName"
+          VerticalAlignment="Center"
+          Margin="5, 0, 0 , 0"/>
+        <Button Grid.Column="2"
+        Content="X"
+        Width="25"
+        Command="{Binding TrainingOption.ClearAddPointItemCommand}"
+        VerticalAlignment="Center" />
+      </StackPanel>
+        <!-- Get and Fixed postion player -->
+      <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0 5">
+        <TextBlock VerticalAlignment="Center" Margin="0,0,10,0" Text="Cố định vị trí: "/>
+        <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" Text="X:"/>
+        <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding TrainingOption.FixedX, StringFormat={}{0:F0}}"/>
+        <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" Text="Y:"/>
+        <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding TrainingOption.FixedY, StringFormat={}{0:F0}}"/>
+        <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" Text="Map:"/>
+        <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding TrainingOption.FixedMapName}"/>
+        <Button Content="..." Padding="10,2" Command="{Binding TrainingOption.GetCurrentPositionCommand}" VerticalAlignment="Center" />
+        <Button Content="..." Padding="10,2" Command="{Binding TrainingOption.ClearFixedPositionCommand}" VerticalAlignment="Center" />
+      </StackPanel>
     </Grid>
   </GroupBox>
 </UserControl>

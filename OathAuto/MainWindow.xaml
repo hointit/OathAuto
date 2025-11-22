@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="OathAuto - Game Automation"
         Height="700"
-        Width="450">
+        Width="550">
 
   <Grid>
     <Grid.RowDefinitions>
