@@ -31,8 +31,9 @@ namespace OathAuto.Models
     private bool _inCombat;
     private int _processID;
     private bool _isTraining;
-    private object _monsters;
+    private List<QuaiIndividual> _monsters;
     private ObservableCollection<Models.InventoryItem> _inventoryItems;
+    private ObservableCollection<Skill> _skills;
     private double _expPercent;
     public bool _isLoadedOldSetting = false;
     private int _databaseId = 0;
@@ -49,6 +50,9 @@ namespace OathAuto.Models
         newItem.ItemIndex = i;
         _inventoryItems.Add(newItem);
       }
+
+      // Initialize skills collection
+      _skills = new ObservableCollection<Skill>();
     }
 
     public int Id
@@ -347,7 +351,7 @@ namespace OathAuto.Models
       }
     }
 
-    public object Monsters
+    public List<QuaiIndividual> Monsters
     {
       get => _monsters;
       set
@@ -355,7 +359,7 @@ namespace OathAuto.Models
         if (_monsters != value)
         {
           _monsters = value;
-          OnPropertyChanged("Monsters");
+          OnPropertyChanged(nameof(Monsters));
         }
       }
     }
@@ -363,6 +367,19 @@ namespace OathAuto.Models
     public ObservableCollection<InventoryItem> InventoryItems
     {
       get => _inventoryItems;
+    }
+
+    public ObservableCollection<Skill> Skills
+    {
+      get => _skills;
+      set
+      {
+        if (_skills != value)
+        {
+          _skills = value;
+          OnPropertyChanged(nameof(Skills));
+        }
+      }
     }
 
     /// <summary>

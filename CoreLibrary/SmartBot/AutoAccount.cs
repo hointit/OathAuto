@@ -10092,7 +10092,6 @@ label_17:
       bool flag6 = false;
       if ((this.Settings.cboxDanhTheoKey && this.MyParty.PartyNumbers > 0 || this.Settings.txtDanhTheoAi != "" && this.Settings.cboxDanhTheoAi) && (this.MyQuai.TargetID != this.Myself.AttackedID || this.Myself.AttackedID == -1))
         flag6 = true;
-      Debug.WriteLine($"Count Quai {this.MyQuai.AllQuai.Count}");
       if (
         (this.MyQuai.TargetID == -1 ||
           !this.CanAttack() ||
@@ -10349,18 +10348,15 @@ label_17:
               if (this.Settings.cboxOnlyPet && this.HasActivePet())
               {
                 this.CallAttackTargetPacket(this.Myself.ID, -1, quai1.ID, 0, 0);
-                Debug.WriteLine("------------------attack 1");
               }
                 
               else if (num3 <= 10.0 && this.Myself.CharType == AllEnums.CharTypes.NUKER)
               {
                 this.CallAttackTargetPacket(this.Myself.ID, this.MySkills.AllSkills[0].ID, quai1.ID, 0, 0);
-                Debug.WriteLine("------------------attack 2");
               }
               else
               {
                 this.CallAttackTarget(quai1.ID, this.MySkills.AllSkills[0].ID, 0, 0);
-                Debug.WriteLine("------------------attack 3");
               }
                 
               if (this.MyQuai.AllQuai.Count > 1)
@@ -10382,12 +10378,10 @@ label_17:
             {
               if (this.Settings.cboxOnlyPet && this.HasActivePet())
               {
-                Debug.WriteLine("------------------attack 4");
                 this.CallAttackTargetPacket(this.Myself.ID, -1, quai1.ID, 0, 0);
               }
               else
               {
-                Debug.WriteLine("------------------attack 5");
                 this.CallAttackTarget(quai1.ID, this.MySkills.AllSkills[0].ID, 0, 0);
               }
               this.Myself.LastTargetID = quai1.ID;
@@ -10549,20 +10543,17 @@ label_17:
           {
             if (!this.Settings.cboxOnlyPet)
             {
-              Debug.WriteLine("------------------attack 6");
               this.CallAttackTarget(this.MyQuai.TargetID, this.MySkills.AllSkills[0].ID, 0, 0, isPlaySkill: true);
               if (this.MyQuai.TargetID != -1 && (this.Myself.LastTargetID != this.MyQuai.TargetID || this.Myself.ActionStatus == (byte) 0))
               {
                 if (!flag13)
                 {
-                  Debug.WriteLine("------------------attack 7");
                   this.CallAttackTarget(this.MyQuai.TargetID, this.MySkills.AllSkills[0].ID, 0, 0);
                 }
                   
                 else
                 {
                   this.CallAttackTargetPacket(this.Myself.ID, this.MySkills.AllSkills[0].ID, this.MyQuai.TargetID, 0, 0);
-                  Debug.WriteLine("------------------attack 8");
                 }
                 this.Myself.LastTargetID = this.MyQuai.TargetID;
                 this.Myself.CurrentTarget = this.TimQuaiTheoID(this.MyQuai.TargetID);
@@ -10574,7 +10565,6 @@ label_17:
             {
               try
               {
-                Debug.WriteLine("------------------attack 9");
                 this.CallAttackTargetPacket(this.Myself.ID, -1, this.MyQuai.TargetID, 0, 0);
               }
               catch (Exception ex)

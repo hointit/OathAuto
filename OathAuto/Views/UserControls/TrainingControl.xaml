@@ -8,7 +8,7 @@
   <GroupBox Margin="5">
     <GroupBox.Header>
       <CheckBox Content="Training"
-                IsChecked="{Binding TrainingOption.IsTraining, Mode=TwoWay}"
+                IsChecked="{Binding IsTraining, Mode=TwoWay}"
                 FontWeight="Bold"/>
     </GroupBox.Header>
     <Grid Margin="10">
@@ -27,14 +27,14 @@
       </Grid.ColumnDefinitions>
 
       <StackPanel Grid.Row="0" Orientation="Horizontal" Grid.ColumnSpan="2">
-        <CheckBox Content="Tự động thăng cấp khi nhỏ hơn" IsChecked="{Binding TrainingOption.IsAutoUpLevel, Mode=TwoWay}"
+        <CheckBox Content="Tự động thăng cấp khi nhỏ hơn" IsChecked="{Binding IsAutoUpLevel, Mode=TwoWay}"
           Margin="0,5"/>
         <TextBox Width="60"
-         Text="{Binding TrainingOption.MaxLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+         Text="{Binding MaxLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
          VerticalAlignment="Center"
          Margin="10,0"/>
 
-        <CheckBox  Content="Tự dùng x2.5" IsChecked="{Binding TrainingOption.IsAutoUseX2Exp, Mode=TwoWay}" Margin="40,5"/>
+        <CheckBox  Content="Tự dùng x2.5" IsChecked="{Binding IsAutoUseX2Exp, Mode=TwoWay}" Margin="40,5"/>
       </StackPanel>
 
       <TextBlock Grid.Row="1" Text="Vật phẩm reset:" VerticalAlignment="Center" />
@@ -42,14 +42,14 @@
         <ComboBox
           Width="150"
           ItemsSource="{Binding NonEmptyInventoryItems}"
-          SelectedItem="{Binding TrainingOption.ResetLevelItem, Mode=TwoWay}"
+          SelectedItem="{Binding ResetLevelItem, Mode=TwoWay}"
           DisplayMemberPath="ItemName"
           VerticalAlignment="Center"
           Margin="5, 0, 0 , 0"/>
         <Button
         Content="X"
         Width="25"
-        Command="{Binding TrainingOption.ClearResetLevelItemCommand}"
+        Command="{Binding ClearResetLevelItemCommand}"
         VerticalAlignment="Center" />
       </StackPanel>
 
@@ -58,28 +58,51 @@
         <ComboBox
           Width="150"
           ItemsSource="{Binding NonEmptyInventoryItems}"
-          SelectedItem="{Binding TrainingOption.AddPointItem, Mode=TwoWay}"
+          SelectedItem="{Binding AddPointItem, Mode=TwoWay}"
           DisplayMemberPath="ItemName"
           VerticalAlignment="Center"
           Margin="5, 0, 0 , 0"/>
         <Button Grid.Column="2"
         Content="X"
         Width="25"
-        Command="{Binding TrainingOption.ClearAddPointItemCommand}"
+        Command="{Binding ClearAddPointItemCommand}"
         VerticalAlignment="Center" />
       </StackPanel>
         <!-- Get and Fixed postion player -->
       <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0 5">
         <TextBlock VerticalAlignment="Center" Margin="0,0,10,0" Text="Cố định vị trí: "/>
         <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" Text="X:"/>
-        <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding TrainingOption.FixedX, StringFormat={}{0:F0}}"/>
+        <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding FixedX, StringFormat={}{0:F0}}"/>
         <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" Text="Y:"/>
-        <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding TrainingOption.FixedY, StringFormat={}{0:F0}}"/>
+        <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding FixedY, StringFormat={}{0:F0}}"/>
         <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" Text="Map:"/>
-        <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding TrainingOption.FixedMapName}"/>
-        <Button Content="..." Padding="10,2" Command="{Binding TrainingOption.GetCurrentPositionCommand}" VerticalAlignment="Center" />
-        <Button Content="..." Padding="10,2" Command="{Binding TrainingOption.ClearFixedPositionCommand}" VerticalAlignment="Center" />
+        <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding FixedMapName}"/>
+        <Button Content="..." Padding="10,2" Command="{Binding GetCurrentPositionCommand}" VerticalAlignment="Center" />
+        <Button Content="X" Padding="10,2"   Margin="10,0,15,0" Command="{Binding ClearFixedPositionCommand}" VerticalAlignment="Center" />
       </StackPanel>
+      <GroupBox Header="Sử dụng vật phẩm" Grid.Row="4" Grid.ColumnSpan="2">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+          </Grid.RowDefinitions>
+          <CheckBox Grid.Row="0" Content="Sử dụng vật phẩm ngay cả khi không training" IsChecked="{Binding UseItemWithoutTraining, Mode=TwoWay}" Margin="2, 10"/>
+          <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" >
+            <ItemsControl ItemsSource="{Binding NonEmptyInventoryItems}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <UniformGrid Columns="2"/>
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}" Margin="2" Content="{Binding ItemName}"/>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+        </Grid>
+      </GroupBox>
     </Grid>
   </GroupBox>
 </UserControl>

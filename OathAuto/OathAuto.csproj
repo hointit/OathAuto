@@ -14,6 +14,8 @@
     <WarningLevel>4</WarningLevel>
     <Deterministic>true</Deterministic>
     <LangVersion>latest</LangVersion>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -58,11 +60,13 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>lib\System.Data.SQLite.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -76,26 +80,33 @@
     <Compile Include="AppState\ItemIdState.cs" />
     <Compile Include="AppState\StringConverterState.cs" />
     <Compile Include="Models\InventoryItem.cs" />
+    <Compile Include="Models\Skill.cs" />
     <Compile Include="Models\TrainingOption.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\Position.cs" />
+    <Compile Include="Models\TowerPosition.cs" />
     <Compile Include="Services\CommonService.cs" />
+    <Compile Include="Services\DatabaseService.cs" />
     <Compile Include="Services\SmartClassService.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
+    <Compile Include="ViewModels\TowerViewModel.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
     <Compile Include="Views\UserControls\ListItemControl.xaml.cs">
       <DependentUpon>ListItemControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\UserControls\ListMonsterControl.xaml.cs">
-      <DependentUpon>ListMonsterControl.xaml</DependentUpon>
+    <Compile Include="Views\UserControls\ListSkillControl.xaml.cs">
+      <DependentUpon>ListSkillControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UserControls\PlayerListControl.xaml.cs">
       <DependentUpon>PlayerListControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UserControls\TabContentControl.xaml.cs">
       <DependentUpon>TabContentControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\TowerControl.xaml.cs">
+      <DependentUpon>TowerControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UserControls\TrainingControl.xaml.cs">
       <DependentUpon>TrainingControl.xaml</DependentUpon>
@@ -108,7 +119,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\UserControls\ListMonsterControl.xaml">
+    <Page Include="Views\UserControls\ListSkillControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -117,6 +128,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\UserControls\TabContentControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\TowerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -151,6 +166,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="LOGIN.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

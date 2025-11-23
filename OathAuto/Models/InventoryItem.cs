@@ -33,6 +33,20 @@ namespace OathAuto.Models
     private int _btdposX;
     private int _btdposY;
     private long _lastTimeSeen;
+    private bool _isChecked;
+
+    public bool IsChecked
+    {
+      get => _isChecked;
+      set
+      {
+        if (_isChecked != value)
+        {
+          _isChecked = value;
+          OnPropertyChanged(nameof(IsChecked));
+        }
+      }
+    }
 
     public int ItemIndex
     {

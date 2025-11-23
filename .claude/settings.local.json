@@ -4,7 +4,9 @@
       "Bash(dir:*)",
       "Bash(msbuild:*)",
       "mcp__ide__getDiagnostics",
-      "Bash(cmd /c \"msbuild OathAuto\\OathAuto.csproj /p:Configuration=Debug /p:Platform=x86 /v:minimal /nologo\")"
+      "Bash(cmd /c \"msbuild OathAuto\\OathAuto.csproj /p:Configuration=Debug /p:Platform=x86 /v:minimal /nologo\")",
+      "Bash(nuget install:*)",
+      "Bash(where:*)"
     ],
     "deny": [],
     "ask": []

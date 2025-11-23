@@ -1,11 +1,9 @@
 using OathAuto.AppState;
-using OathAuto.ViewModels;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Windows.Input;
 
 namespace OathAuto.Models
 {
@@ -27,10 +25,6 @@ namespace OathAuto.Models
     {
       _player = player ?? throw new ArgumentNullException(nameof(player));
       _player.PropertyChanged += OnPlayerPropertyChanged;
-      ClearResetLevelItemCommand = new RelayCommand(ExecuteClearResetLevelItem);
-      ClearAddPointItemCommand = new RelayCommand(ExecuteClearAddPointItem);
-      GetCurrentPositionCommand = new RelayCommand(ExecuteGetCurrentPosition);
-      ClearFixedPositionCommand = new RelayCommand(ExecuteClearFixedPosition);
 
       // Try to initialize default items if inventory is already loaded
       UpdateDefaultItem();
@@ -169,45 +163,6 @@ namespace OathAuto.Models
         }
       }
     }
-
-    #region Commands
-    public ICommand ClearResetLevelItemCommand { get; private set; }
-    public ICommand ClearAddPointItemCommand { get; private set; }
-    public ICommand GetCurrentPositionCommand { get; private set; }
-    public ICommand ClearFixedPositionCommand { get; private set; }
-    
-    private void ExecuteClearResetLevelItem()
-    {
-      ResetLevelItem = null;
-    }
-
-    private void ExecuteClearAddPointItem()
-    {
-      AddPointItem = null;
-    }
-
-    private void ExecuteGetCurrentPosition()
-    {
-      if (_player != null)
-      {
-        FixedX = (int)_player.PosX;
-        FixedY = (int)_player.PosY;
-        FixedMapId = _player.MapID;
-        FixedMapName = _player.MapName;
-      }
-    }
-
-    private void ExecuteClearFixedPosition()
-    {
-      if (_player != null)
-      {
-        FixedX = 0;
-        FixedY = 0;
-        FixedMapId = 0;
-        FixedMapName = "";
-      }
-    }
-    #endregion
 
     private void OnPlayerPropertyChanged(object sender, PropertyChangedEventArgs e)
     {

@@ -11,20 +11,11 @@
       <TabItem Header="Training">
         <userControls:TrainingControl DataContext="{Binding SelectedPlayer}"/>
       </TabItem>
-      <TabItem Header="Monsters">
-        <userControls:ListMonsterControl DataContext="{Binding SelectedPlayer}"/>
-      </TabItem>
-      <TabItem Header="Items">
-        <userControls:ListItemControl DataContext="{Binding SelectedPlayer}"/>
+      <TabItem Header="Đi Tháp">
+        <userControls:TowerControl DataContext="{Binding SelectedPlayer}"/>
       </TabItem>
       <TabItem Header="Skills">
-        <Grid>
-          <TextBlock Text="Skills Tab - Coming Soon"
-                               FontSize="16"
-                               FontWeight="Bold"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"/>
-        </Grid>
+        <userControls:ListSkillControl DataContext="{Binding SelectedPlayer}"/>
       </TabItem>
       <TabItem Header="Settings">
         <Grid>
