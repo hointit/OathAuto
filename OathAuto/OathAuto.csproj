@@ -90,6 +90,7 @@
     <Compile Include="Services\CommonService.cs" />
     <Compile Include="Services\DatabaseService.cs" />
     <Compile Include="Services\SmartClassService.cs" />
+    <Compile Include="Services\SmartClassService.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\TowerViewModel.cs" />
@@ -211,6 +212,10 @@
     <ProjectReference Include="..\CoreLibrary\CoreLibrary.csproj">
       <Project>{5ab0d16c-322a-4979-8ca8-e7f74c8a83e1}</Project>
       <Name>CoreLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OathAuto.Tools\OathAuto.Tools.csproj">
+      <Project>{8a9f4d21-5b7c-4e3a-9d2f-1c8e9a3b5d7f}</Project>
+      <Name>OathAuto.Tools</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

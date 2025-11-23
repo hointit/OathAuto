@@ -1,4 +1,5 @@
-﻿using OathAuto.ViewModels;
+﻿using OathAuto.Tools.Services;
+using OathAuto.ViewModels;
 using System.ComponentModel;
 using System.Windows;
 
@@ -23,6 +24,12 @@ namespace OathAuto
       // Cleanup resources
       _viewModel?.Cleanup();
       base.OnClosing(e);
+    }
+
+    private void PositionFinder_Click(object sender, RoutedEventArgs e)
+    {
+      // Launch the Position Finder overlay tool
+      PositionFinderService.Show();
     }
   }
 }

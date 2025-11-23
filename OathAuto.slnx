@@ -9,4 +9,7 @@
   <Project Path="OathAuto/OathAuto.csproj" Id="547d87ae-3312-4240-bf09-195c1c4de7b0">
     <Platform Solution="*|x86" Project="x86" />
   </Project>
+  <Project Path="OathAuto.Tools/OathAuto.Tools.csproj" Id="8a9f4d21-5b7c-4e3a-9d2f-1c8e9a3b5d7f">
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
 </Solution>
