@@ -80,6 +80,7 @@
     <Compile Include="AppState\ItemIdState.cs" />
     <Compile Include="AppState\StringConverterState.cs" />
     <Compile Include="Models\InventoryItem.cs" />
+    <Compile Include="Models\PlayerSettings.cs" />
     <Compile Include="Models\Skill.cs" />
     <Compile Include="Models\TrainingOption.cs" />
     <Compile Include="Models\Item.cs" />
@@ -184,7 +185,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="TLBB.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

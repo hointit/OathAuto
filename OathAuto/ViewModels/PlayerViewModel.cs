@@ -5,6 +5,7 @@ using SmartBot;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -13,7 +14,9 @@ using System.Security.Principal;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using Newtonsoft.Json;
 using static SmartBot.AllEnums;
+using InventoryItem = OathAuto.Models.InventoryItem;
 
 namespace OathAuto.ViewModels
 {
@@ -41,9 +44,13 @@ namespace OathAuto.ViewModels
     private int _fixedMapId = 0;
     private string _fixedMapName = "";
     private bool _useItemWithoutTraining = false;
+    private bool _isLoadingSettings = false; // Flag to prevent saving during load
 
     public PlayerViewModel(Player player, SmartClassService smartClassService, int accountIndex)
     {
+      // Prevent saving during initialization
+      _isLoadingSettings = true;
+
       _player = player ?? new Player();
       _smartClassService = smartClassService;
       _accountIndex = accountIndex;
@@ -69,13 +76,35 @@ namespace OathAuto.ViewModels
       _towerPositions = new ObservableCollection<TowerPosition>
       {
         new TowerPosition { Name = "Position 1", X = 26, Y = 36, IsChecked = true },
-        new TowerPosition { Name = "Position 2", X = 45, Y = 35, IsChecked = true },
-        new TowerPosition { Name = "Position 3", X = 36, Y = 20, IsChecked = true },
-        new TowerPosition { Name = "Position 4", X = 24, Y = 19, IsChecked = true }
+        new TowerPosition { Name = "Position 2", X = 36, Y = 34, IsChecked = true },
+        new TowerPosition { Name = "Position 3", X = 36, Y = 24, IsChecked = true },
+        new TowerPosition { Name = "Position 4", X = 24, Y = 23, IsChecked = true }
       };
+
+      // Subscribe to tower position property changes
+      foreach (var pos in _towerPositions)
+      {
+        pos.PropertyChanged += TowerPosition_PropertyChanged;
+      }
 
       // Try to initialize default items if inventory is already loaded
       UpdateDefaultItem();
+
+      // Subscribe to inventory items if already available
+      if (_player.InventoryItems != null)
+      {
+        _player.InventoryItems.CollectionChanged += InventoryItems_CollectionChanged;
+        foreach (var item in _player.InventoryItems)
+        {
+          item.PropertyChanged += InventoryItem_PropertyChanged;
+        }
+      }
+
+      // Load settings after all initialization is complete
+      LoadSettings();
+
+      // Enable saving after initialization is complete
+      _isLoadingSettings = false;
     }
 
     public Player Player
@@ -99,6 +128,20 @@ namespace OathAuto.ViewModels
 
             // Load skills when player changes
             LoadSkillsIfNeeded();
+
+            // Subscribe to inventory items collection changes
+            if (_player.InventoryItems != null)
+            {
+              _player.InventoryItems.CollectionChanged += InventoryItems_CollectionChanged;
+              foreach (var item in _player.InventoryItems)
+              {
+                item.PropertyChanged += InventoryItem_PropertyChanged;
+              }
+            }
+
+            // Reset and load settings for new player
+            isLoaded = false;
+            LoadSettings();
           }
         }
       }
@@ -150,6 +193,7 @@ namespace OathAuto.ViewModels
           _isTraining = value;
           SetTrainingState(value);
           OnPropertyChanged(nameof(IsTraining));
+          SaveSettings();
         }
       }
     }
@@ -163,6 +207,7 @@ namespace OathAuto.ViewModels
         {
           _isAutoUpLevel = value;
           OnPropertyChanged(nameof(IsAutoUpLevel));
+          SaveSettings();
         }
       }
     }
@@ -176,6 +221,7 @@ namespace OathAuto.ViewModels
         {
           _isAutoUseX2Exp = value;
           OnPropertyChanged(nameof(IsAutoUseX2Exp));
+          SaveSettings();
         }
       }
     }
@@ -189,6 +235,7 @@ namespace OathAuto.ViewModels
         {
           _maxLevel = value;
           OnPropertyChanged(nameof(MaxLevel));
+          SaveSettings();
         }
       }
     }
@@ -202,6 +249,7 @@ namespace OathAuto.ViewModels
         {
           _resetLevelItem = value;
           OnPropertyChanged(nameof(ResetLevelItem));
+          SaveSettings();
         }
       }
     }
@@ -215,6 +263,7 @@ namespace OathAuto.ViewModels
         {
           _addPointItem = value;
           OnPropertyChanged(nameof(AddPointItem));
+          SaveSettings();
         }
       }
     }
@@ -228,6 +277,7 @@ namespace OathAuto.ViewModels
         {
           _fixedX = value;
           OnPropertyChanged(nameof(FixedX));
+          SaveSettings();
         }
       }
     }
@@ -241,6 +291,7 @@ namespace OathAuto.ViewModels
         {
           _fixedY = value;
           OnPropertyChanged(nameof(FixedY));
+          SaveSettings();
         }
       }
     }
@@ -254,6 +305,7 @@ namespace OathAuto.ViewModels
         {
           _fixedMapId = value;
           OnPropertyChanged(nameof(FixedMapId));
+          SaveSettings();
         }
       }
     }
@@ -267,6 +319,7 @@ namespace OathAuto.ViewModels
         {
           _fixedMapName = value;
           OnPropertyChanged(nameof(FixedMapName));
+          SaveSettings();
         }
       }
     }
@@ -280,6 +333,7 @@ namespace OathAuto.ViewModels
         {
           _useItemWithoutTraining = value;
           OnPropertyChanged(nameof(UseItemWithoutTraining));
+          SaveSettings();
         }
       }
     }
@@ -371,9 +425,8 @@ namespace OathAuto.ViewModels
       var skill = parameter as Skill;
       if (skill != null)
       {
-        // This method will be implemented by the user
-        // For now, just a placeholder that can be customized
         System.Diagnostics.Debug.WriteLine($"Skill {skill.SkillName} ({skill.SkillId}) checked state changed to: {skill.IsChecked}");
+        SaveSettings();
       }
     }
 
@@ -514,5 +567,215 @@ namespace OathAuto.ViewModels
         Debug.WriteLine(ex.Message.ToString());
       }
     }
+
+    #region Settings Persistence
+
+    private void SaveSettings()
+    {
+      // Don't save during loading or if database service is not available
+      if (_isLoadingSettings || _databaseService == null || _player == null)
+        return;
+
+      try
+      {
+        var settings = new PlayerSettings
+        {
+          PlayerId = _player.DatabaseId,
+          IsTraining = _isTraining,
+          IsAutoUpLevel = _isAutoUpLevel,
+          IsAutoUseX2Exp = _isAutoUseX2Exp,
+          MaxLevel = _maxLevel,
+          ResetLevelItemIndex = _resetLevelItem?.ItemIndex ?? 0,
+          AddPointItemIndex = _addPointItem?.ItemIndex ?? 0,
+          FixedX = _fixedX,
+          FixedY = _fixedY,
+          FixedMapId = _fixedMapId,
+          FixedMapName = _fixedMapName ?? "",
+          UseItemWithoutTraining = _useItemWithoutTraining,
+          IsTowerMode = _isTowerMode,
+          IsAutoMoveEnabled = _isAutoMoveEnabled,
+          TowerPositionsJson = JsonConvert.SerializeObject(_towerPositions),
+          SelectedSkillIdsJson = JsonConvert.SerializeObject(
+            _player.Skills.Where(s => s.IsChecked).Select(s => s.SkillId).ToList()
+          ),
+          CheckedItemIndexesJson = JsonConvert.SerializeObject(
+            _player.InventoryItems.Where(i => i.IsChecked).Select(i => i.ItemIndex).ToList()
+          )
+        };
+
+        _databaseService.SavePlayerSettings(settings);
+        Debug.WriteLine($"Settings saved for player {_player.DatabaseId}");
+      }
+      catch (Exception ex)
+      {
+        Debug.WriteLine($"Error saving settings: {ex.Message}");
+      }
+    }
+    private bool isLoaded = false;
+    private void LoadSettings()
+    {
+      if (_databaseService == null || _player == null || isLoaded)
+        return;
+
+      // Save previous state to restore later
+      bool wasLoadingSettings = _isLoadingSettings;
+
+      try
+      {
+        _isLoadingSettings = true;
+
+        var settings = _databaseService.LoadPlayerSettings(_player.DatabaseId);
+        if (settings != null)
+        {
+          // Load training settings
+          _isTraining = settings.IsTraining;
+          _isAutoUpLevel = settings.IsAutoUpLevel;
+          _isAutoUseX2Exp = settings.IsAutoUseX2Exp;
+          _maxLevel = settings.MaxLevel;
+          _fixedX = settings.FixedX;
+          _fixedY = settings.FixedY;
+          _fixedMapId = settings.FixedMapId;
+          _fixedMapName = settings.FixedMapName ?? "";
+          _useItemWithoutTraining = settings.UseItemWithoutTraining;
+
+          // Load tower settings
+          _isTowerMode = settings.IsTowerMode;
+          _isAutoMoveEnabled = settings.IsAutoMoveEnabled;
+
+          // Load tower positions
+          if (!string.IsNullOrEmpty(settings.TowerPositionsJson))
+          {
+            try
+            {
+              var positions = JsonConvert.DeserializeObject<List<TowerPosition>>(settings.TowerPositionsJson);
+              if (positions != null && positions.Count > 0)
+              {
+                // Unsubscribe from old positions
+                foreach (var oldPos in _towerPositions)
+                {
+                  oldPos.PropertyChanged -= TowerPosition_PropertyChanged;
+                }
+
+                _towerPositions.Clear();
+                foreach (var pos in positions)
+                {
+                  pos.PropertyChanged += TowerPosition_PropertyChanged;
+                  _towerPositions.Add(pos);
+                }
+              }
+            }
+            catch (Exception ex)
+            {
+              Debug.WriteLine($"Error loading tower positions: {ex.Message}");
+            }
+          }
+
+          // Load checked skills
+          if (!string.IsNullOrEmpty(settings.SelectedSkillIdsJson))
+          {
+            try
+            {
+              var skillIds = JsonConvert.DeserializeObject<List<int>>(settings.SelectedSkillIdsJson);
+              if (skillIds != null)
+              {
+                foreach (var skill in _player.Skills)
+                {
+                  skill.IsChecked = skillIds.Contains(skill.SkillId);
+                }
+              }
+            }
+            catch (Exception ex)
+            {
+              Debug.WriteLine($"Error loading skill selections: {ex.Message}");
+            }
+          }
+
+          // Load checked inventory items
+          if (!string.IsNullOrEmpty(settings.CheckedItemIndexesJson))
+          {
+            try
+            {
+              var itemIndexes = JsonConvert.DeserializeObject<List<int>>(settings.CheckedItemIndexesJson);
+              if (itemIndexes != null && _player.InventoryItems != null)
+              {
+                foreach (var item in _player.InventoryItems)
+                {
+                  item.IsChecked = itemIndexes.Contains(item.ItemIndex);
+                }
+              }
+            }
+            catch (Exception ex)
+            {
+              Debug.WriteLine($"Error loading item selections: {ex.Message}");
+            }
+          }
+
+          // Load reset level and add point items by index
+          if (settings.ResetLevelItemIndex > 0 && _player.InventoryItems != null)
+          {
+            _resetLevelItem = _player.InventoryItems.FirstOrDefault(i => i.ItemIndex == settings.ResetLevelItemIndex);
+          }
+
+          if (settings.AddPointItemIndex > 0 && _player.InventoryItems != null)
+          {
+            _addPointItem = _player.InventoryItems.FirstOrDefault(i => i.ItemIndex == settings.AddPointItemIndex);
+          }
+
+          // Notify all properties changed
+          OnPropertyChanged(string.Empty);
+
+          Debug.WriteLine($"Settings loaded for player {_player.DatabaseId}");
+        }
+      }
+      catch (Exception ex)
+      {
+        Debug.WriteLine($"Error loading settings: {ex.Message}");
+      }
+      finally
+      {
+        // Restore previous state (important when called from constructor)
+        _isLoadingSettings = wasLoadingSettings;
+        isLoaded = true;
+      }
+    }
+
+    private void TowerPosition_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+      if (e.PropertyName == nameof(TowerPosition.IsChecked))
+      {
+        SaveSettings();
+      }
+    }
+
+    private void InventoryItems_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+      // Subscribe to new items
+      if (e.NewItems != null)
+      {
+        foreach (InventoryItem item in e.NewItems)
+        {
+          item.PropertyChanged += InventoryItem_PropertyChanged;
+        }
+      }
+
+      // Unsubscribe from old items
+      if (e.OldItems != null)
+      {
+        foreach (InventoryItem item in e.OldItems)
+        {
+          item.PropertyChanged -= InventoryItem_PropertyChanged;
+        }
+      }
+    }
+
+    private void InventoryItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+      if (e.PropertyName == nameof(InventoryItem.IsChecked))
+      {
+        SaveSettings();
+      }
+    }
+
+    #endregion
   }
 }

@@ -66,6 +66,8 @@ namespace OathAuto.ViewModels
             SetTrainingState(false);
             Debug.WriteLine("Tower Mode Disabled");
           }
+
+          SaveSettings();
         }
       }
     }
@@ -79,6 +81,7 @@ namespace OathAuto.ViewModels
         {
           _isAutoMoveEnabled = value;
           OnPropertyChanged(nameof(IsAutoMoveEnabled));
+          SaveSettings();
         }
       }
     }
@@ -96,7 +99,14 @@ namespace OathAuto.ViewModels
     private void HandleTowerTrainingUpdate()
     {
       // Exit if tower mode is disabled
-      if (!_isTowerMode ) return;
+      // Nếu đang ở đại lý, return
+      if (!_isTowerMode) return;
+
+      if (this.Player.MapID == 2)
+      {
+        SetTrainingState(false);
+        return;
+      }
 
       try
       {

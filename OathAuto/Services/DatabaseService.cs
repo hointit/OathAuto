@@ -1,8 +1,10 @@
+using OathAuto.Models;
+using SmartBot;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.IO;
-using OathAuto.Models;
 
 namespace OathAuto.Services
 {
@@ -17,6 +19,43 @@ namespace OathAuto.Services
         throw new FileNotFoundException($"Database file not found: {dbPath}");
       }
       _connectionString = $"Data Source={dbPath};Version=3;";
+
+      // Ensure settings table exists
+      CreateSettingsTableIfNotExists();
+    }
+
+    private void CreateSettingsTableIfNotExists()
+    {
+      using (var connection = new SQLiteConnection(_connectionString))
+      {
+        connection.Open();
+
+        string createTableQuery = @"
+          CREATE TABLE IF NOT EXISTS PlayerSettings (
+            PlayerId INTEGER PRIMARY KEY,
+            IsTraining INTEGER DEFAULT 0,
+            IsAutoUpLevel INTEGER DEFAULT 0,
+            IsAutoUseX2Exp INTEGER DEFAULT 0,
+            MaxLevel INTEGER DEFAULT 130,
+            ResetLevelItemIndex INTEGER DEFAULT 0,
+            AddPointItemIndex INTEGER DEFAULT 0,
+            FixedX INTEGER DEFAULT 0,
+            FixedY INTEGER DEFAULT 0,
+            FixedMapId INTEGER DEFAULT 0,
+            FixedMapName TEXT DEFAULT '',
+            UseItemWithoutTraining INTEGER DEFAULT 0,
+            IsTowerMode INTEGER DEFAULT 0,
+            IsAutoMoveEnabled INTEGER DEFAULT 1,
+            TowerPositionsJson TEXT DEFAULT '',
+            SelectedSkillIdsJson TEXT DEFAULT '',
+            CheckedItemIndexesJson TEXT DEFAULT ''
+          )";
+
+        using (var command = new SQLiteCommand(createTableQuery, connection))
+        {
+          command.ExecuteNonQuery();
+        }
+      }
     }
 
     public List<Skill> GetSkillsByMenpai(string menpai)
@@ -65,6 +104,97 @@ namespace OathAuto.Services
       }
 
       return skills;
+    }
+
+    public void SavePlayerSettings(PlayerSettings settings)
+    {
+      Debug.WriteLine("SavePlayerSettings " + settings.PlayerId.ToString());
+      using (var connection = new SQLiteConnection(_connectionString))
+      {
+        connection.Open();
+
+        string query = @"
+          INSERT OR REPLACE INTO PlayerSettings (
+            PlayerId, IsTraining, IsAutoUpLevel, IsAutoUseX2Exp, MaxLevel,
+            ResetLevelItemIndex, AddPointItemIndex, FixedX, FixedY, FixedMapId, FixedMapName,
+            UseItemWithoutTraining, IsTowerMode, IsAutoMoveEnabled,
+            TowerPositionsJson, SelectedSkillIdsJson, CheckedItemIndexesJson
+          ) VALUES (
+            @PlayerId, @IsTraining, @IsAutoUpLevel, @IsAutoUseX2Exp, @MaxLevel,
+            @ResetLevelItemIndex, @AddPointItemIndex, @FixedX, @FixedY, @FixedMapId, @FixedMapName,
+            @UseItemWithoutTraining, @IsTowerMode, @IsAutoMoveEnabled,
+            @TowerPositionsJson, @SelectedSkillIdsJson, @CheckedItemIndexesJson
+          )";
+
+        using (var command = new SQLiteCommand(query, connection))
+        {
+          command.Parameters.AddWithValue("@PlayerId", settings.PlayerId);
+          command.Parameters.AddWithValue("@IsTraining", settings.IsTraining ? 1 : 0);
+          command.Parameters.AddWithValue("@IsAutoUpLevel", settings.IsAutoUpLevel ? 1 : 0);
+          command.Parameters.AddWithValue("@IsAutoUseX2Exp", settings.IsAutoUseX2Exp ? 1 : 0);
+          command.Parameters.AddWithValue("@MaxLevel", settings.MaxLevel);
+          command.Parameters.AddWithValue("@ResetLevelItemIndex", settings.ResetLevelItemIndex);
+          command.Parameters.AddWithValue("@AddPointItemIndex", settings.AddPointItemIndex);
+          command.Parameters.AddWithValue("@FixedX", settings.FixedX);
+          command.Parameters.AddWithValue("@FixedY", settings.FixedY);
+          command.Parameters.AddWithValue("@FixedMapId", settings.FixedMapId);
+          command.Parameters.AddWithValue("@FixedMapName", settings.FixedMapName ?? "");
+          command.Parameters.AddWithValue("@UseItemWithoutTraining", settings.UseItemWithoutTraining ? 1 : 0);
+          command.Parameters.AddWithValue("@IsTowerMode", settings.IsTowerMode ? 1 : 0);
+          command.Parameters.AddWithValue("@IsAutoMoveEnabled", settings.IsAutoMoveEnabled ? 1 : 0);
+          command.Parameters.AddWithValue("@TowerPositionsJson", settings.TowerPositionsJson ?? "");
+          command.Parameters.AddWithValue("@SelectedSkillIdsJson", settings.SelectedSkillIdsJson ?? "");
+          command.Parameters.AddWithValue("@CheckedItemIndexesJson", settings.CheckedItemIndexesJson ?? "");
+
+          command.ExecuteNonQuery();
+        }
+      }
+    }
+
+    public PlayerSettings LoadPlayerSettings(int playerId)
+    {
+      Debug.WriteLine("LoadPlayerSettings " + playerId.ToString());
+      using (var connection = new SQLiteConnection(_connectionString))
+      {
+        connection.Open();
+
+        string query = @"SELECT * FROM PlayerSettings WHERE PlayerId = @PlayerId";
+
+        using (var command = new SQLiteCommand(query, connection))
+        {
+          command.Parameters.AddWithValue("@PlayerId", playerId);
+
+          using (var reader = command.ExecuteReader())
+          {
+            if (reader.Read())
+            {
+              return new PlayerSettings
+              {
+                PlayerId = Convert.ToInt32(reader["PlayerId"]),
+                IsTraining = Convert.ToInt32(reader["IsTraining"]) == 1,
+                IsAutoUpLevel = Convert.ToInt32(reader["IsAutoUpLevel"]) == 1,
+                IsAutoUseX2Exp = Convert.ToInt32(reader["IsAutoUseX2Exp"]) == 1,
+                MaxLevel = Convert.ToInt32(reader["MaxLevel"]),
+                ResetLevelItemIndex = Convert.ToInt32(reader["ResetLevelItemIndex"]),
+                AddPointItemIndex = Convert.ToInt32(reader["AddPointItemIndex"]),
+                FixedX = Convert.ToInt32(reader["FixedX"]),
+                FixedY = Convert.ToInt32(reader["FixedY"]),
+                FixedMapId = Convert.ToInt32(reader["FixedMapId"]),
+                FixedMapName = reader["FixedMapName"]?.ToString() ?? "",
+                UseItemWithoutTraining = Convert.ToInt32(reader["UseItemWithoutTraining"]) == 1,
+                IsTowerMode = Convert.ToInt32(reader["IsTowerMode"]) == 1,
+                IsAutoMoveEnabled = Convert.ToInt32(reader["IsAutoMoveEnabled"]) == 1,
+                TowerPositionsJson = reader["TowerPositionsJson"]?.ToString() ?? "",
+                SelectedSkillIdsJson = reader["SelectedSkillIdsJson"]?.ToString() ?? "",
+                CheckedItemIndexesJson = reader["CheckedItemIndexesJson"]?.ToString() ?? ""
+              };
+            }
+          }
+        }
+      }
+
+      // Return default settings if not found
+      return null;
     }
   }
 }

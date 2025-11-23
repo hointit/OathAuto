@@ -1,4 +1,5 @@
 ﻿using OathAuto.Models;
+using OathAuto.Properties;
 using SmartBot;
 using System;
 using System.Collections.Generic;
@@ -118,6 +119,9 @@ namespace OathAuto.Services
           AutoAccount = account
         };
         newPlayer.UpdateInventoryItems(account.MyInventory?.AllItems);
+
+        account.Settings.AIMode = AllEnums.AIModes.DANHQUANHDIEM;
+        account.Settings.cboxTuNhatVatPham = false;
         return newPlayer;
       }
       catch (Exception ex)
