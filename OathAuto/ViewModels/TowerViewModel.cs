@@ -1,4 +1,6 @@
+using OathAuto.AppState;
 using OathAuto.Models;
+using OathAuto.Services;
 using SmartBot;
 using System;
 using System.Collections.Generic;
@@ -13,12 +15,10 @@ namespace OathAuto.ViewModels
   public partial class PlayerViewModel
   {
     // Tower mode fields
-    private bool _isTowerMode = false;
-    private bool _isAutoMoveEnabled = true;
     private int _currentPositionIndex = 0;
     private bool _isMovingForward = true; // True = 0→N, False = N→0
     private const string MONSTER_KEY_NAME = "lần tấn công"; // Adjust this based on actual monster name pattern
-
+    private readonly LockStatus _lock = new LockStatus();
     // Tower configuration
     private readonly int[] TOWER_MAP_IDS = new int[] { 37, 43 };
     private ObservableCollection<TowerPosition> _towerPositions;
@@ -36,75 +36,37 @@ namespace OathAuto.ViewModels
       }
     }
 
-    #region Tower Properties
-
-    public bool IsTowerMode
-    {
-      get => _isTowerMode;
-      set
-      {
-        if (_isTowerMode != value)
-        {
-          _isTowerMode = value;
-          OnPropertyChanged(nameof(IsTowerMode));
-
-          // Initialize when enabling tower mode
-          if (_isTowerMode)
-          {
-            if (IsTraining)
-            {
-              MessageBox.Show("IsTraining will be stopped", "Tower Mode", MessageBoxButton.OK, MessageBoxImage.Information);
-              IsTraining = false;
-            }
-            SetTrainingState(false);
-            _currentPositionIndex = 0;
-            _isMovingForward = true;
-            Debug.WriteLine("Tower Mode Enabled - Starting ping-pong patrol");
-          }
-          else
-          {
-            SetTrainingState(false);
-            Debug.WriteLine("Tower Mode Disabled");
-          }
-
-          SaveSettings();
-        }
-      }
-    }
-
-    public bool IsAutoMoveEnabled
-    {
-      get => _isAutoMoveEnabled;
-      set
-      {
-        if (_isAutoMoveEnabled != value)
-        {
-          _isAutoMoveEnabled = value;
-          OnPropertyChanged(nameof(IsAutoMoveEnabled));
-          SaveSettings();
-        }
-      }
-    }
-
-    #endregion
-
     #region Tower Methods
-
-
-
-    /// <summary>
-    /// Called from OnPlayerPropertyChanged for real-time tower training logic
-    /// Triggered every ~300ms when account data changes
-    /// </summary>
     private void HandleTowerTrainingUpdate()
     {
       // Exit if tower mode is disabled
       // Nếu đang ở đại lý, return
-      if (!_isTowerMode) return;
+      if (_playerMode != PlayerMode.FightTower) return;
 
       if (this.Player.MapID == 2)
       {
         SetTrainingState(false);
+
+        //lock (_lock)
+        //{
+        //  _lock.Status = "open";
+          
+
+        //  IntPtr gameWindow = Player.AutoAccount.Target.MainWindowHandle;
+
+        //  // Method 1: Try custom protocol (most likely to work)
+          
+
+        //  for (int i = 0; i <200; i++)
+        //  {
+        //    MouseInputService.ClickGameButton(gameWindow, i);
+        //  }
+
+        //  MouseInputService.SendClickWithChildWindow(gameWindow, 38, 76);
+        //  Thread.Sleep(3000);
+        //}
+
+
         return;
       }
 

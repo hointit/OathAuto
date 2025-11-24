@@ -5,7 +5,8 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{8A9F4D21-5B7C-4E3A-9D2F-1C8E9A3B5D7F}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>WinExe</OutputType>
+    <StartupObject>OathAuto.Tools.App</StartupObject>
     <RootNamespace>OathAuto.Tools</RootNamespace>
     <AssemblyName>OathAuto.Tools</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
@@ -61,21 +62,37 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\PositionFinderViewModel.cs" />
-    <Compile Include="ViewModels\RelayCommand.cs" />
-    <Compile Include="Services\PositionFinderService.cs" />
-    <Compile Include="Services\MouseInputService.cs" />
-    <Compile Include="Views\PositionFinderWindow.xaml.cs">
-      <DependentUpon>PositionFinderWindow.xaml</DependentUpon>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Views\PositionFinderWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
+		<Compile Include="Properties\AssemblyInfo.cs" />
+		<Compile Include="ViewModels\PositionFinderViewModel.cs" />
+		<Compile Include="ViewModels\RelayCommand.cs" />
+		<Compile Include="Services\PositionFinderService.cs" />
+		<Compile Include="Services\WindowInspectorService.cs" />
+		<Compile Include="Services\MouseInputService.cs" />
+		<Compile Include="Views\PositionFinderWindow.xaml.cs">
+			<DependentUpon>PositionFinderWindow.xaml</DependentUpon>
+		</Compile>
+		<Compile Include="Views\WindowInspectorWindow.xaml.cs">
+			<DependentUpon>WindowInspectorWindow.xaml</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<ApplicationDefinition Include="App.xaml">
+			<Generator>MSBuild:Compile</Generator>
+			<SubType>Designer</SubType>
+		</ApplicationDefinition>
+		<Page Include="Views\PositionFinderWindow.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Include="Views\WindowInspectorWindow.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+	</ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CoreLibrary\CoreLibrary.csproj">
       <Project>{5ab0d16c-322a-4979-8ca8-e7f74c8a83e1}</Project>

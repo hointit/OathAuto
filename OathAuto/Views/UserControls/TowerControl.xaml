@@ -21,7 +21,7 @@
 
             <StackPanel Grid.Row="0" Orientation="Horizontal">
                 <CheckBox Content="Auto Move (disabled for now)"
-                          IsChecked="{Binding IsAutoMoveEnabled, Mode=TwoWay}"
+                          IsChecked="{Binding Settings.IsAutoMoveEnabled, Mode=TwoWay}"
                           VerticalAlignment="Center"
                           Margin="0,5"
                           IsEnabled="False"/>

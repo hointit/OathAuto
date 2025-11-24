@@ -6049,7 +6049,6 @@ public class SmartClass
         DanhHieu = myref3,
         HPPercent = num
       });
-      Debug.WriteLine($"Tìm Thấy Quái: {myref1}");
     }
     if ((double) num <= 0.0 || tempmsg.int7 != account.MyQuai.TargetID)
       return;

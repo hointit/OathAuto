@@ -27,23 +27,15 @@ namespace OathAuto.ViewModels
     private readonly int _accountIndex;
     private DatabaseService _databaseService;
     private ICommand _skillCheckedChangedCommand;
-    private ICommand _clearResetLevelItemCommand;
-    private ICommand _clearAddPointItemCommand;
     private ICommand _getCurrentPositionCommand;
     private ICommand _clearFixedPositionCommand;
 
-    // Training option fields
-    private bool _isTraining = false;
-    private bool _isAutoUpLevel = false;
-    private bool _isAutoUseX2Exp = false;
-    private int _maxLevel = 130;
-    private OathAuto.Models.InventoryItem _resetLevelItem;
-    private OathAuto.Models.InventoryItem _addPointItem;
-    private int _fixedX = 0;
-    private int _fixedY = 0;
-    private int _fixedMapId = 0;
-    private string _fixedMapName = "";
-    private bool _useItemWithoutTraining = false;
+    // Player mode for internal logic
+    private PlayerMode _playerMode = PlayerMode.None;
+
+    // Settings - bound directly to UI
+    private PlayerSettings _settings;
+
     private bool _isLoadingSettings = false; // Flag to prevent saving during load
 
     public PlayerViewModel(Player player, SmartClassService smartClassService, int accountIndex)
@@ -67,8 +59,6 @@ namespace OathAuto.ViewModels
       _skillCheckedChangedCommand = new RelayCommand(OnSkillCheckedChanged);
 
       // Initialize training option commands
-      _clearResetLevelItemCommand = new RelayCommand(ExecuteClearResetLevelItem);
-      _clearAddPointItemCommand = new RelayCommand(ExecuteClearAddPointItem);
       _getCurrentPositionCommand = new RelayCommand(ExecuteGetCurrentPosition);
       _clearFixedPositionCommand = new RelayCommand(ExecuteClearFixedPosition);
 
@@ -86,9 +76,6 @@ namespace OathAuto.ViewModels
       {
         pos.PropertyChanged += TowerPosition_PropertyChanged;
       }
-
-      // Try to initialize default items if inventory is already loaded
-      UpdateDefaultItem();
 
       // Subscribe to inventory items if already available
       if (_player.InventoryItems != null)
@@ -121,7 +108,6 @@ namespace OathAuto.ViewModels
 
           _player = value;
           OnPropertyChanged(nameof(Player));
-
           if (_player != null)
           {
             _player.PropertyChanged += OnPlayerPropertyChanged;
@@ -138,10 +124,31 @@ namespace OathAuto.ViewModels
                 item.PropertyChanged += InventoryItem_PropertyChanged;
               }
             }
+          }
+        }
+      }
+    }
 
-            // Reset and load settings for new player
-            isLoaded = false;
-            LoadSettings();
+    public PlayerSettings Settings
+    {
+      get => _settings;
+      set
+      {
+        if (_settings != value)
+        {
+          // Unsubscribe from old settings
+          if (_settings != null)
+          {
+            _settings.PropertyChanged -= OnSettingsPropertyChanged;
+          }
+
+          _settings = value;
+          OnPropertyChanged(nameof(Settings));
+
+          // Subscribe to new settings
+          if (_settings != null)
+          {
+            _settings.PropertyChanged += OnSettingsPropertyChanged;
           }
         }
       }
@@ -176,164 +183,57 @@ namespace OathAuto.ViewModels
       }
     }
 
-    // Training option properties
+    // Mode wrapper properties for XAML binding
     public bool IsTraining
     {
-      get => _isTraining;
+      get => _playerMode == PlayerMode.Training;
       set
       {
-        if (_isTraining != value)
+        if (IsTraining != value)
         {
-          // Prevent enabling IsTraining when IsTowerMode is active
-          if (value && _isTowerMode)
+          if (value)
           {
-            return;
+            _playerMode = PlayerMode.Training;
+            if (_settings != null) _settings.Mode = PlayerMode.Training;
+            SetTrainingState(true);
           }
-
-          _isTraining = value;
-          SetTrainingState(value);
+          else if (_playerMode == PlayerMode.Training)
+          {
+            _playerMode = PlayerMode.None;
+            if (_settings != null) _settings.Mode = PlayerMode.None;
+            SetTrainingState(false);
+          }
           OnPropertyChanged(nameof(IsTraining));
-          SaveSettings();
+          OnPropertyChanged(nameof(IsTowerMode));
         }
       }
     }
 
-    public bool IsAutoUpLevel
+    public bool IsTowerMode
     {
-      get => _isAutoUpLevel;
+      get => _playerMode == PlayerMode.FightTower;
       set
       {
-        if (_isAutoUpLevel != value)
+        if (IsTowerMode != value)
         {
-          _isAutoUpLevel = value;
-          OnPropertyChanged(nameof(IsAutoUpLevel));
-          SaveSettings();
-        }
-      }
-    }
-
-    public bool IsAutoUseX2Exp
-    {
-      get => _isAutoUseX2Exp;
-      set
-      {
-        if (_isAutoUseX2Exp != value)
-        {
-          _isAutoUseX2Exp = value;
-          OnPropertyChanged(nameof(IsAutoUseX2Exp));
-          SaveSettings();
-        }
-      }
-    }
-
-    public int MaxLevel
-    {
-      get => _maxLevel;
-      set
-      {
-        if (_maxLevel != value)
-        {
-          _maxLevel = value;
-          OnPropertyChanged(nameof(MaxLevel));
-          SaveSettings();
-        }
-      }
-    }
-
-    public OathAuto.Models.InventoryItem ResetLevelItem
-    {
-      get => _resetLevelItem;
-      set
-      {
-        if (_resetLevelItem != value)
-        {
-          _resetLevelItem = value;
-          OnPropertyChanged(nameof(ResetLevelItem));
-          SaveSettings();
-        }
-      }
-    }
-
-    public OathAuto.Models.InventoryItem AddPointItem
-    {
-      get => _addPointItem;
-      set
-      {
-        if (_addPointItem != value)
-        {
-          _addPointItem = value;
-          OnPropertyChanged(nameof(AddPointItem));
-          SaveSettings();
-        }
-      }
-    }
-
-    public int FixedX
-    {
-      get => _fixedX;
-      set
-      {
-        if (_fixedX != value)
-        {
-          _fixedX = value;
-          OnPropertyChanged(nameof(FixedX));
-          SaveSettings();
-        }
-      }
-    }
-
-    public int FixedY
-    {
-      get => _fixedY;
-      set
-      {
-        if (_fixedY != value)
-        {
-          _fixedY = value;
-          OnPropertyChanged(nameof(FixedY));
-          SaveSettings();
-        }
-      }
-    }
-
-    public int FixedMapId
-    {
-      get => _fixedMapId;
-      set
-      {
-        if (_fixedMapId != value)
-        {
-          _fixedMapId = value;
-          OnPropertyChanged(nameof(FixedMapId));
-          SaveSettings();
-        }
-      }
-    }
-
-    public string FixedMapName
-    {
-      get => _fixedMapName;
-      set
-      {
-        if (_fixedMapName != value)
-        {
-          _fixedMapName = value;
-          OnPropertyChanged(nameof(FixedMapName));
-          SaveSettings();
-        }
-      }
-    }
-
-    public bool UseItemWithoutTraining
-    {
-      get => _useItemWithoutTraining;
-      set
-      {
-        if (_useItemWithoutTraining != value)
-        {
-          _useItemWithoutTraining = value;
-          OnPropertyChanged(nameof(UseItemWithoutTraining));
-          SaveSettings();
+          if (value)
+          {
+            _playerMode = PlayerMode.FightTower;
+            if (_settings != null) _settings.Mode = PlayerMode.FightTower;
+            SetTrainingState(false);
+            _currentPositionIndex = 0;
+            _isMovingForward = true;
+            Debug.WriteLine("Tower Mode Enabled - Starting ping-pong patrol");
+          }
+          else if (_playerMode == PlayerMode.FightTower)
+          {
+            _playerMode = PlayerMode.None;
+            if (_settings != null) _settings.Mode = PlayerMode.None;
+            SetTrainingState(false);
+            Debug.WriteLine("Tower Mode Disabled");
+          }
+          OnPropertyChanged(nameof(IsTowerMode));
+          OnPropertyChanged(nameof(IsTraining));
         }
       }
     }
@@ -341,8 +241,6 @@ namespace OathAuto.ViewModels
 
     #region Commands
     public ICommand SkillCheckedChangedCommand => _skillCheckedChangedCommand;
-    public ICommand ClearResetLevelItemCommand => _clearResetLevelItemCommand;
-    public ICommand ClearAddPointItemCommand => _clearAddPointItemCommand;
     public ICommand GetCurrentPositionCommand => _getCurrentPositionCommand;
     public ICommand ClearFixedPositionCommand => _clearFixedPositionCommand;
     #endregion
@@ -365,29 +263,65 @@ namespace OathAuto.ViewModels
       // Run level-up and item usage on background thread to avoid blocking UI
       ThreadPool.QueueUserWorkItem(state =>
       {
-        if (FixedMapId == _player.MapID && (Math.Abs(FixedX - _player.PosX) > 5 || Math.Abs(_player.PosY - FixedY) > 5))
+        if (_playerMode == PlayerMode.Training)
         {
-          ThreadPool.QueueUserWorkItem(state1 =>
-          {
-            this.IsTraining = false;
-            this._player.AutoAccount.CallMoveTo(FixedX, FixedY);
-            Thread.Sleep(2000);
-            this.IsTraining = true;
-          });
+          ModeToFixedPosition();
+          UpLevel();
+          SetTrainingState(true);
         }
-        if (e.PropertyName == nameof(_player.InventoryItems))
-        {
-          UpdateDefaultItem();
-        }
-        UpLevel();
         UseItem();
-
         // Handle tower training logic for real-time monster detection
-        if (_isTowerMode)
+        if (_playerMode == PlayerMode.FightTower)
         {
           HandleTowerTrainingUpdate();
         }
       });
+    }
+
+    private void ModeToFixedPosition()
+    {
+      if (_settings != null && _settings.FixedMapId == _player.MapID && (Math.Abs(_settings.FixedX - _player.PosX) > 5 || Math.Abs(_player.PosY - _settings.FixedY) > 5))
+      {
+        ThreadPool.QueueUserWorkItem(state1 =>
+        {
+          this._player.AutoAccount.CallMoveTo(_settings.FixedX, _settings.FixedY);
+          Thread.Sleep(2000);
+        });
+      }
+    }
+
+    private void OnSettingsPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+      // Handle settings changes
+      if (e.PropertyName == nameof(PlayerSettings.Mode))
+      {
+        // Sync _playerMode with Settings.Mode
+        _playerMode = _settings.Mode;
+
+        // Update training state based on mode
+        if (_playerMode == PlayerMode.Training)
+        {
+          SetTrainingState(true);
+        }
+        else if (_playerMode == PlayerMode.FightTower)
+        {
+          SetTrainingState(false);
+          _currentPositionIndex = 0;
+          _isMovingForward = true;
+          Debug.WriteLine("Tower Mode Enabled - Starting ping-pong patrol");
+        }
+        else
+        {
+          SetTrainingState(false);
+        }
+
+        // Notify wrapper properties
+        OnPropertyChanged(nameof(IsTraining));
+        OnPropertyChanged(nameof(IsTowerMode));
+      }
+
+      // Save settings when any property changes
+      SaveSettings();
     }
 
     private void LoadSkillsIfNeeded()
@@ -430,33 +364,26 @@ namespace OathAuto.ViewModels
       }
     }
 
-    private void ExecuteClearResetLevelItem(object parameter)
-    {
-      ResetLevelItem = null;
-    }
-
-    private void ExecuteClearAddPointItem(object parameter)
-    {
-      AddPointItem = null;
-    }
-
     private void ExecuteGetCurrentPosition(object parameter)
     {
-      if (_player != null)
+      if (_player != null && _settings != null)
       {
-        FixedX = (int)_player.PosX;
-        FixedY = (int)_player.PosY;
-        FixedMapId = _player.MapID;
-        FixedMapName = _player.MapName;
+        _settings.FixedX = (int)_player.PosX;
+        _settings.FixedY = (int)_player.PosY;
+        _settings.FixedMapId = _player.MapID;
+        _settings.FixedMapName = _player.MapName;
       }
     }
 
     private void ExecuteClearFixedPosition(object parameter)
     {
-      FixedX = 0;
-      FixedY = 0;
-      FixedMapId = 0;
-      FixedMapName = "";
+      if (_settings != null)
+      {
+        _settings.FixedX = 0;
+        _settings.FixedY = 0;
+        _settings.FixedMapId = 0;
+        _settings.FixedMapName = "";
+      }
     }
 
     /// <summary>
@@ -476,10 +403,8 @@ namespace OathAuto.ViewModels
     {
       try
       {
-        if (_isTraining && _isAutoUpLevel && _player.ExpPercent >= 100.0 && _player.Level < _maxLevel)
+        if (_settings != null && _playerMode == PlayerMode.Training && _settings.IsAutoUpLevel && _player.Level < _settings.MaxLevel)
         {
-          _player.AutoAccount.CallUpLevelPacket();
-          Thread.Sleep(50);
           _player.AutoAccount.CallUpLevelPacket();
         }
       }
@@ -489,50 +414,13 @@ namespace OathAuto.ViewModels
       }
     }
 
-    private void UpdateDefaultItem()
-    {
-      try
-      {
-        if (_player.InventoryItems == null)
-          return;
-
-        if (_resetLevelItem != null)
-        {
-          var updatedItem = _player.InventoryItems.FirstOrDefault(i => i.ItemIndex == _resetLevelItem.ItemIndex);
-          if (updatedItem != null && updatedItem.ItemId == _resetLevelItem.ItemId)
-          {
-            ResetLevelItem = updatedItem;
-          }
-        }
-        else
-        {
-          ResetLevelItem = _player.InventoryItems.FirstOrDefault(i => i.ItemId == ItemIdState.ResetLevelItemId);
-        }
-
-        if (_addPointItem != null)
-        {
-          var updatedItem = _player.InventoryItems.FirstOrDefault(i => i.ItemIndex == _addPointItem.ItemIndex);
-          if (updatedItem != null && updatedItem.ItemId == _addPointItem.ItemId)
-          {
-            AddPointItem = updatedItem;
-          }
-        }
-        else
-        {
-          AddPointItem = _player.InventoryItems.FirstOrDefault(i => i.ItemId == ItemIdState.AddPointItemId);
-        }
-      }
-      catch (Exception ex)
-      {
-        Debug.WriteLine(ex.Message.ToString());
-      }
-    }
-
     private void UseItem()
     {
       try
       {
-        if ((_isTraining || _useItemWithoutTraining) && _isAutoUseX2Exp)
+        if (_settings == null) return;
+
+        if ((_playerMode == PlayerMode.Training || _settings.UseItemWithoutTraining) && _settings.IsAutoUseX2Exp)
         {
           var x2Item = _player.InventoryItems.FirstOrDefault(i => i.ItemId == ItemIdState.X2ExpItemId);
           if (x2Item != null && x2Item.ItemId != 0)
@@ -541,19 +429,30 @@ namespace OathAuto.ViewModels
           }
         }
 
-        if ((_isTraining || _useItemWithoutTraining) && _resetLevelItem != null && _player.Level < _maxLevel)
+        if ((_playerMode == PlayerMode.Training || _settings.UseItemWithoutTraining) && _settings.IsAutoUseResetLevelItem && _player.Level < _settings.MaxLevel)
         {
-          _player.AutoAccount.CallUseItem(_resetLevelItem.ItemIndex, _player.Id);
-          Thread.Sleep(50);
+          // Find reset level item by ID in inventory
+          var resetItem = _player.InventoryItems.FirstOrDefault(i => i.ItemId == ItemIdState.ResetLevelItemId);
+          if (resetItem != null && resetItem.ItemId != 0)
+          {
+            _player.AutoAccount.CallUseItem(resetItem.ItemIndex, _player.Id);
+            Thread.Sleep(50);
+          }
         }
 
-        if ((_isTraining || _useItemWithoutTraining) && _addPointItem != null && _player.Level < _maxLevel)
+        if ((_playerMode == PlayerMode.Training || _settings.UseItemWithoutTraining) && _settings.IsAutoUseAddPointItem && _player.Level < _settings.MaxLevel)
         {
-          _player.AutoAccount.CallUseItem(_addPointItem.ItemIndex, _player.Id);
-          Thread.Sleep(50);
-          _player.AutoAccount.CallUseItem(_addPointItem.ItemIndex, _player.Id);
+          // Find add point item by ID in inventory
+          var addPointItem = _player.InventoryItems.FirstOrDefault(i => i.ItemId == ItemIdState.AddPointItemId);
+          if (addPointItem != null && addPointItem.ItemId != 0)
+          {
+            _player.AutoAccount.CallUseItem(addPointItem.ItemIndex, _player.Id);
+            Thread.Sleep(50);
+            _player.AutoAccount.CallUseItem(addPointItem.ItemIndex, _player.Id);
+          }
         }
-        if (_isTraining || _useItemWithoutTraining)
+
+        if (_playerMode == PlayerMode.Training || _settings.UseItemWithoutTraining)
         {
           var checkItems = NonEmptyInventoryItems.Where(i => i.IsChecked);
           foreach (var useItem in checkItems)
@@ -572,38 +471,22 @@ namespace OathAuto.ViewModels
 
     private void SaveSettings()
     {
+      Debug.WriteLine("Save setting for:" + Player.Name);
       // Don't save during loading or if database service is not available
-      if (_isLoadingSettings || _databaseService == null || _player == null)
+      if (_isLoadingSettings || _databaseService == null || _player == null || _settings == null)
         return;
-
       try
       {
-        var settings = new PlayerSettings
-        {
-          PlayerId = _player.DatabaseId,
-          IsTraining = _isTraining,
-          IsAutoUpLevel = _isAutoUpLevel,
-          IsAutoUseX2Exp = _isAutoUseX2Exp,
-          MaxLevel = _maxLevel,
-          ResetLevelItemIndex = _resetLevelItem?.ItemIndex ?? 0,
-          AddPointItemIndex = _addPointItem?.ItemIndex ?? 0,
-          FixedX = _fixedX,
-          FixedY = _fixedY,
-          FixedMapId = _fixedMapId,
-          FixedMapName = _fixedMapName ?? "",
-          UseItemWithoutTraining = _useItemWithoutTraining,
-          IsTowerMode = _isTowerMode,
-          IsAutoMoveEnabled = _isAutoMoveEnabled,
-          TowerPositionsJson = JsonConvert.SerializeObject(_towerPositions),
-          SelectedSkillIdsJson = JsonConvert.SerializeObject(
-            _player.Skills.Where(s => s.IsChecked).Select(s => s.SkillId).ToList()
-          ),
-          CheckedItemIndexesJson = JsonConvert.SerializeObject(
-            _player.InventoryItems.Where(i => i.IsChecked).Select(i => i.ItemIndex).ToList()
-          )
-        };
+        // Update JSON fields
+        _settings.TowerPositionsJson = JsonConvert.SerializeObject(_towerPositions);
+        _settings.SelectedSkillIdsJson = JsonConvert.SerializeObject(
+          _player.Skills.Where(s => s.IsChecked).Select(s => s.SkillId).ToList()
+        );
+        _settings.CheckedItemIndexesJson = JsonConvert.SerializeObject(
+          _player.InventoryItems.Where(i => i.IsChecked).Select(i => i.ItemIndex).ToList()
+        );
 
-        _databaseService.SavePlayerSettings(settings);
+        _databaseService.SavePlayerSettings(_settings);
         Debug.WriteLine($"Settings saved for player {_player.DatabaseId}");
       }
       catch (Exception ex)
@@ -611,43 +494,41 @@ namespace OathAuto.ViewModels
         Debug.WriteLine($"Error saving settings: {ex.Message}");
       }
     }
-    private bool isLoaded = false;
-    private void LoadSettings()
+    public void LoadSettings()
     {
-      if (_databaseService == null || _player == null || isLoaded)
+      if (_databaseService == null || _player == null)
         return;
-
-      // Save previous state to restore later
-      bool wasLoadingSettings = _isLoadingSettings;
-
       try
       {
-        _isLoadingSettings = true;
-
-        var settings = _databaseService.LoadPlayerSettings(_player.DatabaseId);
-        if (settings != null)
+        var loadedSettings = _databaseService.LoadPlayerSettings(_player.DatabaseId);
+        if (loadedSettings != null)
         {
-          // Load training settings
-          _isTraining = settings.IsTraining;
-          _isAutoUpLevel = settings.IsAutoUpLevel;
-          _isAutoUseX2Exp = settings.IsAutoUseX2Exp;
-          _maxLevel = settings.MaxLevel;
-          _fixedX = settings.FixedX;
-          _fixedY = settings.FixedY;
-          _fixedMapId = settings.FixedMapId;
-          _fixedMapName = settings.FixedMapName ?? "";
-          _useItemWithoutTraining = settings.UseItemWithoutTraining;
+          // Set the Settings property with loaded data
+          Settings = loadedSettings;
 
-          // Load tower settings
-          _isTowerMode = settings.IsTowerMode;
-          _isAutoMoveEnabled = settings.IsAutoMoveEnabled;
+          // Load player mode from settings
+          _playerMode = _settings.Mode;
+
+          // Update training state based on mode
+          if (_playerMode == PlayerMode.Training)
+          {
+            SetTrainingState(true);
+          }
+          else if (_playerMode == PlayerMode.FightTower)
+          {
+            SetTrainingState(false);
+          }
+          else
+          {
+            SetTrainingState(false);
+          }
 
           // Load tower positions
-          if (!string.IsNullOrEmpty(settings.TowerPositionsJson))
+          if (!string.IsNullOrEmpty(_settings.TowerPositionsJson))
           {
             try
             {
-              var positions = JsonConvert.DeserializeObject<List<TowerPosition>>(settings.TowerPositionsJson);
+              var positions = JsonConvert.DeserializeObject<List<TowerPosition>>(_settings.TowerPositionsJson);
               if (positions != null && positions.Count > 0)
               {
                 // Unsubscribe from old positions
@@ -671,11 +552,11 @@ namespace OathAuto.ViewModels
           }
 
           // Load checked skills
-          if (!string.IsNullOrEmpty(settings.SelectedSkillIdsJson))
+          if (!string.IsNullOrEmpty(_settings.SelectedSkillIdsJson))
           {
             try
             {
-              var skillIds = JsonConvert.DeserializeObject<List<int>>(settings.SelectedSkillIdsJson);
+              var skillIds = JsonConvert.DeserializeObject<List<int>>(_settings.SelectedSkillIdsJson);
               if (skillIds != null)
               {
                 foreach (var skill in _player.Skills)
@@ -691,11 +572,11 @@ namespace OathAuto.ViewModels
           }
 
           // Load checked inventory items
-          if (!string.IsNullOrEmpty(settings.CheckedItemIndexesJson))
+          if (!string.IsNullOrEmpty(_settings.CheckedItemIndexesJson))
           {
             try
             {
-              var itemIndexes = JsonConvert.DeserializeObject<List<int>>(settings.CheckedItemIndexesJson);
+              var itemIndexes = JsonConvert.DeserializeObject<List<int>>(_settings.CheckedItemIndexesJson);
               if (itemIndexes != null && _player.InventoryItems != null)
               {
                 foreach (var item in _player.InventoryItems)
@@ -710,20 +591,6 @@ namespace OathAuto.ViewModels
             }
           }
 
-          // Load reset level and add point items by index
-          if (settings.ResetLevelItemIndex > 0 && _player.InventoryItems != null)
-          {
-            _resetLevelItem = _player.InventoryItems.FirstOrDefault(i => i.ItemIndex == settings.ResetLevelItemIndex);
-          }
-
-          if (settings.AddPointItemIndex > 0 && _player.InventoryItems != null)
-          {
-            _addPointItem = _player.InventoryItems.FirstOrDefault(i => i.ItemIndex == settings.AddPointItemIndex);
-          }
-
-          // Notify all properties changed
-          OnPropertyChanged(string.Empty);
-
           Debug.WriteLine($"Settings loaded for player {_player.DatabaseId}");
         }
       }
@@ -733,9 +600,6 @@ namespace OathAuto.ViewModels
       }
       finally
       {
-        // Restore previous state (important when called from constructor)
-        _isLoadingSettings = wasLoadingSettings;
-        isLoaded = true;
       }
     }
 

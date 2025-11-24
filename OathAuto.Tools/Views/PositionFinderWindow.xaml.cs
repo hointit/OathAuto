@@ -172,6 +172,20 @@ namespace OathAuto.Tools.Views
             }
         }
 
+        private void WindowInspectorButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var inspectorWindow = new WindowInspectorWindow();
+                inspectorWindow.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to open Window Inspector: " + ex.Message,
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         // P/Invoke declarations
         [DllImport("user32.dll")]
         private static extern bool GetCursorPos(out POINT lpPoint);

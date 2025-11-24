@@ -78,8 +78,10 @@
     </ApplicationDefinition>
     <Compile Include="AppState\BaseHashState.cs" />
     <Compile Include="AppState\ItemIdState.cs" />
+    <Compile Include="AppState\PositionClickState.cs" />
     <Compile Include="AppState\StringConverterState.cs" />
     <Compile Include="Models\InventoryItem.cs" />
+    <Compile Include="Models\LockStatus.cs" />
     <Compile Include="Models\PlayerSettings.cs" />
     <Compile Include="Models\Skill.cs" />
     <Compile Include="Models\TrainingOption.cs" />
@@ -87,9 +89,10 @@
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\Position.cs" />
     <Compile Include="Models\TowerPosition.cs" />
+    <Compile Include="Models\PlayerMode.cs" />
     <Compile Include="Services\CommonService.cs" />
     <Compile Include="Services\DatabaseService.cs" />
-    <Compile Include="Services\SmartClassService.cs" />
+    <Compile Include="Services\MouseInputService.cs" />
     <Compile Include="Services\SmartClassService.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />

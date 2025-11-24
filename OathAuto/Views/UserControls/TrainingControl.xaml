@@ -6,11 +6,6 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
   <GroupBox Margin="5">
-    <GroupBox.Header>
-      <CheckBox Content="Training"
-                IsChecked="{Binding IsTraining, Mode=TwoWay}"
-                FontWeight="Bold"/>
-    </GroupBox.Header>
     <Grid Margin="10">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto"/>
@@ -25,58 +20,33 @@
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
+      <CheckBox Content="Training" Grid.Row="0"
+          IsChecked="{Binding IsTraining, Mode=TwoWay}"
+          FontWeight="Bold"/>
 
-      <StackPanel Grid.Row="0" Orientation="Horizontal" Grid.ColumnSpan="2">
-        <CheckBox Content="Tự động thăng cấp khi nhỏ hơn" IsChecked="{Binding IsAutoUpLevel, Mode=TwoWay}"
+      <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="2">
+        <CheckBox Content="Tự động thăng cấp khi nhỏ hơn" IsChecked="{Binding Settings.IsAutoUpLevel, Mode=TwoWay}"
           Margin="0,5"/>
         <TextBox Width="60"
-         Text="{Binding MaxLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+         Text="{Binding Settings.MaxLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
          VerticalAlignment="Center"
          Margin="10,0"/>
 
-        <CheckBox  Content="Tự dùng x2.5" IsChecked="{Binding IsAutoUseX2Exp, Mode=TwoWay}" Margin="40,5"/>
+        <CheckBox  Content="Tự dùng x2.5" IsChecked="{Binding Settings.IsAutoUseX2Exp, Mode=TwoWay}" Margin="40,5"/>
       </StackPanel>
 
-      <TextBlock Grid.Row="1" Text="Vật phẩm reset:" VerticalAlignment="Center" />
-      <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
-        <ComboBox
-          Width="150"
-          ItemsSource="{Binding NonEmptyInventoryItems}"
-          SelectedItem="{Binding ResetLevelItem, Mode=TwoWay}"
-          DisplayMemberPath="ItemName"
-          VerticalAlignment="Center"
-          Margin="5, 0, 0 , 0"/>
-        <Button
-        Content="X"
-        Width="25"
-        Command="{Binding ClearResetLevelItemCommand}"
-        VerticalAlignment="Center" />
-      </StackPanel>
+      <CheckBox Grid.Row="2" Grid.Column="0" Content="Tự reset khi đủ cấp" IsChecked="{Binding Settings.IsAutoUseResetLevelItem, Mode=TwoWay}" Margin="0,5"/>
 
-      <TextBlock Grid.Row="2" Grid.Column="0" Text="Vật Phẩm Cộng Point:" VerticalAlignment="Center"/>
-      <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0 5">
-        <ComboBox
-          Width="150"
-          ItemsSource="{Binding NonEmptyInventoryItems}"
-          SelectedItem="{Binding AddPointItem, Mode=TwoWay}"
-          DisplayMemberPath="ItemName"
-          VerticalAlignment="Center"
-          Margin="5, 0, 0 , 0"/>
-        <Button Grid.Column="2"
-        Content="X"
-        Width="25"
-        Command="{Binding ClearAddPointItemCommand}"
-        VerticalAlignment="Center" />
-      </StackPanel>
+      <CheckBox Grid.Row="2" Grid.Column="1" Content="Tự động cộng point" IsChecked="{Binding Settings.IsAutoUseAddPointItem, Mode=TwoWay}" Margin="20,5"/>
         <!-- Get and Fixed postion player -->
       <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0 5">
         <TextBlock VerticalAlignment="Center" Margin="0,0,10,0" Text="Cố định vị trí: "/>
         <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" Text="X:"/>
-        <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding FixedX, StringFormat={}{0:F0}}"/>
+        <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding Settings.FixedX, StringFormat={}{0:F0}}"/>
         <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" Text="Y:"/>
-        <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding FixedY, StringFormat={}{0:F0}}"/>
+        <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding Settings.FixedY, StringFormat={}{0:F0}}"/>
         <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" Text="Map:"/>
-        <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding FixedMapName}"/>
+        <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding Settings.FixedMapName}"/>
         <Button Content="..." Padding="10,2" Command="{Binding GetCurrentPositionCommand}" VerticalAlignment="Center" />
         <Button Content="X" Padding="10,2"   Margin="10,0,15,0" Command="{Binding ClearFixedPositionCommand}" VerticalAlignment="Center" />
       </StackPanel>
@@ -86,7 +56,7 @@
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
           </Grid.RowDefinitions>
-          <CheckBox Grid.Row="0" Content="Sử dụng vật phẩm ngay cả khi không training" IsChecked="{Binding UseItemWithoutTraining, Mode=TwoWay}" Margin="2, 10"/>
+          <CheckBox Grid.Row="0" Content="Sử dụng vật phẩm ngay cả khi không training" IsChecked="{Binding Settings.UseItemWithoutTraining, Mode=TwoWay}" Margin="2, 10"/>
           <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" >
             <ItemsControl ItemsSource="{Binding NonEmptyInventoryItems}">
               <ItemsControl.ItemsPanel>

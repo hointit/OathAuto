@@ -1,0 +1,8 @@
+<Application x:Class="OathAuto.Tools.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="Views/PositionFinderWindow.xaml">
+    <Application.Resources>
+
+    </Application.Resources>
+</Application>
