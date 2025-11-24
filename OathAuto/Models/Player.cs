@@ -42,15 +42,6 @@ namespace OathAuto.Models
 
     public Player()
     {
-      // Initialize with 90 empty inventory slots
-      _inventoryItems = new ObservableCollection<InventoryItem>();
-      for (int i = 0; i < 90; i++)
-      {
-        var newItem = new InventoryItem();
-        newItem.ItemIndex = i;
-        _inventoryItems.Add(newItem);
-      }
-
       // Initialize skills collection
       _skills = new ObservableCollection<Skill>();
     }
@@ -367,6 +358,14 @@ namespace OathAuto.Models
     public ObservableCollection<InventoryItem> InventoryItems
     {
       get => _inventoryItems;
+      set
+      {
+        if (_inventoryItems != value)
+        {
+          _inventoryItems = value;
+          OnPropertyChanged(nameof(InventoryItems));
+        }
+      }
     }
 
     public ObservableCollection<Skill> Skills
@@ -382,67 +381,6 @@ namespace OathAuto.Models
       }
     }
 
-    /// <summary>
-    /// Update inventory items from CoreLibrary items without replacing the collection
-    /// </summary>
-    public void UpdateInventoryItems(List<CoreInventoryItem> sourceItems)
-    {
-      if (sourceItems == null) return;
-
-      // Update existing items in place
-      int count = System.Math.Min(sourceItems.Count, _inventoryItems.Count);
-      for (int i = 0; i < count; i++)
-      {
-        _inventoryItems[i].UpdateFrom(sourceItems[i]);
-      }
-
-      // Notify that inventory items have been updated
-      OnPropertyChanged(nameof(InventoryItems));
-    }
-
-    /// <summary>
-    /// Sync inventory items from another player's inventory without replacing the collection
-    /// </summary>
-    public void SyncInventoryFrom(Player otherPlayer)
-    {
-      if (otherPlayer == null || otherPlayer.InventoryItems == null) return;
-
-      // Copy properties from other player's items to this player's items
-      int count = System.Math.Min(otherPlayer.InventoryItems.Count, _inventoryItems.Count);
-      for (int i = 0; i < count; i++)
-      {
-        var source = otherPlayer.InventoryItems[i];
-        var target = _inventoryItems[i];
-        target.ItemId = source.ItemId;
-        target.NeedToWait = source.NeedToWait;
-        target.BuyingPrice = source.BuyingPrice;
-        target.SellingPrice = source.SellingPrice;
-        target.RealSpread = source.RealSpread;
-        target.MidSpread = source.MidSpread;
-        target.HighSpread = source.HighSpread;
-        target.LowSpread = source.LowSpread;
-        target.HasHistory = source.HasHistory;
-        target.ItemCount = source.ItemCount;
-        target.ItemName = source.ItemName;
-        target.SaveNameCode = source.SaveNameCode;
-        target.ItemGUID1 = source.ItemGUID1;
-        target.ItemGUID2 = source.ItemGUID2;
-        target.Lines = source.Lines;
-        target.LineValueArray = source.LineValueArray;
-        target.SavedCode = source.SavedCode;
-        target.ItemType = source.ItemType;
-        target.ItemStars = source.ItemStars;
-        target.ItemSource = source.ItemSource;
-        target.DinhViPhuTime = source.DinhViPhuTime;
-        target.ItemMapID = source.ItemMapID;
-        target.BTDMapID = source.BTDMapID;
-        target.BTDposX = source.BTDposX;
-        target.BTDposY = source.BTDposY;
-        target.LastTimeSeen = source.LastTimeSeen;
-      }
-      // Notify that inventory items have been updated
-      OnPropertyChanged(nameof(InventoryItems));
-    }
 
     public double ExpPercent
     {
@@ -472,7 +410,7 @@ namespace OathAuto.Models
 
     public event PropertyChangedEventHandler PropertyChanged;
 
-    protected void OnPropertyChanged(string propertyName)
+    public void OnPropertyChanged(string propertyName)
     {
       if (PropertyChanged != null)
       {

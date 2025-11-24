@@ -111,15 +111,11 @@ namespace OathAuto.ViewModels
 
           if (existingViewModel != null)
           {
-            // Update existing player data (this will trigger PropertyChanged events)
             UpdatePlayerData(existingViewModel.Player, updatedPlayer);
           }
           else
           {
-            // Add new player
             var newPlayerViewModel = new PlayerViewModel(updatedPlayer, _smartClassService, i);
-
-            // Load settings based on DatabaseId
             if (updatedPlayer.DatabaseId > 0)
             {
               newPlayerViewModel.LoadSettings();
@@ -130,6 +126,7 @@ namespace OathAuto.ViewModels
               newPlayerViewModel.Settings = null;
             }
 
+            newPlayerViewModel.LoadPlayerInventory();
             this.Players.Add(newPlayerViewModel);
 
             // Auto-select first player if none selected
@@ -173,21 +170,6 @@ namespace OathAuto.ViewModels
       existingPlayer.isTraining = newData.isTraining;
       existingPlayer.Monsters = newData.Monsters;
       existingPlayer.DatabaseId = newData.DatabaseId;
-
-      // Sync inventory items in place without replacing the collection
-      existingPlayer.SyncInventoryFrom(newData);
-
-      // Check if we need to reload settings
-      var existingViewModel = Players.FirstOrDefault(vm => vm.Player == existingPlayer);
-      if (existingViewModel != null)
-      {
-        // If settings is null and DatabaseId is not empty, reload settings
-        if (existingViewModel.Settings == null && existingPlayer.DatabaseId > 0)
-        {
-          existingViewModel.LoadSettings();
-        }
-        // If settings is not null, do nothing (as per requirement)
-      }
     }
 
     #endregion

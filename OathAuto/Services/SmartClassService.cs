@@ -118,7 +118,6 @@ namespace OathAuto.Services
           DatabaseId = account.Myself.DatabaseID,
           AutoAccount = account
         };
-        newPlayer.UpdateInventoryItems(account.MyInventory?.AllItems);
 
         account.Settings.AIMode = AllEnums.AIModes.DANHQUANHDIEM;
         account.Settings.cboxTuNhatVatPham = false;

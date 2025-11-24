@@ -23,8 +23,6 @@ namespace OathAuto.ViewModels
   public partial class PlayerViewModel : INotifyPropertyChanged
   {
     private Player _player;
-    private readonly SmartClassService _smartClassService;
-    private readonly int _accountIndex;
     private DatabaseService _databaseService;
     private ICommand _skillCheckedChangedCommand;
     private ICommand _getCurrentPositionCommand;
@@ -36,19 +34,11 @@ namespace OathAuto.ViewModels
     // Settings - bound directly to UI
     private PlayerSettings _settings;
 
-    private bool _isLoadingSettings = false; // Flag to prevent saving during load
-
     public PlayerViewModel(Player player, SmartClassService smartClassService, int accountIndex)
     {
-      // Prevent saving during initialization
-      _isLoadingSettings = true;
-
       _player = player ?? new Player();
-      _smartClassService = smartClassService;
-      _accountIndex = accountIndex;
       _player.PropertyChanged += OnPlayerPropertyChanged;
 
-      // Initialize database service
       string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TLBB.db");
       if (File.Exists(dbPath))
       {
@@ -78,7 +68,7 @@ namespace OathAuto.ViewModels
       }
 
       // Subscribe to inventory items if already available
-      if (_player.InventoryItems != null)
+      if (Player.InventoryItems != null)
       {
         _player.InventoryItems.CollectionChanged += InventoryItems_CollectionChanged;
         foreach (var item in _player.InventoryItems)
@@ -86,12 +76,71 @@ namespace OathAuto.ViewModels
           item.PropertyChanged += InventoryItem_PropertyChanged;
         }
       }
+    }
 
-      // Load settings after all initialization is complete
-      LoadSettings();
+    public void LoadPlayerInventory()
+    {
+      if (Player == null ||
+          Player.AutoAccount == null ||
+          Player.AutoAccount.MyInventory == null)
+        return;
 
-      // Enable saving after initialization is complete
-      _isLoadingSettings = false;
+      try
+      {
+        var allItems = Player.AutoAccount.MyInventory.AllItems.Where(item => item.ItemID > 0).ToList();
+        if (allItems == null || allItems.Count == 0) return;
+
+        var settings = Settings;
+        var checkedItemIds = new System.Collections.Generic.List<int>();
+        // Load checked item IDs from settings if available
+        if (settings != null && !string.IsNullOrEmpty(settings.CheckedItemIdsJson))
+        {
+          try
+          {
+            checkedItemIds = Newtonsoft.Json.JsonConvert.DeserializeObject<System.Collections.Generic.List<int>>(settings.CheckedItemIdsJson)
+                             ?? new System.Collections.Generic.List<int>();
+          }
+          catch { }
+        }
+
+        if (Player.InventoryItems == null || Player.InventoryItems.Count == 0)
+        {
+          Player.InventoryItems = new ObservableCollection<InventoryItem>();
+          foreach (var item in allItems)
+          {
+            Player.InventoryItems.Add(new InventoryItem()
+            {
+              Id = item.ItemID,
+              IsSelected = checkedItemIds.Contains(item.ItemID),
+              Name = item.ItemName != string.Empty ? item.ItemName : item.ItemID.ToString()
+            });
+          }
+          Player.OnPropertyChanged(nameof(Player.InventoryItems));
+        }
+        else
+        {
+          foreach (var item in allItems)
+          {
+            if (Player.InventoryItems.Any(i => i.Id == item.ItemID))
+            {
+              continue;
+            }
+            else
+            {
+              Player.InventoryItems.Add(new InventoryItem()
+              {
+                Id = item.ItemID,
+                IsSelected = checkedItemIds.Contains(item.ItemID),
+                Name = item.ItemName != string.Empty ? item.ItemName : item.ItemID.ToString()
+              });
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        System.Diagnostics.Debug.WriteLine($"Error loading player inventory: {ex.Message}");
+      }
     }
 
     public Player Player
@@ -173,16 +222,6 @@ namespace OathAuto.ViewModels
     public double ExpPercent => _player?.ExpPercent ?? 0;
     public ObservableCollection<Models.InventoryItem> InventoryItems => _player?.InventoryItems;
     public int DatabaseId => _player.DatabaseId;
-    public IEnumerable<Models.InventoryItem> NonEmptyInventoryItems
-    {
-      get
-      {
-        if (_player?.InventoryItems == null)
-          return new List<Models.InventoryItem>();
-        return _player.InventoryItems.Where(item => item.CanDisplay);
-      }
-    }
-
     // Mode wrapper properties for XAML binding
     public bool IsTraining
     {
@@ -266,15 +305,12 @@ namespace OathAuto.ViewModels
         if (_playerMode == PlayerMode.Training)
         {
           ModeToFixedPosition();
-          UpLevel();
+          
           SetTrainingState(true);
         }
+        UpLevel();
         UseItem();
-        // Handle tower training logic for real-time monster detection
-        if (_playerMode == PlayerMode.FightTower)
-        {
-          HandleTowerTrainingUpdate();
-        }
+        HandleTowerTrainingUpdate();
       });
     }
 
@@ -403,7 +439,7 @@ namespace OathAuto.ViewModels
     {
       try
       {
-        if (_settings != null && _playerMode == PlayerMode.Training && _settings.IsAutoUpLevel && _player.Level < _settings.MaxLevel)
+        if (_settings.IsAutoUpLevel && _player.Level < _settings.MaxLevel)
         {
           _player.AutoAccount.CallUpLevelPacket();
         }
@@ -420,60 +456,67 @@ namespace OathAuto.ViewModels
       {
         if (_settings == null) return;
 
-        if ((_playerMode == PlayerMode.Training || _settings.UseItemWithoutTraining) && _settings.IsAutoUseX2Exp)
+        if (_settings.IsAutoUseX2Exp)
         {
-          var x2Item = _player.InventoryItems.FirstOrDefault(i => i.ItemId == ItemIdState.X2ExpItemId);
-          if (x2Item != null && x2Item.ItemId != 0)
+          var itemIndex = FindItemIndexInInventoryCharacter(ItemIdState.X2ExpItemId);
+          if (itemIndex != -1)
           {
-            _player.AutoAccount.CallUseItem(x2Item.ItemIndex, _player.Id);
+            _player.AutoAccount.CallUseItem(itemIndex, _player.Id);
           }
         }
 
-        if ((_playerMode == PlayerMode.Training || _settings.UseItemWithoutTraining) && _settings.IsAutoUseResetLevelItem && _player.Level < _settings.MaxLevel)
+        if (_settings.IsAutoUseResetLevelItem)
         {
           // Find reset level item by ID in inventory
-          var resetItem = _player.InventoryItems.FirstOrDefault(i => i.ItemId == ItemIdState.ResetLevelItemId);
-          if (resetItem != null && resetItem.ItemId != 0)
+          var itemIndex = FindItemIndexInInventoryCharacter(ItemIdState.ResetLevelItemId);
+          if (itemIndex != -1)
           {
-            _player.AutoAccount.CallUseItem(resetItem.ItemIndex, _player.Id);
-            Thread.Sleep(50);
+            _player.AutoAccount.CallUseItem(itemIndex, _player.Id);
           }
         }
 
-        if ((_playerMode == PlayerMode.Training || _settings.UseItemWithoutTraining) && _settings.IsAutoUseAddPointItem && _player.Level < _settings.MaxLevel)
+        if (_settings.IsAutoUseAddPointItem)
         {
           // Find add point item by ID in inventory
-          var addPointItem = _player.InventoryItems.FirstOrDefault(i => i.ItemId == ItemIdState.AddPointItemId);
-          if (addPointItem != null && addPointItem.ItemId != 0)
+          var itemIndex = FindItemIndexInInventoryCharacter(ItemIdState.AddPointItemId);
+          if (itemIndex != -1)
           {
-            _player.AutoAccount.CallUseItem(addPointItem.ItemIndex, _player.Id);
-            Thread.Sleep(50);
-            _player.AutoAccount.CallUseItem(addPointItem.ItemIndex, _player.Id);
+            _player.AutoAccount.CallUseItem(itemIndex, _player.Id);
           }
         }
 
-        if (_playerMode == PlayerMode.Training || _settings.UseItemWithoutTraining)
+        var checkItems = Player.InventoryItems.Where(i => i.IsSelected);
+        foreach (var useItem in checkItems)
         {
-          var checkItems = NonEmptyInventoryItems.Where(i => i.IsChecked);
-          foreach (var useItem in checkItems)
+          var itemIndex = FindItemIndexInInventoryCharacter(useItem.Id);
+          if (itemIndex != -1)
           {
-            Player.AutoAccount.CallUseItem(useItem.ItemIndex, Player.Id);
+            Player.AutoAccount.CallUseItem(itemIndex, Player.Id);
           }
         }
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         Debug.WriteLine(ex.Message.ToString());
       }
+    }
+
+    private int FindItemIndexInInventoryCharacter(int itemId)
+    {
+      if (_player.AutoAccount.MyInventory.AllItems == null || _player.AutoAccount.MyInventory.AllItems.Count == 0)
+        return -1;
+      for (int i = 0; i < _player.AutoAccount.MyInventory.AllItems.Count; i++)
+      {
+        if (_player.AutoAccount.MyInventory.AllItems[i].ItemID == itemId) return i;
+      }
+      return -1;
     }
 
     #region Settings Persistence
 
     private void SaveSettings()
     {
-      Debug.WriteLine("Save setting for:" + Player.Name);
-      // Don't save during loading or if database service is not available
-      if (_isLoadingSettings || _databaseService == null || _player == null || _settings == null)
+      if (_databaseService == null || _player == null || _settings == null)
         return;
       try
       {
@@ -482,8 +525,8 @@ namespace OathAuto.ViewModels
         _settings.SelectedSkillIdsJson = JsonConvert.SerializeObject(
           _player.Skills.Where(s => s.IsChecked).Select(s => s.SkillId).ToList()
         );
-        _settings.CheckedItemIndexesJson = JsonConvert.SerializeObject(
-          _player.InventoryItems.Where(i => i.IsChecked).Select(i => i.ItemIndex).ToList()
+        _settings.CheckedItemIdsJson = JsonConvert.SerializeObject(
+          _player.InventoryItems.Where(i => i.IsSelected).Select(i => i.Id).ToList()
         );
 
         _databaseService.SavePlayerSettings(_settings);
@@ -496,7 +539,7 @@ namespace OathAuto.ViewModels
     }
     public void LoadSettings()
     {
-      if (_databaseService == null || _player == null)
+      if (_databaseService == null || _player == null || _player.DatabaseId <= 0)
         return;
       try
       {
@@ -510,13 +553,9 @@ namespace OathAuto.ViewModels
           _playerMode = _settings.Mode;
 
           // Update training state based on mode
-          if (_playerMode == PlayerMode.Training)
+          if (_playerMode == PlayerMode.Training || _playerMode == PlayerMode.FightTower)
           {
             SetTrainingState(true);
-          }
-          else if (_playerMode == PlayerMode.FightTower)
-          {
-            SetTrainingState(false);
           }
           else
           {
@@ -572,16 +611,16 @@ namespace OathAuto.ViewModels
           }
 
           // Load checked inventory items
-          if (!string.IsNullOrEmpty(_settings.CheckedItemIndexesJson))
+          if (!string.IsNullOrEmpty(_settings.CheckedItemIdsJson))
           {
             try
             {
-              var itemIndexes = JsonConvert.DeserializeObject<List<int>>(_settings.CheckedItemIndexesJson);
-              if (itemIndexes != null && _player.InventoryItems != null)
+              var itemIds = JsonConvert.DeserializeObject<List<int>>(_settings.CheckedItemIdsJson);
+              if (itemIds != null && _player.InventoryItems != null)
               {
                 foreach (var item in _player.InventoryItems)
                 {
-                  item.IsChecked = itemIndexes.Contains(item.ItemIndex);
+                  item.IsSelected = itemIds.Contains(item.Id);
                 }
               }
             }
@@ -634,7 +673,7 @@ namespace OathAuto.ViewModels
 
     private void InventoryItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
-      if (e.PropertyName == nameof(InventoryItem.IsChecked))
+      if (e.PropertyName == nameof(InventoryItem.IsSelected))
       {
         SaveSettings();
       }

@@ -34,9 +34,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}"
-                                  Margin="2"
-                                  Content="{Binding SkillName}"/>
+                        <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}" Margin="2, 0" Content="{Binding SkillName}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

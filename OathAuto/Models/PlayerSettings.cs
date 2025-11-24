@@ -15,11 +15,10 @@ namespace OathAuto.Models
     private int _fixedY;
     private int _fixedMapId;
     private string _fixedMapName = "";
-    private bool _useItemWithoutTraining;
     private bool _isAutoMoveEnabled;
     private string _towerPositionsJson;
     private string _selectedSkillIdsJson;
-    private string _checkedItemIndexesJson;
+    private string _checkedItemIdsJson;
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -166,20 +165,6 @@ namespace OathAuto.Models
         }
       }
     }
-
-    public bool UseItemWithoutTraining
-    {
-      get => _useItemWithoutTraining;
-      set
-      {
-        if (_useItemWithoutTraining != value)
-        {
-          _useItemWithoutTraining = value;
-          OnPropertyChanged(nameof(UseItemWithoutTraining));
-        }
-      }
-    }
-
     // Tower Settings
     public bool IsAutoMoveEnabled
     {
@@ -197,42 +182,21 @@ namespace OathAuto.Models
     public string TowerPositionsJson
     {
       get => _towerPositionsJson;
-      set
-      {
-        if (_towerPositionsJson != value)
-        {
-          _towerPositionsJson = value;
-          OnPropertyChanged(nameof(TowerPositionsJson));
-        }
-      }
+      set => _towerPositionsJson = value;
     }
 
     // Skill Settings
     public string SelectedSkillIdsJson
     {
       get => _selectedSkillIdsJson;
-      set
-      {
-        if (_selectedSkillIdsJson != value)
-        {
-          _selectedSkillIdsJson = value;
-          OnPropertyChanged(nameof(SelectedSkillIdsJson));
-        }
-      }
+      set => _selectedSkillIdsJson = value;
     }
 
     // Inventory Item Settings
-    public string CheckedItemIndexesJson
+    public string CheckedItemIdsJson
     {
-      get => _checkedItemIndexesJson;
-      set
-      {
-        if (_checkedItemIndexesJson != value)
-        {
-          _checkedItemIndexesJson = value;
-          OnPropertyChanged(nameof(CheckedItemIndexesJson));
-        }
-      }
+      get => _checkedItemIdsJson;
+      set => _checkedItemIdsJson = value;
     }
 
     protected void OnPropertyChanged(string propertyName)

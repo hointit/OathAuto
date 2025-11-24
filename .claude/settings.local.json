@@ -8,7 +8,9 @@
       "Bash(nuget install:*)",
       "Bash(where:*)",
       "Bash(cmd /c \"dir /b /ad\")",
-      "Bash(cmd /c \"msbuild OathAuto.Tools\\OathAuto.Tools.csproj /p:Configuration=Debug /p:Platform=x86 /v:minimal /nologo\")"
+      "Bash(cmd /c \"msbuild OathAuto.Tools\\OathAuto.Tools.csproj /p:Configuration=Debug /p:Platform=x86 /v:minimal /nologo\")",
+      "Bash(cmd /c \"where msbuild\")",
+      "Bash(cmd /c:*)"
     ],
     "deny": [],
     "ask": []
