@@ -119,7 +119,6 @@ namespace OathAuto.Services
           AutoAccount = account
         };
 
-        account.Settings.AIMode = AllEnums.AIModes.DANHQUANHDIEM;
         account.Settings.cboxTuNhatVatPham = false;
         return newPlayer;
       }

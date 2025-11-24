@@ -9989,6 +9989,12 @@ label_17:
 
   public void AttackQuai(int nullDelay = 3000)
   {
+    // hoint change: nếu ở đại lý thì ko làm gì cả
+    if (this.Myself.MapID == 2)
+    {
+      return;
+    }
+
     if (GA.isShitMember())
       Thread.Sleep(new Random().Next(1000, 2000));
     if (this.Myself.IDLEStamp - frmLogin.GlobalTimer.ElapsedMilliseconds > 0L)
@@ -10577,8 +10583,8 @@ label_17:
       }
       else if ((double) this.MyQuai.TargetHPPercent <= (double) frmLogin.GAuto.Settings.releaseHPPercent)
         this.Myself.CurrentTargetID = -1;
-      //if (this.Myself.TargetTimestamp.ElapsedMilliseconds < 3000L || this.Myself.CurrentTarget == null || (double) this.MyQuai.TargetHPPercent < (double) this.Myself.TargetLastHPPercent)
-      //  return;
+      if (this.Myself.TargetTimestamp.ElapsedMilliseconds < 3000L || this.Myself.CurrentTarget == null || (double)this.MyQuai.TargetHPPercent < (double)this.Myself.TargetLastHPPercent)
+        return;
       this.Myself.CurrentTargetID = -1;
       this.Myself.TargetTimestamp.Reset();
       this.Myself.TargetTimestamp.Start();

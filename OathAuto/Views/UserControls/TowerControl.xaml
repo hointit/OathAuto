@@ -37,7 +37,7 @@
                     <ItemsControl ItemsSource="{Binding TowerPositions}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
                                           Content="{Binding DisplayName}"
                                           Margin="5,2"/>
                             </DataTemplate>

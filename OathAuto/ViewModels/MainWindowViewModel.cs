@@ -112,17 +112,24 @@ namespace OathAuto.ViewModels
           if (existingViewModel != null)
           {
             UpdatePlayerData(existingViewModel.Player, updatedPlayer);
+            var isChangeMap = existingViewModel.Player.MapID != updatedPlayer.MapID;
+            existingViewModel.RunAction(isChangeMap);
+            var isChangeMempai = existingViewModel.Player.Menpai != updatedPlayer.Menpai;
+            if (isChangeMempai)
+            {
+              existingViewModel.LoadSkills();
+            }
           }
           else
           {
             var newPlayerViewModel = new PlayerViewModel(updatedPlayer, _smartClassService, i);
             if (updatedPlayer.DatabaseId > 0)
             {
+              newPlayerViewModel.LoadSkills();
               newPlayerViewModel.LoadSettings();
             }
             else
             {
-              // Set to null if DatabaseId is empty
               newPlayerViewModel.Settings = null;
             }
 

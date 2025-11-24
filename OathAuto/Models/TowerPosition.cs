@@ -4,10 +4,24 @@ namespace OathAuto.Models
 {
   public class TowerPosition : INotifyPropertyChanged
   {
+    private int _id;
     private float _x;
     private float _y;
-    private bool _isChecked = true;
+    private bool _isSelected = true;
     private string _name;
+
+    public int Id
+    {
+      get => _id;
+      set
+      {
+        if (_id != value)
+        {
+          _id = value;
+          OnPropertyChanged(nameof(Id));
+        }
+      }
+    }
 
     public float X
     {
@@ -35,15 +49,15 @@ namespace OathAuto.Models
       }
     }
 
-    public bool IsChecked
+    public bool IsSelected
     {
-      get => _isChecked;
+      get => _isSelected;
       set
       {
-        if (_isChecked != value)
+        if (_isSelected != value)
         {
-          _isChecked = value;
-          OnPropertyChanged(nameof(IsChecked));
+          _isSelected = value;
+          OnPropertyChanged(nameof(IsSelected));
         }
       }
     }

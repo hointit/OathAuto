@@ -19,8 +19,6 @@ namespace OathAuto.ViewModels
     private bool _isMovingForward = true; // True = 0→N, False = N→0
     private const string MONSTER_KEY_NAME = "lần tấn công"; // Adjust this based on actual monster name pattern
     private readonly LockStatus _lock = new LockStatus();
-    // Tower configuration
-    private readonly int[] TOWER_MAP_IDS = new int[] { 37, 43 };
     private ObservableCollection<TowerPosition> _towerPositions;
 
     public ObservableCollection<TowerPosition> TowerPositions
@@ -72,6 +70,8 @@ namespace OathAuto.ViewModels
 
       try
       {
+        this.Player.AutoAccount.Settings.AIMode = AllEnums.AIModes.DANHTUDO;
+        
         bool hasMonsters = CheckForMonsters();
         if (hasMonsters)
         {
@@ -79,6 +79,15 @@ namespace OathAuto.ViewModels
         }
         else
         {
+          var currentPosition = TowerPositions.First(p => p.IsSelected);
+          if (currentPosition != null)
+          {
+            if (this.Player.AutoAccount.Settings.CenterX != currentPosition.X || this.Player.AutoAccount.Settings.CenterY != currentPosition.Y)
+            {
+              this.Player.AutoAccount.Settings.CenterX = currentPosition.X;
+              this.Player.AutoAccount.Settings.CenterY = currentPosition.Y;
+            }
+          }
           MoveCurrentPosition();
         }
       }
@@ -102,17 +111,10 @@ namespace OathAuto.ViewModels
       return deltaX <= 2 && deltaY <= 2;
     }
 
-    private bool IsTowerMap()
-    {
-      return true;
-      return _player != null && TOWER_MAP_IDS.Contains(_player.MapID);
-    }
-
     private bool CheckForMonsters()
     {
       if (_player?.Monsters == null)
       {
-        Debug.WriteLine("Monster list is null");
         return false;
       }
 
@@ -122,16 +124,6 @@ namespace OathAuto.ViewModels
         // Use LINQ to check if any monsters match the key name
         var matchingMonsters = _player.Monsters.Where(m => !string.IsNullOrEmpty(m.Name) && m.Name.ToLower().Contains(MONSTER_KEY_NAME)).ToList();
         int matchCount = matchingMonsters.Count;
-
-        if (matchCount > 0)
-        {
-          Debug.WriteLine($"Found {matchCount} matching monsters out of {totalMonsters} total. First monster: {matchingMonsters[0].Name}");
-        }
-        else if (totalMonsters > 0)
-        {
-          Debug.WriteLine($"No matching monsters found. Total monsters: {totalMonsters}. First monster name: {_player.Monsters[0].Name}");
-        }
-
         return matchCount > 0;
       }
       catch (Exception ex)
@@ -146,7 +138,7 @@ namespace OathAuto.ViewModels
       try
       {
         // Get only checked positions
-        var checkedPositions = TowerPositions.Where(p => p.IsChecked).ToList();
+        var checkedPositions = TowerPositions.Where(p => p.IsSelected).ToList();
 
         if (checkedPositions.Count == 0)
         {
@@ -171,6 +163,7 @@ namespace OathAuto.ViewModels
 
         if (!isArrived)
         {
+          Debug.WriteLine($"{this.Player.Name} is moving to tower position: {targetPosition.X}, {targetPosition.Y}");
           // Not arrived yet, keep moving to current target
           _player.AutoAccount.CallMoveTo((int)targetPosition.X, (int)targetPosition.Y);
           return;

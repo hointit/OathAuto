@@ -1,43 +1,34 @@
-<UserControl x:Class="OathAuto.Views.UserControls.ListSkillControl"
+﻿<UserControl x:Class="OathAuto.Views.UserControls.ListSkillControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+             d:DesignHeight="450" d:DesignWidth="500">
+  <Grid Margin="10">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="300"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+    <GroupBox Header="Sử dụng kỹ năng" Grid.Row="0" >
+      <ScrollViewer VerticalScrollBarVisibility="Auto" >
+        <ItemsControl ItemsSource="{Binding Player.Skills}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <UniformGrid Columns="2"/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Margin="2" Content="{Binding Name}"/>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </GroupBox>
+  </Grid>
 
-        <!-- Header -->
-        <Border Grid.Row="0"
-                BorderBrush="Gray"
-                BorderThickness="0,0,0,1"
-                Padding="10">
-            <Grid>
-                <TextBlock Text="Skills"
-                           FontSize="14"
-                           FontWeight="Bold"
-                           VerticalAlignment="Center"/>
-            </Grid>
-        </Border>
 
-        <!-- Skills ListView with CheckBoxes -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <ItemsControl ItemsSource="{Binding Player.Skills}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="2"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}" Margin="2, 0" Content="{Binding SkillName}"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
-    </Grid>
+
+  
 </UserControl>

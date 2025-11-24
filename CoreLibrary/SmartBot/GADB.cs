@@ -286,6 +286,8 @@ public class GADB
     connection.Close();
   }
 
+
+  // TODO: hàm load all setting cũ
   public static void LoadAllSettings(AutoAccount account)
   {
     string charTableName = GADB.GetCharTableName(account.Myself.DatabaseID);

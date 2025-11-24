@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using OathAuto.AppState;
 using OathAuto.Models;
 using OathAuto.Services;
@@ -10,11 +11,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using Newtonsoft.Json;
 using static SmartBot.AllEnums;
 using InventoryItem = OathAuto.Models.InventoryItem;
 
@@ -27,6 +28,7 @@ namespace OathAuto.ViewModels
     private ICommand _skillCheckedChangedCommand;
     private ICommand _getCurrentPositionCommand;
     private ICommand _clearFixedPositionCommand;
+    private readonly LockStatus _lockRunAction = new LockStatus() { Status = "Lock Action" };
 
     // Player mode for internal logic
     private PlayerMode _playerMode = PlayerMode.None;
@@ -45,9 +47,6 @@ namespace OathAuto.ViewModels
         _databaseService = new DatabaseService(dbPath);
       }
 
-      // Initialize command for skill checkbox changes
-      _skillCheckedChangedCommand = new RelayCommand(OnSkillCheckedChanged);
-
       // Initialize training option commands
       _getCurrentPositionCommand = new RelayCommand(ExecuteGetCurrentPosition);
       _clearFixedPositionCommand = new RelayCommand(ExecuteClearFixedPosition);
@@ -55,26 +54,16 @@ namespace OathAuto.ViewModels
       // Initialize tower positions
       _towerPositions = new ObservableCollection<TowerPosition>
       {
-        new TowerPosition { Name = "Position 1", X = 26, Y = 36, IsChecked = true },
-        new TowerPosition { Name = "Position 2", X = 36, Y = 34, IsChecked = true },
-        new TowerPosition { Name = "Position 3", X = 36, Y = 24, IsChecked = true },
-        new TowerPosition { Name = "Position 4", X = 24, Y = 23, IsChecked = true }
+        new TowerPosition { Name = "Vị trí 1", X = 26, Y = 36, IsSelected = true },
+        new TowerPosition { Name = "Vị trí 2", X = 36, Y = 34, IsSelected = true },
+        new TowerPosition { Name = "Vị trí 3", X = 36, Y = 24, IsSelected = true },
+        new TowerPosition { Name = "Vị trí 4", X = 24, Y = 23, IsSelected = true }
       };
 
       // Subscribe to tower position property changes
       foreach (var pos in _towerPositions)
       {
-        pos.PropertyChanged += TowerPosition_PropertyChanged;
-      }
-
-      // Subscribe to inventory items if already available
-      if (Player.InventoryItems != null)
-      {
-        _player.InventoryItems.CollectionChanged += InventoryItems_CollectionChanged;
-        foreach (var item in _player.InventoryItems)
-        {
-          item.PropertyChanged += InventoryItem_PropertyChanged;
-        }
+        pos.PropertyChanged += HandleEventUIChange;
       }
     }
 
@@ -108,14 +97,17 @@ namespace OathAuto.ViewModels
           Player.InventoryItems = new ObservableCollection<InventoryItem>();
           foreach (var item in allItems)
           {
-            Player.InventoryItems.Add(new InventoryItem()
+            var newItem = new InventoryItem()
             {
               Id = item.ItemID,
               IsSelected = checkedItemIds.Contains(item.ItemID),
               Name = item.ItemName != string.Empty ? item.ItemName : item.ItemID.ToString()
-            });
+            };
+
+
+            newItem.PropertyChanged += HandleEventUIChange;
+            Player.InventoryItems.Add(newItem);
           }
-          Player.OnPropertyChanged(nameof(Player.InventoryItems));
         }
         else
         {
@@ -127,12 +119,14 @@ namespace OathAuto.ViewModels
             }
             else
             {
-              Player.InventoryItems.Add(new InventoryItem()
+              var newItem = new InventoryItem()
               {
                 Id = item.ItemID,
                 IsSelected = checkedItemIds.Contains(item.ItemID),
                 Name = item.ItemName != string.Empty ? item.ItemName : item.ItemID.ToString()
-              });
+              };
+              newItem.PropertyChanged += HandleEventUIChange;
+              Player.InventoryItems.Add(newItem);
             }
           }
         }
@@ -160,19 +154,6 @@ namespace OathAuto.ViewModels
           if (_player != null)
           {
             _player.PropertyChanged += OnPlayerPropertyChanged;
-
-            // Load skills when player changes
-            LoadSkillsIfNeeded();
-
-            // Subscribe to inventory items collection changes
-            if (_player.InventoryItems != null)
-            {
-              _player.InventoryItems.CollectionChanged += InventoryItems_CollectionChanged;
-              foreach (var item in _player.InventoryItems)
-              {
-                item.PropertyChanged += InventoryItem_PropertyChanged;
-              }
-            }
           }
         }
       }
@@ -295,22 +276,30 @@ namespace OathAuto.ViewModels
     }
     private void OnPlayerPropertyChanged(object sender, PropertyChangedEventArgs e)
     {
-      // Re-raise property changed for convenience properties
       OnPropertyChanged(e.PropertyName);
-      LoadSkillsIfNeeded();
+    }
 
-      // Run level-up and item usage on background thread to avoid blocking UI
+
+    public void RunAction(bool isChangeMap = false)
+    {
       ThreadPool.QueueUserWorkItem(state =>
       {
-        if (_playerMode == PlayerMode.Training)
+        lock (_lockRunAction)
         {
-          ModeToFixedPosition();
-          
-          SetTrainingState(true);
+          if (isChangeMap)
+          {
+            Thread.Sleep(2500);
+          }
+          if (_playerMode == PlayerMode.Training)
+          {
+            ModeToFixedPosition();
+
+            SetTrainingState(true);
+          }
+          UpLevel();
+          UseItem();
+          HandleTowerTrainingUpdate();
         }
-        UpLevel();
-        UseItem();
-        HandleTowerTrainingUpdate();
       });
     }
 
@@ -360,12 +349,10 @@ namespace OathAuto.ViewModels
       SaveSettings();
     }
 
-    private void LoadSkillsIfNeeded()
+    public void LoadSkills()
     {
       if (_player == null || _databaseService == null)
         return;
-
-      // Check if Menpai is set and skills haven't been loaded
       if (_player.Menpai != Menpais.NOMENPAI && _player.Skills.Count == 0)
       {
         try
@@ -377,9 +364,14 @@ namespace OathAuto.ViewModels
           _player.Skills.Clear();
           foreach (var skill in skills)
           {
-            // Assign the command to each skill
-            skill.CheckedChangedCommand = _skillCheckedChangedCommand;
-            _player.Skills.Add(skill);
+            var newSkill = new Skill()
+            {
+              Id = skill.Id,
+              Name = skill.Name,
+              IsSelected = false
+            };
+            newSkill.PropertyChanged += HandleEventUIChange;
+            _player.Skills.Add(newSkill);
           }
         }
         catch (Exception ex)
@@ -387,16 +379,6 @@ namespace OathAuto.ViewModels
           // Log or handle error silently
           System.Diagnostics.Debug.WriteLine($"Error loading skills: {ex.Message}");
         }
-      }
-    }
-
-    private void OnSkillCheckedChanged(object parameter)
-    {
-      var skill = parameter as Skill;
-      if (skill != null)
-      {
-        System.Diagnostics.Debug.WriteLine($"Skill {skill.SkillName} ({skill.SkillId}) checked state changed to: {skill.IsChecked}");
-        SaveSettings();
       }
     }
 
@@ -467,7 +449,6 @@ namespace OathAuto.ViewModels
 
         if (_settings.IsAutoUseResetLevelItem)
         {
-          // Find reset level item by ID in inventory
           var itemIndex = FindItemIndexInInventoryCharacter(ItemIdState.ResetLevelItemId);
           if (itemIndex != -1)
           {
@@ -523,7 +504,7 @@ namespace OathAuto.ViewModels
         // Update JSON fields
         _settings.TowerPositionsJson = JsonConvert.SerializeObject(_towerPositions);
         _settings.SelectedSkillIdsJson = JsonConvert.SerializeObject(
-          _player.Skills.Where(s => s.IsChecked).Select(s => s.SkillId).ToList()
+          _player.Skills.Where(s => s.IsSelected).Select(s => s.Id).ToList()
         );
         _settings.CheckedItemIdsJson = JsonConvert.SerializeObject(
           _player.InventoryItems.Where(i => i.IsSelected).Select(i => i.Id).ToList()
@@ -562,7 +543,6 @@ namespace OathAuto.ViewModels
             SetTrainingState(false);
           }
 
-          // Load tower positions
           if (!string.IsNullOrEmpty(_settings.TowerPositionsJson))
           {
             try
@@ -573,13 +553,13 @@ namespace OathAuto.ViewModels
                 // Unsubscribe from old positions
                 foreach (var oldPos in _towerPositions)
                 {
-                  oldPos.PropertyChanged -= TowerPosition_PropertyChanged;
+                  oldPos.PropertyChanged -= HandleEventUIChange;
                 }
 
                 _towerPositions.Clear();
                 foreach (var pos in positions)
                 {
-                  pos.PropertyChanged += TowerPosition_PropertyChanged;
+                  pos.PropertyChanged += HandleEventUIChange;
                   _towerPositions.Add(pos);
                 }
               }
@@ -600,7 +580,7 @@ namespace OathAuto.ViewModels
               {
                 foreach (var skill in _player.Skills)
                 {
-                  skill.IsChecked = skillIds.Contains(skill.SkillId);
+                  skill.IsSelected = skillIds.Contains(skill.Id);
                 }
               }
             }
@@ -642,43 +622,60 @@ namespace OathAuto.ViewModels
       }
     }
 
-    private void TowerPosition_PropertyChanged(object sender, PropertyChangedEventArgs e)
+
+    /// <summary>
+    /// Handle all prop when UI change, assign event += for it
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void HandleEventUIChange(object sender, PropertyChangedEventArgs e)
     {
-      if (e.PropertyName == nameof(TowerPosition.IsChecked))
+      if (e.PropertyName == nameof(TowerPosition.IsSelected) ||
+        e.PropertyName == nameof(InventoryItem.IsSelected) || 
+        e.PropertyName == nameof(Skill.IsSelected))
       {
         SaveSettings();
       }
-    }
 
-    private void InventoryItems_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-    {
-      // Subscribe to new items
-      if (e.NewItems != null)
+      if (e.PropertyName == nameof(Skill.IsSelected))
       {
-        foreach (InventoryItem item in e.NewItems)
+        Player.AutoAccount.Settings.SkillPlayList = new GAutoList<SkillPlayItem>();
+        foreach (var item in Player.Skills.Where(s => s.IsSelected))
         {
-          item.PropertyChanged += InventoryItem_PropertyChanged;
-        }
-      }
-
-      // Unsubscribe from old items
-      if (e.OldItems != null)
-      {
-        foreach (InventoryItem item in e.OldItems)
-        {
-          item.PropertyChanged -= InventoryItem_PropertyChanged;
+          HandleSkillCheckedChanged(item.Id);
         }
       }
     }
 
-    private void InventoryItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void HandleSkillCheckedChanged(int skillId)
     {
-      if (e.PropertyName == nameof(InventoryItem.IsSelected))
-      {
-        SaveSettings();
-      }
-    }
+      
+      SkillPlayItem skillPlayItem = new SkillPlayItem();
+      SingleSkill singleSkill = new SingleSkill();
+      
+      var skillBook = frmLogin.GAuto.SkillBookDB.FirstOrDefault(s => s.SkillID == skillId);
 
+      singleSkill.ID = skillBook.SkillID;
+      singleSkill.Name = skillBook.SkillName;
+      singleSkill.Special = skillBook.Special;
+      singleSkill.BookSlot = skillBook.BookSlot;
+      singleSkill.BuffPeriod = skillBook.BuffPeriod;
+      singleSkill.RageRequired = skillBook.RageRequired;
+      singleSkill.SkillBook = skillBook.SkillBook;
+      singleSkill.Special = skillBook.Special;
+      skillPlayItem.SkillItem = singleSkill;
+      skillPlayItem.IsEnabled = true;
+      skillPlayItem.SkillDelayInSecond = 1;
+      var a = skillId;
+      if (skillId == 395)
+      {
+        a = 394;
+      }
+
+      var skill = Player.AutoAccount.MySkills.AllSkills.FirstOrDefault(s => s.ID == a);
+      skillPlayItem.SkillItem.KeyDesc = skill.KeyDesc;
+      Player.AutoAccount.Settings.SkillPlayList.Add(skillPlayItem);
+    }
     #endregion
   }
 }

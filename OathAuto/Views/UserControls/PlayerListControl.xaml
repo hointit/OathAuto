@@ -18,6 +18,7 @@
       <ListView.View>
         <GridView x:Name="PlayerGridView">
           <GridViewColumn Header="Name" Width="160" DisplayMemberBinding="{Binding DisplayName}"/>
+          <GridViewColumn Header="UserName" Width="120" DisplayMemberBinding="{Binding UserName}"/>
           <GridViewColumn Header="HP %" Width="40" DisplayMemberBinding="{Binding HPPercent, StringFormat={}{0:F1}}"/>
           <GridViewColumn Header="MP %" Width="40" DisplayMemberBinding="{Binding MPPercent, StringFormat={}{0:F1}}"/>
           <GridViewColumn Header="Map" DisplayMemberBinding="{Binding MapLocation}"/>
