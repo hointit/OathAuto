@@ -4470,10 +4470,18 @@ public class SmartClass
                             }
                             if (flag3 || petName == "")
                             {
+                              // hoint: fix get pet LV để gọi pet
                               if (versionNum == 1 || versionNum == 2)
-                                mybase7 = tempIntValue + index4 * myref4 + 60;
+                              {
+                                mybase7 = tempIntValue + index4 * myref4 + 72;
+                              }
+                              else
+                              {
+                                mybase7 = tempIntValue + index4 * myref4 + 52;
+                              }
                               myref1 = 0;
                               SmartClass.ReadMyValueInt(account, ref myref1, mybase7);
+
                               account.MyPet.AllPets[index4].Level = myref1;
                               int myref11 = versionNum == 3 || versionNum == 4 ? tempIntValue + index4 * myref4 + 48 /*0x30*/ : tempIntValue + index4 * myref4 + 56;
                               SmartClass.ReadMyValueInt(account, ref myref11, myref11);

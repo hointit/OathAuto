@@ -118,8 +118,8 @@ namespace OathAuto.Services
           DatabaseId = account.Myself.DatabaseID,
           AutoAccount = account
         };
-
         account.Settings.cboxTuNhatVatPham = false;
+        account.Settings.cboxTuClickYes2 = true;
         return newPlayer;
       }
       catch (Exception ex)

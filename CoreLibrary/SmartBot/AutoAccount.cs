@@ -7446,6 +7446,8 @@ label_49:
 
   public void CallThuPet(int petGUID, int petDB)
   {
+    //TODO: bỏ chức năng thu pet
+    return;
     MyDLL.PostMessage(this.Target.MainWindowHandle, frmLogin.GAuto.Settings.WM_THUPET, (IntPtr) petGUID, (IntPtr) petDB);
   }
 
@@ -7837,7 +7839,7 @@ label_49:
     int petGUID = 0,
     int petDBID = 0)
   {
-    this.CallXuongNgua();
+    // this.CallXuongNgua();
     if (targetID == 0)
       targetID = this.Myself.ID;
     if (this.Myself.ID <= 0 || (itemIndex < 0 || itemIndex >= 30) && (itemIndex < 60 || itemIndex >= 90))
@@ -10517,8 +10519,9 @@ label_17:
         flag14 = false;
       if (flag14 && (flag15 || GA.IsInPhuBan(this.Myself.MapID, this)) && (double) this.MyQuai.TargetHPPercent > (double) frmLogin.GAuto.Settings.releaseHPPercent && (double) this.MyQuai.TargetHPPercent > 0.0 && this.CanAttack())
       {
-        if (this.Myself.HorseType != -1 && !this.Myself.IsTKC)
-          this.CallXuongNgua();
+        //TODO: bỏ xuống ngựa tự động vì quá phiền. 
+        //if (this.Myself.HorseType != -1 && !this.Myself.IsTKC)
+        //  this.CallXuongNgua();
         this.PlayPetAOE((int) this.Myself.CurrentTarget.PosX, (int) this.Myself.CurrentTarget.PosY);
         if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.LastActionTimeStamp >= (long) frmLogin.GAuto.Settings.ActionDelay)
         {
@@ -25476,8 +25479,12 @@ label_104:
                                 Thread.Sleep(500);
                               flag = petByName.Happiness >= 60;
                             }
-                            if (this.Myself.ActionStatus != (byte) 5 && flag && this.Myself.HorseType == -1)
-                              this.CallPetSure(this.MyPet.AlwaysActivePetName);
+                            // hoint: check trạng thái đủ level mới call pet để chống lag
+                            if (this.Myself.ActionStatus != (byte)5 && flag && this.Myself.HorseType == -1)
+                              if (this.Myself.Level >= petByName.Level - 10)
+                              {
+                                this.CallPetSure(this.MyPet.AlwaysActivePetName);
+                              }
                           }
                         }
                       }
