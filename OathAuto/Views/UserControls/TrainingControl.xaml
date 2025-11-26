@@ -12,6 +12,7 @@
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
         <RowDefinition Height="200"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
@@ -20,9 +21,7 @@
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
-      <CheckBox Content="Training" Grid.Row="0"
-          IsChecked="{Binding IsTraining, Mode=TwoWay}"
-          FontWeight="Bold"/>
+      
 
       <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="2">
         <CheckBox Content="Tự động thăng cấp khi nhỏ hơn" IsChecked="{Binding Settings.IsAutoUpLevel, Mode=TwoWay}"
@@ -39,7 +38,7 @@
 
       <CheckBox Grid.Row="2" Grid.Column="1" Content="Tự động cộng point" IsChecked="{Binding Settings.IsAutoUseAddPointItem, Mode=TwoWay}" Margin="20,5"/>
         <!-- Get and Fixed postion player -->
-      <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0 5">
+      <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0 0">
         <TextBlock VerticalAlignment="Center" Margin="0,0,10,0" Text="Cố định vị trí: "/>
         <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" Text="X:"/>
         <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding Settings.FixedX, StringFormat={}{0:F0}}"/>
@@ -47,10 +46,21 @@
         <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding Settings.FixedY, StringFormat={}{0:F0}}"/>
         <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" Text="Map:"/>
         <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding Settings.FixedMapName}"/>
-        <Button Content="..." Padding="10,2" Command="{Binding GetCurrentPositionCommand}" VerticalAlignment="Center" />
-        <Button Content="X" Padding="10,2"   Margin="10,0,15,0" Command="{Binding ClearFixedPositionCommand}" VerticalAlignment="Center" />
+        <Button Content="⊕" Width="24" Height="22" Padding="0" Command="{Binding GetCurrentPositionCommand}" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ToolTip="Get Current Position" FontSize="16" />
+        <Button Content="✖" Width="24" Height="22" Padding="0" Margin="5,0,15,0" Command="{Binding ClearFixedPositionCommand}" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ToolTip="Clear Position" Foreground="Red" FontWeight="Bold" />
       </StackPanel>
-      <GroupBox Header="Sử dụng vật phẩm" Grid.Row="4" Grid.ColumnSpan="2">
+      <!-- Pet Selection -->
+      <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,5">
+        <TextBlock VerticalAlignment="Center" Margin="0,0,10,0" Text="Pet Xuất Chiến:" />
+        <ComboBox Width="120"
+                  ItemsSource="{Binding Player.Pets}"
+                  SelectedValuePath="Id"
+                  DisplayMemberPath="Name"
+                  SelectedValue="{Binding Settings.SelectedPetId, Mode=TwoWay}"
+                  VerticalAlignment="Center" />
+        <Button Content="✖" Width="24" Height="22" Padding="0" Margin="5,0,0,0" Command="{Binding ClearSelectedPetCommand}" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ToolTip="Clear Pet Selection" Foreground="Red" FontWeight="Bold" />
+      </StackPanel>
+      <GroupBox Header="Sử dụng vật phẩm" Grid.Row="5" Grid.ColumnSpan="2">
         <ScrollViewer Grid.Row="4" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Auto" >
           <ItemsControl ItemsSource="{Binding Player.InventoryItems}">
             <ItemsControl.ItemsPanel>

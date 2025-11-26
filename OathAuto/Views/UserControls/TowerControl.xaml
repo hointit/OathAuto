@@ -1,50 +1,60 @@
 ﻿<UserControl x:Class="OathAuto.Views.UserControls.TowerControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:OathAuto.Views.UserControls"
-             mc:Ignorable="d" 
+             xmlns:converters="clr-namespace:OathAuto.Converters"
+             xmlns:models="clr-namespace:OathAuto.Models"
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
-    <GroupBox Margin="5">
-        <GroupBox.Header>
-            <CheckBox Content="Tower Mode"
-                      IsChecked="{Binding IsTowerMode, Mode=TwoWay}"
-                      FontWeight="Bold"/>
-        </GroupBox.Header>
-        <Grid Margin="10">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <StackPanel Grid.Row="0" Orientation="Horizontal">
-                <CheckBox Content="Auto Move (disabled for now)"
+  <UserControl.Resources>
+    <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
+  </UserControl.Resources>
+  <GroupBox Margin="5">
+    <Grid Margin="10">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <!-- Mode Training Options -->
+      <GroupBox Header="Player Mode" Grid.Row="0" Margin="0,0,0,10">
+        <StackPanel Margin="5" Orientation="Horizontal">
+          <RadioButton Content="None (Idle)"
+                       IsChecked="{Binding Mode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:PlayerMode.None}, Mode=TwoWay}"
+                       GroupName="PlayerMode"
+                       Margin="0, 2"/>
+          <RadioButton Content="Training Mode"
+                       IsChecked="{Binding Mode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:PlayerMode.Training}, Mode=TwoWay}"
+                       GroupName="PlayerMode"
+                       Margin="20, 2, 0, 0"/>
+          <RadioButton Content="Tower Mode"
+                       IsChecked="{Binding Mode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:PlayerMode.FightTower}, Mode=TwoWay}"
+                       GroupName="PlayerMode"
+                       Margin="20, 2, 0, 0"/>
+        </StackPanel>
+      </GroupBox>
+      <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5,0,0">
+        <CheckBox Content="Auto Move (disabled for now)"
                           IsChecked="{Binding Settings.IsAutoMoveEnabled, Mode=TwoWay}"
                           VerticalAlignment="Center"
-                          Margin="0,5"
                           IsEnabled="False"/>
-            </StackPanel>
-
-            <TextBlock Grid.Row="1"
-                       Text="Tower Positions:"
-                       Margin="0,10,0,5"
-                       FontWeight="Bold"/>
-
-            <GroupBox Grid.Row="2" Header="Select Positions to Patrol" Margin="0,5,0,0">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="200">
-                    <ItemsControl ItemsSource="{Binding TowerPositions}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                          Content="{Binding DisplayName}"
-                                          Margin="5,2"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-            </GroupBox>
-        </Grid>
-    </GroupBox>
+      </StackPanel>
+      <GroupBox Grid.Row="2" Header="Select Positions to Patrol" Margin="0,5,0,0">
+        <ItemsControl ItemsSource="{Binding TowerPositions}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <UniformGrid Columns="2"/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Content="{Binding DisplayName}"  Margin="5,2"/>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </GroupBox>
+    </Grid>
+  </GroupBox>
 </UserControl>

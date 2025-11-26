@@ -2618,6 +2618,7 @@ public class SmartClass
         ++index1;
       }
       string unicode = GA.ConvertToUnicode(tempArr, 0, count);
+      // hoint: pk ne
       if (!account.CanAttackCheckValue(attackByte))
         return;
       if (account.Settings.cboxDanhQuai && account.IsAIEnabled && !account.Myself.IsPK && !GA.IsInPhuBan(account.Myself.MapID, account) && account.Myself.Status != AllEnums.CharStatuses.GOGOGO && account.Myself.Status != AllEnums.CharStatuses.NMBUFFMAU && account.Myself.Status != AllEnums.CharStatuses.NHATBOC && (account.Settings.FightMode == AllEnums.FightingModes.DANHGOMQUAI || account.MyQuai.AllQuai.Count <= 1) && account.Myself.ActionStatus != (byte) 5 && (account.Settings.AIMode == AllEnums.AIModes.DANHQUANHDIEM || account.Settings.AIMode == AllEnums.AIModes.DANHTUDO))

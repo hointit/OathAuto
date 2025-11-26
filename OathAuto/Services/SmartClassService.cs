@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Security.Principal;
 using System.Threading;
 
@@ -111,15 +112,17 @@ namespace OathAuto.Services
           PosY = account.Myself?.PosY ?? 0,
           InCombat = account.Myself?.IsPK ?? false,
           ProcessID = account.Target?.ProcessID ?? 0,
-          isTraining = account.Myself != null && !account.Myself.StopTrain,
           Monsters = account.MyQuai?.AllQuai,
           Menpai = (AllEnums.Menpais)(account.Myself?.Menpai),
           ExpPercent = account.Myself?.ExpPercent ?? 0,
           DatabaseId = account.Myself.DatabaseID,
-          AutoAccount = account
+          AutoAccount = account,
         };
+        var a = account.MyParty;
         account.Settings.cboxTuNhatVatPham = false;
         account.Settings.cboxTuClickYes2 = true;
+        // set feed pet
+        account.Settings.numPetHPPercent = 99;
         return newPlayer;
       }
       catch (Exception ex)

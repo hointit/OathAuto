@@ -83,11 +83,13 @@
     <Compile Include="Models\LockStatus.cs" />
     <Compile Include="Models\PlayerSettings.cs" />
     <Compile Include="Models\Skill.cs" />
+    <Compile Include="Models\Pet.cs" />
     <Compile Include="Models\InventoryItem.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\Position.cs" />
     <Compile Include="Models\TowerPosition.cs" />
     <Compile Include="Models\PlayerMode.cs" />
+    <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Services\CommonService.cs" />
     <Compile Include="Services\DatabaseService.cs" />
     <Compile Include="Services\MouseInputService.cs" />
@@ -183,9 +185,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="settings.dat">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="settings.dat" />
     <None Include="TLBB.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

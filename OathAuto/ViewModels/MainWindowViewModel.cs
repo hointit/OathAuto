@@ -115,18 +115,16 @@ namespace OathAuto.ViewModels
             var isChangeMap = existingViewModel.Player.MapID != updatedPlayer.MapID;
             existingViewModel.RunAction(isChangeMap);
             var isChangeMempai = existingViewModel.Player.Menpai != updatedPlayer.Menpai;
-            if (isChangeMempai)
-            {
-              existingViewModel.LoadSkills();
-            }
+            existingViewModel.LoadSkills();
+            existingViewModel.LoadPets();
           }
           else
           {
             var newPlayerViewModel = new PlayerViewModel(updatedPlayer, _smartClassService, i);
             if (updatedPlayer.DatabaseId > 0)
             {
-              newPlayerViewModel.LoadSkills();
               newPlayerViewModel.LoadSettings();
+              newPlayerViewModel.LoadSkills();
             }
             else
             {
@@ -174,7 +172,6 @@ namespace OathAuto.ViewModels
       existingPlayer.PosY = newData.PosY;
       existingPlayer.InCombat = newData.InCombat;
       existingPlayer.ProcessID = newData.ProcessID;
-      existingPlayer.isTraining = newData.isTraining;
       existingPlayer.Monsters = newData.Monsters;
       existingPlayer.DatabaseId = newData.DatabaseId;
     }

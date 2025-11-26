@@ -28,6 +28,14 @@ namespace OathAuto.ViewModels
     private ICommand _skillCheckedChangedCommand;
     private ICommand _getCurrentPositionCommand;
     private ICommand _clearFixedPositionCommand;
+    private ICommand _clearSelectedPetCommand;
+
+    #region Commands
+    public ICommand SkillCheckedChangedCommand => _skillCheckedChangedCommand;
+    public ICommand GetCurrentPositionCommand => _getCurrentPositionCommand;
+    public ICommand ClearFixedPositionCommand => _clearFixedPositionCommand;
+    public ICommand ClearSelectedPetCommand => _clearSelectedPetCommand;
+    #endregion
     private readonly LockStatus _lockRunAction = new LockStatus() { Status = "Lock Action" };
 
     // Player mode for internal logic
@@ -50,6 +58,7 @@ namespace OathAuto.ViewModels
       // Initialize training option commands
       _getCurrentPositionCommand = new RelayCommand(ExecuteGetCurrentPosition);
       _clearFixedPositionCommand = new RelayCommand(ExecuteClearFixedPosition);
+      _clearSelectedPetCommand = new RelayCommand(ExecuteClearSelectedPet);
 
       // Initialize tower positions
       _towerPositions = new ObservableCollection<TowerPosition>
@@ -76,7 +85,7 @@ namespace OathAuto.ViewModels
 
       try
       {
-        var allItems = Player.AutoAccount.MyInventory.AllItems.Where(item => item.ItemID > 0).ToList();
+        var allItems = Player.AutoAccount.MyInventory.AllItems.Take(30).Where(item => item.ItemID > 0).ToList();
         if (allItems == null || allItems.Count == 0) return;
 
         var settings = Settings;
@@ -203,67 +212,52 @@ namespace OathAuto.ViewModels
     public double ExpPercent => _player?.ExpPercent ?? 0;
     public ObservableCollection<Models.InventoryItem> InventoryItems => _player?.InventoryItems;
     public int DatabaseId => _player.DatabaseId;
-    // Mode wrapper properties for XAML binding
-    public bool IsTraining
-    {
-      get => _playerMode == PlayerMode.Training;
-      set
-      {
-        if (IsTraining != value)
-        {
-          if (value)
-          {
-            _playerMode = PlayerMode.Training;
-            if (_settings != null) _settings.Mode = PlayerMode.Training;
-            SetTrainingState(true);
-          }
-          else if (_playerMode == PlayerMode.Training)
-          {
-            _playerMode = PlayerMode.None;
-            if (_settings != null) _settings.Mode = PlayerMode.None;
-            SetTrainingState(false);
-          }
-          OnPropertyChanged(nameof(IsTraining));
-          OnPropertyChanged(nameof(IsTowerMode));
-        }
-      }
-    }
 
-    public bool IsTowerMode
+    // Direct Mode property for XAML binding
+    public PlayerMode Mode
     {
-      get => _playerMode == PlayerMode.FightTower;
+      get => _playerMode;
       set
       {
-        if (IsTowerMode != value)
+        if (_playerMode != value)
         {
-          if (value)
+          var oldMode = _playerMode;
+          _playerMode = value;
+
+          // Update settings
+          if (_settings != null)
           {
-            _playerMode = PlayerMode.FightTower;
-            if (_settings != null) _settings.Mode = PlayerMode.FightTower;
-            SetTrainingState(false);
-            _currentPositionIndex = 0;
-            _isMovingForward = true;
-            Debug.WriteLine("Tower Mode Enabled - Starting ping-pong patrol");
+            _settings.Mode = value;
           }
-          else if (_playerMode == PlayerMode.FightTower)
+
+          // Handle mode-specific logic
+          switch (value)
           {
-            _playerMode = PlayerMode.None;
-            if (_settings != null) _settings.Mode = PlayerMode.None;
-            SetTrainingState(false);
-            Debug.WriteLine("Tower Mode Disabled");
+            case PlayerMode.None:
+              SetTrainingState(false);
+              Debug.WriteLine("None Mode - Player Idle");
+              break;
+
+            case PlayerMode.Training:
+              SetTrainingState(true);
+              Debug.WriteLine("Training Mode Enabled");
+              break;
+
+            case PlayerMode.FightTower:
+              SetTrainingState(false);
+              _currentPositionIndex = 0;
+              _isMovingForward = true;
+              Debug.WriteLine("Tower Mode Enabled - Starting ping-pong patrol");
+              break;
           }
-          OnPropertyChanged(nameof(IsTowerMode));
-          OnPropertyChanged(nameof(IsTraining));
+
+          OnPropertyChanged(nameof(Mode));
         }
       }
     }
 
 
-    #region Commands
-    public ICommand SkillCheckedChangedCommand => _skillCheckedChangedCommand;
-    public ICommand GetCurrentPositionCommand => _getCurrentPositionCommand;
-    public ICommand ClearFixedPositionCommand => _clearFixedPositionCommand;
-    #endregion
+    
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -340,11 +334,9 @@ namespace OathAuto.ViewModels
           SetTrainingState(false);
         }
 
-        // Notify wrapper properties
-        OnPropertyChanged(nameof(IsTraining));
-        OnPropertyChanged(nameof(IsTowerMode));
+        // Notify Mode property
+        OnPropertyChanged(nameof(Mode));
       }
-
       // Save settings when any property changes
       SaveSettings();
     }
@@ -359,19 +351,27 @@ namespace OathAuto.ViewModels
         {
           // Load skills from database
           var skills = _databaseService.GetSkillsByMenpai(_player.Menpai.ToString());
-
+          
           // Clear existing skills and add new ones
           _player.Skills.Clear();
+          var skillIdSeleted = JsonConvert.DeserializeObject<List<int>>(_settings.SelectedSkillIdsJson);
           foreach (var skill in skills)
           {
             var newSkill = new Skill()
             {
               Id = skill.Id,
               Name = skill.Name,
-              IsSelected = false
+              IsSelected = skillIdSeleted.Contains(skill.Id)
             };
             newSkill.PropertyChanged += HandleEventUIChange;
             _player.Skills.Add(newSkill);
+          }
+
+          // Initialize AutoAccount SkillPlayList based on selected skills
+          Player.AutoAccount.Settings.SkillPlayList = new GAutoList<SkillPlayItem>();
+          foreach (var item in _player.Skills.Where(s => s.IsSelected))
+          {
+            HandleSkillCheckedChanged(item.Id);
           }
         }
         catch (Exception ex)
@@ -379,6 +379,54 @@ namespace OathAuto.ViewModels
           // Log or handle error silently
           System.Diagnostics.Debug.WriteLine($"Error loading skills: {ex.Message}");
         }
+      }
+    }
+
+    public void LoadPets()
+    {
+      if (_player == null || _player.AutoAccount == null || _player.AutoAccount.MyPet == null)
+        return;
+
+      try
+      {
+        // Get all pets with valid IDs
+        var allPets = _player.AutoAccount.MyPet.AllPets.Where(p => p.DatabaseID > 0 || p.ID > 0).ToList();
+        if (allPets == null || allPets.Count == 0) return;
+
+        // Initialize Pets collection if empty
+        if (_player.Pets == null || _player.Pets.Count == 0)
+        {
+          _player.Pets = new ObservableCollection<Pet>();
+          foreach (var pet in allPets)
+          {
+            var newPet = new Pet()
+            {
+              Id = pet.DatabaseID,
+              Name = !string.IsNullOrEmpty(pet.PetName) ? pet.PetName : pet.DatabaseID.ToString()
+            };
+            _player.Pets.Add(newPet);
+          }
+        }
+        else
+        {
+          // Add new pets if they don't exist (check by DatabaseID)
+          foreach (var pet in allPets)
+          {
+            if (!_player.Pets.Any(p => p.Id == pet.DatabaseID))
+            {
+              var newPet = new Pet()
+              {
+                Id = pet.DatabaseID,
+                Name = !string.IsNullOrEmpty(pet.PetName) ? pet.PetName : pet.DatabaseID.ToString()
+              };
+              _player.Pets.Add(newPet);
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Debug.WriteLine($"Error loading pets: {ex.Message}");
       }
     }
 
@@ -401,6 +449,13 @@ namespace OathAuto.ViewModels
         _settings.FixedY = 0;
         _settings.FixedMapId = 0;
         _settings.FixedMapName = "";
+      }
+    }
+    private void ExecuteClearSelectedPet(object parameter)
+    {
+      if (_settings != null)
+      {
+        _settings.SelectedPetId = 0;
       }
     }
 
@@ -520,8 +575,11 @@ namespace OathAuto.ViewModels
     }
     public void LoadSettings()
     {
-      if (_databaseService == null || _player == null || _player.DatabaseId <= 0)
+      if (_databaseService == null || _player == null || _player.DatabaseId <= 0 || 
+        ( _player.Skills != null && _player.Skills.Count > 0))
+      {
         return;
+      }
       try
       {
         var loadedSettings = _databaseService.LoadPlayerSettings(_player.DatabaseId);
@@ -570,26 +628,6 @@ namespace OathAuto.ViewModels
             }
           }
 
-          // Load checked skills
-          if (!string.IsNullOrEmpty(_settings.SelectedSkillIdsJson))
-          {
-            try
-            {
-              var skillIds = JsonConvert.DeserializeObject<List<int>>(_settings.SelectedSkillIdsJson);
-              if (skillIds != null)
-              {
-                foreach (var skill in _player.Skills)
-                {
-                  skill.IsSelected = skillIds.Contains(skill.Id);
-                }
-              }
-            }
-            catch (Exception ex)
-            {
-              Debug.WriteLine($"Error loading skill selections: {ex.Message}");
-            }
-          }
-
           // Load checked inventory items
           if (!string.IsNullOrEmpty(_settings.CheckedItemIdsJson))
           {
@@ -611,6 +649,9 @@ namespace OathAuto.ViewModels
           }
 
           Debug.WriteLine($"Settings loaded for player {_player.DatabaseId}");
+
+          // Call SetPetActive to activate the selected pet
+          SetPetActive();
         }
       }
       catch (Exception ex)
@@ -622,6 +663,25 @@ namespace OathAuto.ViewModels
       }
     }
 
+
+    /// <summary>
+    /// Activates the selected pet based on SelectedPetId in settings.
+    /// This method will be implemented with the logic to call the appropriate pet activation method.
+    /// </summary>
+    private void SetPetActive()
+    {
+      if (_player == null || _player.AutoAccount == null || _settings == null)
+        return;
+
+      if (_settings.SelectedPetId <= 0)
+        return;
+
+      // TODO: Implement pet activation logic
+      // Find the pet by ID and call activation method
+      // Example: var pet = _player.Pets.FirstOrDefault(p => p.Id == _settings.SelectedPetId);
+      // if (pet != null) _player.AutoAccount.CallPetSure(pet.Name);
+      Debug.WriteLine($"SetPetActive called for pet ID: {_settings.SelectedPetId}");
+    }
 
     /// <summary>
     /// Handle all prop when UI change, assign event += for it

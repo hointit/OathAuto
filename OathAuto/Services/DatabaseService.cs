@@ -22,6 +22,9 @@ namespace OathAuto.Services
 
       // Ensure settings table exists
       CreateSettingsTableIfNotExists();
+
+      // Run migrations
+      MigrateDatabase();
     }
 
     private void CreateSettingsTableIfNotExists()
@@ -46,12 +49,52 @@ namespace OathAuto.Services
             IsAutoMoveEnabled INTEGER DEFAULT 1,
             TowerPositionsJson TEXT DEFAULT '',
             SelectedSkillIdsJson TEXT DEFAULT '',
-            CheckedItemIdsJson TEXT DEFAULT ''
+            CheckedItemIdsJson TEXT DEFAULT '',
+            SelectedPetId INTEGER DEFAULT 0
           )";
 
         using (var command = new SQLiteCommand(createTableQuery, connection))
         {
           command.ExecuteNonQuery();
+        }
+      }
+    }
+
+    private void MigrateDatabase()
+    {
+      using (var connection = new SQLiteConnection(_connectionString))
+      {
+        connection.Open();
+
+        // Check if SelectedPetId column exists
+        string checkColumnQuery = "PRAGMA table_info(PlayerSettings)";
+        bool columnExists = false;
+
+        using (var command = new SQLiteCommand(checkColumnQuery, connection))
+        {
+          using (var reader = command.ExecuteReader())
+          {
+            while (reader.Read())
+            {
+              string columnName = reader["name"].ToString();
+              if (columnName == "SelectedPetId")
+              {
+                columnExists = true;
+                break;
+              }
+            }
+          }
+        }
+
+        // Add SelectedPetId column if it doesn't exist
+        if (!columnExists)
+        {
+          string addColumnQuery = "ALTER TABLE PlayerSettings ADD COLUMN SelectedPetId INTEGER DEFAULT 0";
+          using (var command = new SQLiteCommand(addColumnQuery, connection))
+          {
+            command.ExecuteNonQuery();
+            Debug.WriteLine("Added SelectedPetId column to PlayerSettings table");
+          }
         }
       }
     }
@@ -106,12 +149,12 @@ namespace OathAuto.Services
             PlayerId, Mode, IsAutoUpLevel, IsAutoUseX2Exp, IsAutoUseResetLevelItem, IsAutoUseAddPointItem, MaxLevel,
             FixedX, FixedY, FixedMapId, FixedMapName,
             IsAutoMoveEnabled,
-            TowerPositionsJson, SelectedSkillIdsJson, CheckedItemIdsJson
+            TowerPositionsJson, SelectedSkillIdsJson, CheckedItemIdsJson, SelectedPetId
           ) VALUES (
             @PlayerId, @Mode, @IsAutoUpLevel, @IsAutoUseX2Exp, @IsAutoUseResetLevelItem, @IsAutoUseAddPointItem, @MaxLevel,
             @FixedX, @FixedY, @FixedMapId, @FixedMapName,
             @IsAutoMoveEnabled,
-            @TowerPositionsJson, @SelectedSkillIdsJson, @CheckedItemIdsJson
+            @TowerPositionsJson, @SelectedSkillIdsJson, @CheckedItemIdsJson, @SelectedPetId
           )";
 
         using (var command = new SQLiteCommand(query, connection))
@@ -131,6 +174,7 @@ namespace OathAuto.Services
           command.Parameters.AddWithValue("@TowerPositionsJson", settings.TowerPositionsJson ?? "");
           command.Parameters.AddWithValue("@SelectedSkillIdsJson", settings.SelectedSkillIdsJson ?? "");
           command.Parameters.AddWithValue("@CheckedItemIdsJson", settings.CheckedItemIdsJson ?? "");
+          command.Parameters.AddWithValue("@SelectedPetId", settings.SelectedPetId);
 
           command.ExecuteNonQuery();
         }
@@ -147,7 +191,7 @@ namespace OathAuto.Services
           SELECT PlayerId, Mode, IsAutoUpLevel, IsAutoUseX2Exp, IsAutoUseResetLevelItem, IsAutoUseAddPointItem, MaxLevel,
                  FixedX, FixedY, FixedMapId, FixedMapName,
                  IsAutoMoveEnabled,
-                 TowerPositionsJson, SelectedSkillIdsJson, CheckedItemIdsJson
+                 TowerPositionsJson, SelectedSkillIdsJson, CheckedItemIdsJson, SelectedPetId
           FROM PlayerSettings
           WHERE PlayerId = @PlayerId";
 
@@ -175,7 +219,8 @@ namespace OathAuto.Services
                 IsAutoMoveEnabled = Convert.ToInt32(reader["IsAutoMoveEnabled"]) == 1,
                 TowerPositionsJson = reader["TowerPositionsJson"]?.ToString() ?? "",
                 SelectedSkillIdsJson = reader["SelectedSkillIdsJson"]?.ToString() ?? "",
-                CheckedItemIdsJson = reader["CheckedItemIdsJson"]?.ToString() ?? ""
+                CheckedItemIdsJson = reader["CheckedItemIdsJson"]?.ToString() ?? "",
+                SelectedPetId = reader["SelectedPetId"] != DBNull.Value ? Convert.ToInt32(reader["SelectedPetId"]) : 0
               };
             }
           }
@@ -199,7 +244,8 @@ namespace OathAuto.Services
         IsAutoMoveEnabled = true,
         TowerPositionsJson = "",
         SelectedSkillIdsJson = "",
-        CheckedItemIdsJson = ""
+        CheckedItemIdsJson = "",
+        SelectedPetId = 0
       };
     }
   }

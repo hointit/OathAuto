@@ -19,6 +19,7 @@ namespace OathAuto.Models
     private string _towerPositionsJson;
     private string _selectedSkillIdsJson;
     private string _checkedItemIdsJson;
+    private int _selectedPetId = 0;
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -197,6 +198,20 @@ namespace OathAuto.Models
     {
       get => _checkedItemIdsJson;
       set => _checkedItemIdsJson = value;
+    }
+
+    // Pet Settings
+    public int SelectedPetId
+    {
+      get => _selectedPetId;
+      set
+      {
+        if (_selectedPetId != value)
+        {
+          _selectedPetId = value;
+          OnPropertyChanged(nameof(SelectedPetId));
+        }
+      }
     }
 
     protected void OnPropertyChanged(string propertyName)
