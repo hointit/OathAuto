@@ -13,8 +13,10 @@ using System.IO;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
 using System.Threading;
+using System.Timers;
 using System.Windows.Forms;
 
 #nullable disable
@@ -7429,9 +7431,16 @@ label_330:
       this.AllAutoAccounts.Add(newAccount);
     if (titleCheck == 1 || titleCheck == 99)
       newAccount.Target.CyberStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-    newAccount.BGThread = new Thread(new ThreadStart(newAccount.BGHandler));
-    newAccount.BGThread.IsBackground = true;
-    newAccount.BGThread.Start();
+
+    System.Timers.Timer _updateTimer = new System.Timers.Timer(300); // 300ms interval
+    _updateTimer.Elapsed += newAccount.OnTimerElapsed;
+    _updateTimer.AutoReset = true;
+    _updateTimer.Start();
+
+
+    //newAccount.BGThread = new Thread(new ThreadStart(newAccount.BGHandler));
+    //newAccount.BGThread.IsBackground = true;
+    //newAccount.BGThread.Start();
   }
 
   private static HashAddressPatch GetMyPatch(AutoAccount newAccount)

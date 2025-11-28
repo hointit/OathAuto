@@ -11,6 +11,7 @@ using System.IO;
 using System.Media;
 using System.Security;
 using System.Threading;
+using System.Timers;
 using System.Windows.Forms;
 
 #nullable disable
@@ -30343,237 +30344,176 @@ label_94:
     }
   }
 
+  public void OnTimerElapsed(object sender, ElapsedEventArgs e)
+  {
+    BGHandler();
+  }
+
   public void BGHandler()
   {
     if (this == null)
       return;
-    while (this.Target.BGRunner)
+    if (this != null)
     {
-      if (this != null)
+      try
       {
-        try
+        if (frmLogin.GAuto.Settings.optGCafe && !this.MyFlag.OKToInject)
         {
-          if (frmLogin.GAuto.Settings.optGCafe && !this.MyFlag.OKToInject)
+          int tempLevel = 0;
+          int tempMaxHP = 0;
+          int tempMenpai = -1;
+          int tempRage = -1;
+          if (frmLogin.GAuto.Settings.AllowReadMem)
           {
-            int tempLevel = 0;
-            int tempMaxHP = 0;
-            int tempMenpai = -1;
-            int tempRage = -1;
-            if (frmLogin.GAuto.Settings.AllowReadMem)
-            {
-              SmartClass.ReadBriefInfo(this.Target.ProcessHandle, this.Target.MyBase, ref tempLevel, ref tempMaxHP, ref tempMenpai, ref tempRage, this);
-              if (tempMaxHP > 0 && tempLevel > 0 && tempLevel <= 150 && tempMenpai >= 0 && tempMenpai <= 12 && tempRage >= 0 && tempRage <= 1000)
-                this.MyFlag.OKToInject = true;
-            }
-          }
-          if (!this.MyFlag.OKToInject || !frmLogin.GAuto.Settings.optGCafe)
-          {
-            if (frmLogin.GAuto.Settings.optGCafe)
-              goto label_20;
-          }
-          if (!this.Target.IsHooked && !this.Target.IsInjected)
-          {
-            lock (frmLogin.dlllock)
-            {
-              if (!this.Target.HasActiveProfile)
-                SmartClass.InjectDll(this);
-              else
-                SmartClass.InjectDll(this, true);
-            }
-          }
-          if (!this.Target.AICreated)
-          {
-            if (!this.Target.TempRemoved)
-            {
-              if (!frmLogin.AutoInfoOK || !(frmLogin.CompilingLanguage == "VN"))
-              {
-                if (!(frmLogin.CompilingLanguage != "VN"))
-                  goto label_20;
-              }
-              int loginAction = this.MyFlag.LoginAction;
-              frmMain.HookToProcess(this, (uint) this.Target.ProcessID);
-              this.MyFlag.LoginAction = loginAction;
-            }
+            SmartClass.ReadBriefInfo(this.Target.ProcessHandle, this.Target.MyBase, ref tempLevel, ref tempMaxHP, ref tempMenpai, ref tempRage, this);
+            if (tempMaxHP > 0 && tempLevel > 0 && tempLevel <= 150 && tempMenpai >= 0 && tempMenpai <= 12 && tempRage >= 0 && tempRage <= 1000)
+              this.MyFlag.OKToInject = true;
           }
         }
-        catch (Exception ex)
+        if (!this.MyFlag.OKToInject || !frmLogin.GAuto.Settings.optGCafe)
         {
-          GA.WriteUserLog(frmMain.langBaoHook + ex.Message, this);
+          if (frmLogin.GAuto.Settings.optGCafe)
+            goto label_20;
         }
-label_20:
-        try
+        if (!this.Target.IsHooked && !this.Target.IsInjected)
+        {
+          lock (frmLogin.dlllock)
+          {
+            if (!this.Target.HasActiveProfile)
+              SmartClass.InjectDll(this);
+            else
+              SmartClass.InjectDll(this, true);
+          }
+        }
+        if (!this.Target.AICreated)
         {
           if (!this.Target.TempRemoved)
           {
-            int num1 = 3000;
-            int num2 = 1000;
-            if (!frmLogin.GAuto.Settings.LamNheAuto)
+            if (!frmLogin.AutoInfoOK || !(frmLogin.CompilingLanguage == "VN"))
             {
+              if (!(frmLogin.CompilingLanguage != "VN"))
+                goto label_20;
+            }
+            int loginAction = this.MyFlag.LoginAction;
+            frmMain.HookToProcess(this, (uint)this.Target.ProcessID);
+            this.MyFlag.LoginAction = loginAction;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        GA.WriteUserLog(frmMain.langBaoHook + ex.Message, this);
+      }
+    label_20:
+      try
+      {
+        if (!this.Target.TempRemoved)
+        {
+          int num1 = 3000;
+          int num2 = 1000;
+          if (!frmLogin.GAuto.Settings.LamNheAuto)
+          {
+            this.MyFlag.Slow3000Read = true;
+            this.MyFlag.Slow1000Read = true;
+            this.MyFlag.Slow1MinRead = true;
+          }
+          else
+          {
+            this.MyFlag.Slow3000Read = false;
+            this.MyFlag.Slow1000Read = false;
+            if (this.MyFlag.Slow3000ReadStamp < this.nowStamp())
+            {
+              this.MyFlag.Slow3000ReadStamp = this.nowStamp() + (long)num1;
               this.MyFlag.Slow3000Read = true;
+            }
+            if (this.MyFlag.Slow1000ReadStamp < this.nowStamp())
+            {
+              this.MyFlag.Slow1000ReadStamp = this.nowStamp() + (long)num2;
               this.MyFlag.Slow1000Read = true;
+            }
+            if (this.MyFlag.Slow1MinReadStamp < this.nowStamp())
+            {
+              this.MyFlag.Slow1MinReadStamp = this.nowStamp() + 60000L;
               this.MyFlag.Slow1MinRead = true;
             }
-            else
-            {
-              this.MyFlag.Slow3000Read = false;
-              this.MyFlag.Slow1000Read = false;
-              if (this.MyFlag.Slow3000ReadStamp < this.nowStamp())
-              {
-                this.MyFlag.Slow3000ReadStamp = this.nowStamp() + (long) num1;
-                this.MyFlag.Slow3000Read = true;
-              }
-              if (this.MyFlag.Slow1000ReadStamp < this.nowStamp())
-              {
-                this.MyFlag.Slow1000ReadStamp = this.nowStamp() + (long) num2;
-                this.MyFlag.Slow1000Read = true;
-              }
-              if (this.MyFlag.Slow1MinReadStamp < this.nowStamp())
-              {
-                this.MyFlag.Slow1MinReadStamp = this.nowStamp() + 60000L;
-                this.MyFlag.Slow1MinRead = true;
-              }
-            }
-            SmartClass.ReadMemory(this);
-            SmartClass.ProcessBocRing(this);
-            SmartClass.ProcessMsgRing(this);
-            SmartClass.ProcessNguoiRing(this);
-            SmartClass.ProcessQuaiRing(this);
-            SmartClass.ProcessPackets(this);
-            SmartClass.ProcessVariables(this);
-            SmartClass.ProcessAIMsg(this);
           }
+          SmartClass.ReadMemory(this);
+          SmartClass.ProcessBocRing(this);
+          SmartClass.ProcessMsgRing(this);
+          SmartClass.ProcessNguoiRing(this);
+          SmartClass.ProcessQuaiRing(this);
+          SmartClass.ProcessPackets(this);
+          SmartClass.ProcessVariables(this);
+          SmartClass.ProcessAIMsg(this);
         }
-        catch (Exception ex)
+      }
+      catch (Exception ex)
+      {
+        if (ex.Message == "Thread was being aborted.")
         {
-          if (ex.Message == "Thread was being aborted.")
-          {
-            if (GA.isVipMember())
-              GA.WriteUserLog("BG Thread báo thread abort, không quan tâm", this);
-          }
-          else
-          {
-            if (!this.Target.HasException)
-              GA.WriteUserLog($"{frmMain.langReportBGT}{ex.Message} Stack: {ex.StackTrace.ToString()}", this);
-            this.Target.HasException = true;
-          }
+          if (GA.isVipMember())
+            GA.WriteUserLog("BG Thread báo thread abort, không quan tâm", this);
         }
-        if (this.Myself != null)
+        else
         {
-          if (!this.Myself.SetHotKey)
-          {
-            try
-            {
-              this.Myself.SetHotKey = true;
-              for (int index = 0; index < GA.ActiveHotKeys.Count; ++index)
-              {
-                if (GA.ActiveHotKeys[index].KeyMessage == GA.DefaultHotKeys[index].KeyMessage && (GA.ActiveHotKeys[index].KeyValue != GA.DefaultHotKeys[index].KeyValue || GA.ActiveHotKeys[index].Changed))
-                {
-                  this.CallUpdateHotKey(index, GA.ActiveHotKeys[index].KeyValue);
-                  GA.ActiveHotKeys[index].Changed = false;
-                }
-              }
-            }
-            catch (Exception ex)
-            {
-              GA.WriteUserLog(frmMain.langBaoHook2 + ex.Message, this);
-            }
-          }
+          if (!this.Target.HasException)
+            GA.WriteUserLog($"{frmMain.langReportBGT}{ex.Message} Stack: {ex.StackTrace.ToString()}", this);
+          this.Target.HasException = true;
         }
-        if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Target.BGThreadStamp >= 2000L)
+      }
+      if (this.Myself != null)
+      {
+        if (!this.Myself.SetHotKey)
         {
-          this.Target.BGThreadStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-          this.Target.BGRandom = frmLogin.GlobalTimer.ElapsedMilliseconds;
-        }
-        if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Target.sequenceStamp > 2000L)
-        {
-          this.Target.sequenceStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
           try
           {
-            if (!this.Target.DLLRead && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.StartingStamp >= 5000L)
+            this.Myself.SetHotKey = true;
+            for (int index = 0; index < GA.ActiveHotKeys.Count; ++index)
             {
-              SmartClass.ReadMyValueUInt(this, ref this.Target.DLLPatchedValue, this.Target.DLLChecking + this.Target.ExeBase + 4096 /*0x1000*/);
-              if (this.Target.DLLPatchedValue == 6971548U)
-                this.Target.DLLRead = true;
-            }
-            if (this.Target.DLLRead)
-            {
-              if (!this.Target.ThreadDied)
+              if (GA.ActiveHotKeys[index].KeyMessage == GA.DefaultHotKeys[index].KeyMessage && (GA.ActiveHotKeys[index].KeyValue != GA.DefaultHotKeys[index].KeyValue || GA.ActiveHotKeys[index].Changed))
               {
-                SmartClass.ReadMyValueUInt(this, ref this.Target.DLLPatchedValue, this.Target.DLLChecking + this.Target.ExeBase + 4096 /*0x1000*/);
-                if (this.Target.DLLPatchedValue != 6971548U)
-                {
-                  if (this.Target.DLLPatchedValue != 0U)
-                  {
-                    if (!this.Target.DLLExit)
-                    {
-                      this.Target.ThreadDied = true;
-                      this.Target.DLLRead = false;
-                      this.Target.ThreadDiedStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                      this.CallBringWindowUp(this.Target.MainWindowHandle);
-                    }
-                  }
-                }
+                this.CallUpdateHotKey(index, GA.ActiveHotKeys[index].KeyValue);
+                GA.ActiveHotKeys[index].Changed = false;
               }
             }
           }
           catch (Exception ex)
           {
-            GA.WriteUserLog(frmMain.langBaoThread, this);
+            GA.WriteUserLog(frmMain.langBaoHook2 + ex.Message, this);
           }
         }
-        if (frmLogin.BlockChatStamp == 0L || frmLogin.BlockChatStamp > 0L && frmLogin.GlobalTimer.ElapsedMilliseconds - frmLogin.BlockChatStamp >= 900000L)
-        {
-          frmLogin.BlockChatStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-          if (!frmLogin.GAuto.Settings.BlockChat)
-            MyDLL.PostMessage(this.Target.MainWindowHandle, frmLogin.GAuto.Settings.WM_BLOCKCHAT, IntPtr.Zero, IntPtr.Zero);
-          else
-            MyDLL.PostMessage(this.Target.MainWindowHandle, frmLogin.GAuto.Settings.WM_BLOCKCHAT, (IntPtr) 1, IntPtr.Zero);
-        }
-        if (this.Myself.ID <= 0)
-        {
-          try
-          {
-            if (this.Target.PacketStamp != 0L)
-              this.Target.PacketStamp = 0L;
-            if (this.Target.DLLCounter != 0L)
-              this.Target.DLLCounter = 0L;
-          }
-          catch (Exception ex)
-          {
-          }
-        }
-        if (this.Target.TempRemoved)
-        {
-          try
-          {
-            if (this.Target.PacketStamp != 0L)
-              this.Target.PacketStamp = 0L;
-            if (this.Target.DLLCounter != 0L)
-              this.Target.DLLCounter = 0L;
-          }
-          catch (Exception ex)
-          {
-          }
-        }
+      }
+      if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Target.BGThreadStamp >= 2000L)
+      {
+        this.Target.BGThreadStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+        this.Target.BGRandom = frmLogin.GlobalTimer.ElapsedMilliseconds;
+      }
+      if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Target.sequenceStamp > 2000L)
+      {
+        this.Target.sequenceStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
         try
         {
-          if (this.Target.PacketStamp > 0L)
+          if (!this.Target.DLLRead && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.StartingStamp >= 5000L)
           {
-            if (this.Target.DLLCounter > 0L)
+            SmartClass.ReadMyValueUInt(this, ref this.Target.DLLPatchedValue, this.Target.DLLChecking + this.Target.ExeBase + 4096 /*0x1000*/);
+            if (this.Target.DLLPatchedValue == 6971548U)
+              this.Target.DLLRead = true;
+          }
+          if (this.Target.DLLRead)
+          {
+            if (!this.Target.ThreadDied)
             {
-              if (this.Target.DLLCounter - this.Target.PacketStamp >= 180000L)
+              SmartClass.ReadMyValueUInt(this, ref this.Target.DLLPatchedValue, this.Target.DLLChecking + this.Target.ExeBase + 4096 /*0x1000*/);
+              if (this.Target.DLLPatchedValue != 6971548U)
               {
-                if (frmLogin.GAuto.Settings.TuThoatGameDis)
+                if (this.Target.DLLPatchedValue != 0U)
                 {
-                  GA.WriteUserLog(frmMain.langOutGameDisc, this, (object) (this.Target.DLLCounter - this.Target.PacketStamp).ToString(), (object) this.Target.DLLCounter.ToString(), (object) this.Target.PacketStamp.ToString());
-                  this.Target.PacketStamp = 0L;
-                  this.CallOutGame();
-                  try
+                  if (!this.Target.DLLExit)
                   {
-                    new SoundPlayer("disconnect.wav").Play();
-                  }
-                  catch (Exception ex)
-                  {
+                    this.Target.ThreadDied = true;
+                    this.Target.DLLRead = false;
+                    this.Target.ThreadDiedStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                    this.CallBringWindowUp(this.Target.MainWindowHandle);
                   }
                 }
               }
@@ -30582,24 +30522,87 @@ label_20:
         }
         catch (Exception ex)
         {
+          GA.WriteUserLog(frmMain.langBaoThread, this);
         }
       }
-      if (frmLogin.LastGLoginThread.Contains(this.BGThread.ManagedThreadId) && frmLogin.GAuto.AllAutoAccounts.Count == 0)
+      if (frmLogin.BlockChatStamp == 0L || frmLogin.BlockChatStamp > 0L && frmLogin.GlobalTimer.ElapsedMilliseconds - frmLogin.BlockChatStamp >= 900000L)
       {
-        if (this.AIThread == null)
+        frmLogin.BlockChatStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+        if (!frmLogin.GAuto.Settings.BlockChat)
+          MyDLL.PostMessage(this.Target.MainWindowHandle, frmLogin.GAuto.Settings.WM_BLOCKCHAT, IntPtr.Zero, IntPtr.Zero);
+        else
+          MyDLL.PostMessage(this.Target.MainWindowHandle, frmLogin.GAuto.Settings.WM_BLOCKCHAT, (IntPtr)1, IntPtr.Zero);
+      }
+      if (this.Myself.ID <= 0)
+      {
+        try
         {
-          try
+          if (this.Target.PacketStamp != 0L)
+            this.Target.PacketStamp = 0L;
+          if (this.Target.DLLCounter != 0L)
+            this.Target.DLLCounter = 0L;
+        }
+        catch (Exception ex)
+        {
+        }
+      }
+      if (this.Target.TempRemoved)
+      {
+        try
+        {
+          if (this.Target.PacketStamp != 0L)
+            this.Target.PacketStamp = 0L;
+          if (this.Target.DLLCounter != 0L)
+            this.Target.DLLCounter = 0L;
+        }
+        catch (Exception ex)
+        {
+        }
+      }
+      try
+      {
+        if (this.Target.PacketStamp > 0L)
+        {
+          if (this.Target.DLLCounter > 0L)
           {
-            frmLogin.LastGLoginThread.Clear();
-            this.Target.BGRunner = false;
-          }
-          catch (Exception ex)
-          {
+            if (this.Target.DLLCounter - this.Target.PacketStamp >= 180000L)
+            {
+              if (frmLogin.GAuto.Settings.TuThoatGameDis)
+              {
+                GA.WriteUserLog(frmMain.langOutGameDisc, this, (object)(this.Target.DLLCounter - this.Target.PacketStamp).ToString(), (object)this.Target.DLLCounter.ToString(), (object)this.Target.PacketStamp.ToString());
+                this.Target.PacketStamp = 0L;
+                this.CallOutGame();
+                try
+                {
+                  new SoundPlayer("disconnect.wav").Play();
+                }
+                catch (Exception ex)
+                {
+                }
+              }
+            }
           }
         }
       }
-      Thread.Sleep(frmLogin.GAuto.Settings.numDelayTrue);
+      catch (Exception ex)
+      {
+      }
     }
+    if (frmLogin.LastGLoginThread.Contains(this.BGThread.ManagedThreadId) && frmLogin.GAuto.AllAutoAccounts.Count == 0)
+    {
+      if (this.AIThread == null)
+      {
+        try
+        {
+          frmLogin.LastGLoginThread.Clear();
+          this.Target.BGRunner = false;
+        }
+        catch (Exception ex)
+        {
+        }
+      }
+    }
+    Thread.Sleep(frmLogin.GAuto.Settings.numDelayTrue);
     this.MyFlag.EndBG = true;
   }
 
