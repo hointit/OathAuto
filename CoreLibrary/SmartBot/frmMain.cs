@@ -3747,11 +3747,12 @@ label_44:
         if (account.Target.VersionNum < 10)
         {
           account.Settings.AIWhileLoop = true;
-          if (account.AIThread == null)
+          if (account.AIThreadTimer == null)
           {
-            account.AIThread = new Thread(new ThreadStart(account.AIThreadFunction));
-            account.AIThread.IsBackground = true;
-            account.AIThread.Start();
+            account.AIThreadTimer = new System.Timers.Timer();
+            account.AIThreadTimer.Elapsed += account.OnAIThreadTimerElapsed;
+            account.AIThreadTimer.AutoReset = true;
+            account.AIThreadTimer.Start();
           }
         }
         account.SaveWindowHandle();

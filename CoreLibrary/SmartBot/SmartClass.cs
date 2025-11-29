@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -3283,6 +3284,7 @@ public class SmartClass
         {
           QuaiIndividual quaiIndividual = account.MyQuai.AllQuai[index];
           bool flag1 = false;
+          // TODO: lỗi
           if (quaiIndividual.ID != -1 && quaiIndividual.HPPointer > 0 && quaiIndividual.QuaiType != (byte) 4)
           {
             byte[] lpBuffer = new byte[4];
@@ -4806,21 +4808,20 @@ public class SmartClass
                         {
                           for (int index11 = 0; index11 < account.MySkills.SkillDelays.Count; ++index11)
                           {
-                            for (int index12 = 0; index12 < frmLogin.GAuto.SkillBookDB.Count; ++index12)
+                            var tempSkill = frmLogin.GAuto.SkillBookDB.First(s => account.MySkills.SkillDelays[index11].SkillBook == s.SkillBook
+                                && account.MySkills.SkillDelays[index11].BookSlot == s.BookSlot
+                                && (account.Myself.Menpai == s.RealMenpai || s.RealMenpai == AllEnums.Menpais.ALLPHAI));
+                            if (tempSkill != null)
                             {
-                              if (account.MySkills.SkillDelays[index11].SkillBook == frmLogin.GAuto.SkillBookDB[index12].SkillBook && account.MySkills.SkillDelays[index11].BookSlot == frmLogin.GAuto.SkillBookDB[index12].BookSlot && (account.Myself.Menpai == frmLogin.GAuto.SkillBookDB[index12].RealMenpai || frmLogin.GAuto.SkillBookDB[index12].RealMenpai == AllEnums.Menpais.ALLPHAI))
-                              {
-                                account.MySkills.SkillDelays[index11].SkillID = frmLogin.GAuto.SkillBookDB[index12].SkillID;
-                                account.MySkills.SkillDelays[index11].RageRequired = frmLogin.GAuto.SkillBookDB[index12].RageRequired;
-                                account.MySkills.SkillDelays[index11].IsAttackPhat = frmLogin.GAuto.SkillBookDB[index12].IsAttackPhat;
-                                account.MySkills.SkillDelays[index11].IsBuffPhat = frmLogin.GAuto.SkillBookDB[index12].IsBuffPhat;
-                                account.MySkills.SkillDelays[index11].PKSlot = frmLogin.GAuto.SkillBookDB[index12].PKSlot;
-                                account.MySkills.SkillDelays[index11].TrainSlot = frmLogin.GAuto.SkillBookDB[index12].TrainSlot;
-                                account.MySkills.SkillDelays[index11].Special = frmLogin.GAuto.SkillBookDB[index12].Special;
-                                account.MySkills.SkillDelays[index11].BuffPeriod = frmLogin.GAuto.SkillBookDB[index12].BuffPeriod;
-                                account.MySkills.SkillDelays[index11].FoundInList = true;
-                                break;
-                              }
+                              account.MySkills.SkillDelays[index11].SkillID = tempSkill.SkillID;
+                              account.MySkills.SkillDelays[index11].RageRequired = tempSkill.RageRequired;
+                              account.MySkills.SkillDelays[index11].IsAttackPhat = tempSkill.IsAttackPhat;
+                              account.MySkills.SkillDelays[index11].IsBuffPhat = tempSkill.IsBuffPhat;
+                              account.MySkills.SkillDelays[index11].PKSlot = tempSkill.PKSlot;
+                              account.MySkills.SkillDelays[index11].TrainSlot = tempSkill.TrainSlot;
+                              account.MySkills.SkillDelays[index11].Special = tempSkill.Special;
+                              account.MySkills.SkillDelays[index11].BuffPeriod = tempSkill.BuffPeriod;
+                              account.MySkills.SkillDelays[index11].FoundInList = true;
                             }
                           }
                           if (account.Myself.Menpai != AllEnums.Menpais.THIEULAM)
@@ -4865,6 +4866,8 @@ public class SmartClass
                                 }
                                 account.MySkills.AllSkills[account.MySkills.IDChangeList[index13]].Searched = true;
                                 account.MySkills.AllSkills[account.MySkills.IDChangeList[index13]].Name = account.Myself.Menpai == AllEnums.Menpais.QUYCOC ? GA.GetValidSkillName(GA.GetSkillName(account.MySkills.AllSkills[account.MySkills.IDChangeList[index13]].ID)) : GA.GetSkillName(account.MySkills.AllSkills[account.MySkills.IDChangeList[index13]].ID);
+                                
+                                //TODO: lỗi
                                 account.MySkills.AllSkills[account.MySkills.IDChangeList[index13]].KeyDesc = GA.GetSkillButton(account.MySkills.AllSkills[account.MySkills.IDChangeList[index13]].ID, account);
                                 SmartClass.AdjustSkillButton(account, index13);
                               }
@@ -5452,6 +5455,7 @@ public class SmartClass
 
   private static void AdjustSkillButton(AutoAccount account, int i)
   {
+    // TODO: lỗi
     if (account.Settings.SkillPlayList.Count > 0 && account.MySkills.AllSkills[account.MySkills.IDChangeList[i]].IsAttackPhat == 1)
     {
       for (int index = account.Settings.SkillPlayList.Count - 1; index >= 0; --index)
@@ -6421,7 +6425,7 @@ public class SmartClass
           }
           if (!SmartClass.Exiting)
           {
-            Process[] processes = Process.GetProcesses();
+            Process[] processes = Process.GetProcessesByName("Game");
             bool flag3 = false;
             if (processes != null)
             {
@@ -6824,7 +6828,12 @@ public class SmartClass
                       try
                       {
                         F.UnhookProcess(allAutoAccount, true);
-                        allAutoAccount.AIThread = (Thread) null;
+                        if (allAutoAccount.AIThreadTimer != null)
+                        {
+                          allAutoAccount.AIThreadTimer = null;
+                          allAutoAccount.AIThreadTimer.Stop();
+                        }
+                        
                         if (allAutoAccount.AutoProfile != null)
                         {
                           allAutoAccount.AutoProfile.IsHandled = false;
@@ -7312,8 +7321,8 @@ label_330:
         frmLogin.GAuto.AllAutoAccounts[i].AutoProfile.InvalidPassword = false;
         frmLogin.GAuto.AllAutoAccounts[i].AutoProfile.RefAutoAccount = (AutoAccount) null;
       }
-      if (unhook && frmLogin.GAuto.AllAutoAccounts[i].BGThread != null && unhook)
-        frmLogin.GAuto.AllAutoAccounts[i].BGThread.Abort();
+      if (unhook && frmLogin.GAuto.AllAutoAccounts[i].BGThreadTimer != null && unhook)
+        frmLogin.GAuto.AllAutoAccounts[i].BGThreadTimer.Stop();
 
       Debug.WriteLine("AICreated 1");
       frmLogin.GAuto.AllAutoAccounts[i].Target.AICreated = false;
@@ -7335,8 +7344,8 @@ label_330:
       F.UnhookProcess(frmLogin.GAuto.AllAutoAccounts[i], unhook, isToReset);
       if (!unhook)
         return;
-      if (frmLogin.GAuto.AllAutoAccounts[i].AIThread != null)
-        frmLogin.GAuto.AllAutoAccounts[i].AIThread.Abort();
+      if (frmLogin.GAuto.AllAutoAccounts[i].AIThreadTimer != null)
+        frmLogin.GAuto.AllAutoAccounts[i].AIThreadTimer.Stop();
       frmLogin.GAuto.AllAutoAccounts[i].Target.NeedToAbort2 = true;
       if (unhook)
         frmLogin.GAuto.Settings.ProcessList.Remove(frmLogin.GAuto.AllAutoAccounts[i].Target.ProcessID);
@@ -7432,10 +7441,10 @@ label_330:
     if (titleCheck == 1 || titleCheck == 99)
       newAccount.Target.CyberStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
 
-    System.Timers.Timer _updateTimer = new System.Timers.Timer(300); // 300ms interval
-    _updateTimer.Elapsed += newAccount.OnTimerElapsed;
-    _updateTimer.AutoReset = true;
-    _updateTimer.Start();
+    newAccount.BGThreadTimer = new System.Timers.Timer(300); // 300ms interval
+    newAccount.BGThreadTimer.Elapsed += newAccount.OnBGThreadTimerElapsed;
+    newAccount.BGThreadTimer.AutoReset = true;
+    newAccount.BGThreadTimer.Start();
 
 
     //newAccount.BGThread = new Thread(new ThreadStart(newAccount.BGHandler));
@@ -7932,9 +7941,6 @@ label_330:
   {
     lock (frmLogin.dllinjectlock)
     {
-      GLoginHook = false;
-      if (GLoginHook && !frmLogin.LastGLoginThread.Contains(newAccount.BGThread.ManagedThreadId))
-        frmLogin.LastGLoginThread.Add(newAccount.BGThread.ManagedThreadId);
       SmartClass.KickMyAss(newAccount);
       if (File.Exists(frmLogin.GAuto.Settings.BaseDllName))
       {

@@ -4,6 +4,7 @@ using OathAuto.Models;
 using OathAuto.Services;
 using SmartBot;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -43,7 +44,6 @@ namespace OathAuto.ViewModels
 
     // Settings - bound directly to UI
     private PlayerSettings _settings;
-
     public PlayerViewModel(Player player, SmartClassService smartClassService, int accountIndex)
     {
       _player = player ?? new Player();
@@ -55,25 +55,17 @@ namespace OathAuto.ViewModels
         _databaseService = new DatabaseService(dbPath);
       }
 
+      // đối với list, khi change thuộc tính trên UI thì phải khởi tạo cái này cho nó
+      foreach (var item in _towerPositions)
+      {
+        item.PropertyChanged += HandleEventUIChange;
+      }
+
       // Initialize training option commands
       _getCurrentPositionCommand = new RelayCommand(ExecuteGetCurrentPosition);
       _clearFixedPositionCommand = new RelayCommand(ExecuteClearFixedPosition);
       _clearSelectedPetCommand = new RelayCommand(ExecuteClearSelectedPet);
-
-      // Initialize tower positions
-      _towerPositions = new ObservableCollection<TowerPosition>
-      {
-        new TowerPosition { Name = "Vị trí 1", X = 26, Y = 36, IsSelected = true },
-        new TowerPosition { Name = "Vị trí 2", X = 36, Y = 34, IsSelected = true },
-        new TowerPosition { Name = "Vị trí 3", X = 36, Y = 24, IsSelected = true },
-        new TowerPosition { Name = "Vị trí 4", X = 24, Y = 23, IsSelected = true }
-      };
-
-      // Subscribe to tower position property changes
-      foreach (var pos in _towerPositions)
-      {
-        pos.PropertyChanged += HandleEventUIChange;
-      }
+      Debug.WriteLine("--------------------------------INIT PLAYER VIEWMODLE----------------------");
     }
 
     public void LoadPlayerInventory()
@@ -244,10 +236,8 @@ namespace OathAuto.ViewModels
               break;
 
             case PlayerMode.FightTower:
-              SetTrainingState(false);
-              _currentPositionIndex = 0;
-              _isMovingForward = true;
-              Debug.WriteLine("Tower Mode Enabled - Starting ping-pong patrol");
+              SetTrainingState(true);
+              Debug.WriteLine("Tower Mode Enabled");
               break;
           }
 
@@ -287,7 +277,6 @@ namespace OathAuto.ViewModels
           if (_playerMode == PlayerMode.Training)
           {
             ModeToFixedPosition();
-
             SetTrainingState(true);
           }
           UpLevel();
@@ -299,13 +288,17 @@ namespace OathAuto.ViewModels
 
     private void ModeToFixedPosition()
     {
-      if (_settings != null && _settings.FixedMapId == _player.MapID && (Math.Abs(_settings.FixedX - _player.PosX) > 5 || Math.Abs(_player.PosY - _settings.FixedY) > 5))
+      if (_settings != null && _settings.FixedMapId == _player.MapID && _settings.FixedX != 0 && _settings.FixedX != 0)
       {
-        ThreadPool.QueueUserWorkItem(state1 =>
+        var distance = GA.CalculateDistance(_settings.FixedX, _settings.FixedY, _player.PosX, _player.PosY);
+        if (distance >= 5.0)
         {
-          this._player.AutoAccount.CallMoveTo(_settings.FixedX, _settings.FixedY);
-          Thread.Sleep(2000);
-        });
+          ThreadPool.QueueUserWorkItem(state1 =>
+          {
+            this._player.AutoAccount.CallMoveTo(_settings.FixedX, _settings.FixedY);
+            Thread.Sleep(2000);
+          });
+        }      
       }
     }
 
@@ -318,16 +311,9 @@ namespace OathAuto.ViewModels
         _playerMode = _settings.Mode;
 
         // Update training state based on mode
-        if (_playerMode == PlayerMode.Training)
-        {
-          SetTrainingState(true);
-        }
-        else if (_playerMode == PlayerMode.FightTower)
+        if (_playerMode == PlayerMode.None)
         {
           SetTrainingState(false);
-          _currentPositionIndex = 0;
-          _isMovingForward = true;
-          Debug.WriteLine("Tower Mode Enabled - Starting ping-pong patrol");
         }
         else
         {
@@ -343,6 +329,7 @@ namespace OathAuto.ViewModels
 
     public void LoadSkills()
     {
+      if (_settings == null) return;
       if (_player == null || _databaseService == null)
         return;
       if (_player.Menpai != Menpais.NOMENPAI && _player.Skills.Count == 0)
@@ -354,7 +341,7 @@ namespace OathAuto.ViewModels
           
           // Clear existing skills and add new ones
           _player.Skills.Clear();
-          var skillIdSeleted = JsonConvert.DeserializeObject<List<int>>(_settings.SelectedSkillIdsJson);
+          var skillIdSeleted = JsonConvert.DeserializeObject<List<int>>(_settings.SelectedSkillIdsJson) ?? new List<int>();
           foreach (var skill in skills)
           {
             var newSkill = new Skill()
@@ -466,9 +453,19 @@ namespace OathAuto.ViewModels
     /// <param name="enabled">True to enable training, false to disable</param>
     private void SetTrainingState(bool enabled)
     {
-      if (_player?.AutoAccount != null && _player.AutoAccount.IsAIEnabled != enabled)
+      if (_player?.AutoAccount != null && _player.AutoAccount.AIThreadTimer != null)
       {
-        _player.AutoAccount.IsAIEnabled = enabled;
+        if (_player.AutoAccount.AIThreadTimer.Enabled != enabled)
+        {
+          if (enabled)
+          {
+            _player.AutoAccount.AIThreadTimer.Start();
+          }
+          else
+          {
+            _player.AutoAccount.AIThreadTimer.Stop();
+          }
+        }
       }
     }
 
@@ -476,7 +473,7 @@ namespace OathAuto.ViewModels
     {
       try
       {
-        if (_settings.IsAutoUpLevel && _player.Level < _settings.MaxLevel)
+        if (_settings != null && _settings.IsAutoUpLevel && _player.Level < _settings.MaxLevel)
         {
           _player.AutoAccount.CallUpLevelPacket();
         }
@@ -493,9 +490,9 @@ namespace OathAuto.ViewModels
       {
         if (_settings == null) return;
 
-        if (_settings.IsAutoUseX2Exp)
+        if (_settings.IsAutoUseX2Exp && Player.MapID != Constant.DaiLyMapId)
         {
-          var itemIndex = FindItemIndexInInventoryCharacter(ItemIdState.X2ExpItemId);
+          var itemIndex = FindItemIndexInInventoryCharacter(Constant.X2ExpItemId);
           if (itemIndex != -1)
           {
             _player.AutoAccount.CallUseItem(itemIndex, _player.Id);
@@ -504,7 +501,7 @@ namespace OathAuto.ViewModels
 
         if (_settings.IsAutoUseResetLevelItem)
         {
-          var itemIndex = FindItemIndexInInventoryCharacter(ItemIdState.ResetLevelItemId);
+          var itemIndex = FindItemIndexInInventoryCharacter(Constant.ResetLevelItemId);
           if (itemIndex != -1)
           {
             _player.AutoAccount.CallUseItem(itemIndex, _player.Id);
@@ -514,7 +511,7 @@ namespace OathAuto.ViewModels
         if (_settings.IsAutoUseAddPointItem)
         {
           // Find add point item by ID in inventory
-          var itemIndex = FindItemIndexInInventoryCharacter(ItemIdState.AddPointItemId);
+          var itemIndex = FindItemIndexInInventoryCharacter(Constant.AddPointItemId);
           if (itemIndex != -1)
           {
             _player.AutoAccount.CallUseItem(itemIndex, _player.Id);
@@ -556,8 +553,6 @@ namespace OathAuto.ViewModels
         return;
       try
       {
-        // Update JSON fields
-        _settings.TowerPositionsJson = JsonConvert.SerializeObject(_towerPositions);
         _settings.SelectedSkillIdsJson = JsonConvert.SerializeObject(
           _player.Skills.Where(s => s.IsSelected).Select(s => s.Id).ToList()
         );
@@ -565,7 +560,7 @@ namespace OathAuto.ViewModels
           _player.InventoryItems.Where(i => i.IsSelected).Select(i => i.Id).ToList()
         );
 
-        _databaseService.SavePlayerSettings(_settings);
+        _databaseService.SavePlayerSettings(_settings, Player.Name);
         Debug.WriteLine($"Settings saved for player {_player.DatabaseId}");
       }
       catch (Exception ex)
@@ -582,7 +577,7 @@ namespace OathAuto.ViewModels
       }
       try
       {
-        var loadedSettings = _databaseService.LoadPlayerSettings(_player.DatabaseId);
+        var loadedSettings = _databaseService.LoadPlayerSettings(_player.DatabaseId, _player.Name);
         if (loadedSettings != null)
         {
           // Set the Settings property with loaded data
@@ -592,40 +587,13 @@ namespace OathAuto.ViewModels
           _playerMode = _settings.Mode;
 
           // Update training state based on mode
-          if (_playerMode == PlayerMode.Training || _playerMode == PlayerMode.FightTower)
+          if (_playerMode == PlayerMode.Training)
           {
             SetTrainingState(true);
           }
           else
           {
             SetTrainingState(false);
-          }
-
-          if (!string.IsNullOrEmpty(_settings.TowerPositionsJson))
-          {
-            try
-            {
-              var positions = JsonConvert.DeserializeObject<List<TowerPosition>>(_settings.TowerPositionsJson);
-              if (positions != null && positions.Count > 0)
-              {
-                // Unsubscribe from old positions
-                foreach (var oldPos in _towerPositions)
-                {
-                  oldPos.PropertyChanged -= HandleEventUIChange;
-                }
-
-                _towerPositions.Clear();
-                foreach (var pos in positions)
-                {
-                  pos.PropertyChanged += HandleEventUIChange;
-                  _towerPositions.Add(pos);
-                }
-              }
-            }
-            catch (Exception ex)
-            {
-              Debug.WriteLine($"Error loading tower positions: {ex.Message}");
-            }
           }
 
           // Load checked inventory items
@@ -663,7 +631,6 @@ namespace OathAuto.ViewModels
       }
     }
 
-
     /// <summary>
     /// Activates the selected pet based on SelectedPetId in settings.
     /// This method will be implemented with the logic to call the appropriate pet activation method.
@@ -690,9 +657,7 @@ namespace OathAuto.ViewModels
     /// <param name="e"></param>
     private void HandleEventUIChange(object sender, PropertyChangedEventArgs e)
     {
-      if (e.PropertyName == nameof(TowerPosition.IsSelected) ||
-        e.PropertyName == nameof(InventoryItem.IsSelected) || 
-        e.PropertyName == nameof(Skill.IsSelected))
+      if (e.PropertyName == nameof(InventoryItem.IsSelected))
       {
         SaveSettings();
       }
@@ -704,17 +669,15 @@ namespace OathAuto.ViewModels
         {
           HandleSkillCheckedChanged(item.Id);
         }
+        SaveSettings();
       }
     }
 
     private void HandleSkillCheckedChanged(int skillId)
     {
-      
       SkillPlayItem skillPlayItem = new SkillPlayItem();
       SingleSkill singleSkill = new SingleSkill();
-      
       var skillBook = frmLogin.GAuto.SkillBookDB.FirstOrDefault(s => s.SkillID == skillId);
-
       singleSkill.ID = skillBook.SkillID;
       singleSkill.Name = skillBook.SkillName;
       singleSkill.Special = skillBook.Special;
@@ -727,13 +690,16 @@ namespace OathAuto.ViewModels
       skillPlayItem.IsEnabled = true;
       skillPlayItem.SkillDelayInSecond = 1;
       var a = skillId;
-      if (skillId == 395)
-      {
-        a = 394;
-      }
-
       var skill = Player.AutoAccount.MySkills.AllSkills.FirstOrDefault(s => s.ID == a);
-      skillPlayItem.SkillItem.KeyDesc = skill.KeyDesc;
+      if (skill != null)
+      {
+        // có 1 trường hợp skill của võ đang không hiển thị.
+        skillPlayItem.SkillItem.KeyDesc = skill.KeyDesc;
+      } else
+      {
+        //if (skillId == "")
+        skillPlayItem.SkillItem.KeyDesc = "F8";
+      }
       Player.AutoAccount.Settings.SkillPlayList.Add(skillPlayItem);
     }
     #endregion

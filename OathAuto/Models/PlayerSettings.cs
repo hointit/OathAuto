@@ -16,7 +16,7 @@ namespace OathAuto.Models
     private int _fixedMapId;
     private string _fixedMapName = "";
     private bool _isAutoMoveEnabled;
-    private string _towerPositionsJson;
+    private int _towerPositionId;
     private string _selectedSkillIdsJson;
     private string _checkedItemIdsJson;
     private int _selectedPetId = 0;
@@ -180,10 +180,17 @@ namespace OathAuto.Models
       }
     }
 
-    public string TowerPositionsJson
+    public int TowerPositionId
     {
-      get => _towerPositionsJson;
-      set => _towerPositionsJson = value;
+      get => _towerPositionId;
+      set
+      {
+        if (_towerPositionId != value)
+        {
+          _towerPositionId = value;
+          OnPropertyChanged(nameof(TowerPositionId));
+        }
+      }
     }
 
     // Skill Settings

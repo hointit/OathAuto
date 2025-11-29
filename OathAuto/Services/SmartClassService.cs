@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Security.Principal;
 using System.Threading;
 
@@ -52,84 +53,70 @@ namespace OathAuto.Services
       _isInitialized = true;
     }
 
-    
-
     public List<Player> GetAllAccountsData()
     {
       var result = new List<Player>();
-      var accounts = GetAllAccounts();
-      for (int i = 0; i < accounts.Count; i++)
+
+      for (int i = 0; i < 10; i++)
       {
-        var data = GetAccountData(i);
-        if (data != null)
-          result.Add(data);
+        var isNotValid = _smartClassInstance.AllAutoAccounts.Any(account => account.Myself.MapID <= 0 || account.Myself.ID == 0);
+        
+        // Trường hợp chuyển cảnh các kiểu thì sẽ bị null như thế này, khi có acc chuyển cảnh thì chờ chút.
+        if (isNotValid)
+        {
+          Thread.Sleep(300);
+          continue;
+        }
+        else
+        {
+          break;
+        }
+      }
+      
+      foreach (var account in _smartClassInstance.AllAutoAccounts)
+      {
+        try
+        {
+          var newPlayer = new Player
+          {
+            Id = account.Myself.ID,
+            UserName = account.Myself?.Username ?? "Unknown",
+            Name = account.Myself?.Name ?? "Unknown",
+            Level = account.Myself?.Level ?? 0,
+            HP = account.Myself?.HP ?? 0,
+            MaxHP = account.Myself?.MaxHP ?? 0,
+            HPPercent = account.Myself?.HPPercent ?? 0,
+            MP = account.Myself?.MP ?? 0,
+            MaxMP = account.Myself?.MaxMP ?? 0,
+            MPPercent = account.Myself?.MPPercent ?? 0,
+            Rage = account.Myself?.Rage ?? 0,
+            MaxRage = account.Myself?.MaxRage ?? 0,
+            MapName = account.Myself?.MapName ?? "Unknown",
+            MapID = account.Myself?.MapID ?? 0,
+            PosX = account.Myself?.PosX ?? 0,
+            PosY = account.Myself?.PosY ?? 0,
+            InCombat = account.Myself?.IsPK ?? false,
+            ProcessID = account.Target?.ProcessID ?? 0,
+            Monsters = account.MyQuai?.AllQuai,
+            Menpai = (AllEnums.Menpais)(account.Myself?.Menpai),
+            ExpPercent = account.Myself?.ExpPercent ?? 0,
+            DatabaseId = account.Myself.DatabaseID,
+            AutoAccount = account,
+          };
+          account.Settings.cboxTuNhatVatPham = false;
+          account.Settings.cboxTuClickYes2 = true;
+          account.IsAIEnabled = true;
+          // set feed pet
+          account.Settings.numPetHPPercent = 99;
+          result.Add(newPlayer);
+        }
+        catch (Exception ex)
+        {
+          Debug.WriteLine($"Error getting account data: {ex.Message}");
+          return null;
+        }
       }
       return result;
-    }
-
-
-    public List<AutoAccount> GetAllAccounts()
-    {
-      if (!_isInitialized || _smartClassInstance == null)
-        return new List<AutoAccount>();
-
-      return _smartClassInstance.AllAutoAccounts;
-    }
-    public Player GetAccountData(int index)
-    {
-      var accounts = GetAllAccounts();
-      if (index < 0 || index >= accounts.Count)
-        return null;
-
-      var account = accounts[index];
-      if (account == null)
-        return null;
-
-      if (account.Myself.ID == 0)
-      {
-        return null;
-      }
-
-      try
-      {
-        var newPlayer = new Player
-        {
-          Id = account.Myself.ID,
-          UserName = account.Myself?.Username ?? "Unknown",
-          Name = account.Myself?.Name ?? "Unknown",
-          Level = account.Myself?.Level ?? 0,
-          HP = account.Myself?.HP ?? 0,
-          MaxHP = account.Myself?.MaxHP ?? 0,
-          HPPercent = account.Myself?.HPPercent ?? 0,
-          MP = account.Myself?.MP ?? 0,
-          MaxMP = account.Myself?.MaxMP ?? 0,
-          MPPercent = account.Myself?.MPPercent ?? 0,
-          Rage = account.Myself?.Rage ?? 0,
-          MaxRage = account.Myself?.MaxRage ?? 0,
-          MapName = account.Myself?.MapName ?? "Unknown",
-          MapID = account.Myself?.MapID ?? 0,
-          PosX = account.Myself?.PosX ?? 0,
-          PosY = account.Myself?.PosY ?? 0,
-          InCombat = account.Myself?.IsPK ?? false,
-          ProcessID = account.Target?.ProcessID ?? 0,
-          Monsters = account.MyQuai?.AllQuai,
-          Menpai = (AllEnums.Menpais)(account.Myself?.Menpai),
-          ExpPercent = account.Myself?.ExpPercent ?? 0,
-          DatabaseId = account.Myself.DatabaseID,
-          AutoAccount = account,
-        };
-        var a = account.MyParty;
-        account.Settings.cboxTuNhatVatPham = false;
-        account.Settings.cboxTuClickYes2 = true;
-        // set feed pet
-        account.Settings.numPetHPPercent = 99;
-        return newPlayer;
-      }
-      catch (Exception ex)
-      {
-        Debug.WriteLine($"Error getting account data at index {index}: {ex.Message}");
-        return null;
-      }
     }
 
     public void Shutdown()

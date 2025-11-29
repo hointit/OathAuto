@@ -5,8 +5,9 @@ namespace OathAuto.Models
   public class TowerPosition : INotifyPropertyChanged
   {
     private int _id;
-    private float _x;
-    private float _y;
+    private Position _position;
+    private Position _middlePosition;
+    private Position _subPostion;
     private bool _isSelected = true;
     private string _name;
 
@@ -23,28 +24,40 @@ namespace OathAuto.Models
       }
     }
 
-    public float X
+    public Position Position
     {
-      get => _x;
+      get => _position;
       set
       {
-        if (_x != value)
+        if (_position != value)
         {
-          _x = value;
-          OnPropertyChanged(nameof(X));
+          _position = value;
+          OnPropertyChanged(nameof(Position));
+        }
+      }
+    }
+    public Position SubPostion
+    {
+      get => _subPostion;
+      set
+      {
+        if (_subPostion != value)
+        {
+          _subPostion = value;
+          OnPropertyChanged(nameof(SubPostion));
         }
       }
     }
 
-    public float Y
+    public Position MiddlePosition
     {
-      get => _y;
+      get => _middlePosition;
       set
       {
-        if (_y != value)
+        if (_middlePosition != value)
         {
-          _y = value;
-          OnPropertyChanged(nameof(Y));
+          _middlePosition = value;
+          OnPropertyChanged(nameof(MiddlePosition));
         }
       }
     }
@@ -75,7 +88,7 @@ namespace OathAuto.Models
       }
     }
 
-    public string DisplayName => $"{Name} ({X:F0}, {Y:F0})";
+    public string DisplayName => $"{Name} ({Position.X:F0}, {Position.Y:F0})";
 
     public event PropertyChangedEventHandler PropertyChanged;
 

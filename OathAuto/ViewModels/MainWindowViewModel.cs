@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using System.Windows;
@@ -29,7 +30,7 @@ namespace OathAuto.ViewModels
 
     private void InitializeTimer()
     {
-      _updateTimer = new Timer(300); // 300ms interval
+      _updateTimer = new Timer(600);
       _updateTimer.Elapsed += OnTimerElapsed;
       _updateTimer.AutoReset = true;
       _updateTimer.Start();
@@ -95,8 +96,11 @@ namespace OathAuto.ViewModels
           .Where(vm => !updatedPlayers.Any(p => p.ProcessID == vm.Player.ProcessID && vm.Player.ProcessID != 0))
           .ToList();
 
+        
+
         foreach (var playerToRemove in playersToRemove)
         {
+          Debug.WriteLine($"updatedPlayers: {updatedPlayers.Count}-----playersToRemove---{playersToRemove.Count}----PID: {playerToRemove.Player.ProcessID}-----CharID: {playerToRemove.Player.Id}");
           Players.Remove(playerToRemove);
         }
 

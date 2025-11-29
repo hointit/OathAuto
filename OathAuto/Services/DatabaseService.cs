@@ -22,9 +22,6 @@ namespace OathAuto.Services
 
       // Ensure settings table exists
       CreateSettingsTableIfNotExists();
-
-      // Run migrations
-      MigrateDatabase();
     }
 
     private void CreateSettingsTableIfNotExists()
@@ -36,6 +33,7 @@ namespace OathAuto.Services
         string createTableQuery = @"
           CREATE TABLE IF NOT EXISTS PlayerSettings (
             PlayerId INTEGER PRIMARY KEY,
+            PlayerName TEXT DEFAULT '',
             Mode INTEGER DEFAULT 0,
             IsAutoUpLevel INTEGER DEFAULT 0,
             IsAutoUseX2Exp INTEGER DEFAULT 0,
@@ -47,7 +45,7 @@ namespace OathAuto.Services
             FixedMapId INTEGER DEFAULT 0,
             FixedMapName TEXT DEFAULT '',
             IsAutoMoveEnabled INTEGER DEFAULT 1,
-            TowerPositionsJson TEXT DEFAULT '',
+            TowerPositionId TEXT DEFAULT '',
             SelectedSkillIdsJson TEXT DEFAULT '',
             CheckedItemIdsJson TEXT DEFAULT '',
             SelectedPetId INTEGER DEFAULT 0
@@ -59,46 +57,6 @@ namespace OathAuto.Services
         }
       }
     }
-
-    private void MigrateDatabase()
-    {
-      using (var connection = new SQLiteConnection(_connectionString))
-      {
-        connection.Open();
-
-        // Check if SelectedPetId column exists
-        string checkColumnQuery = "PRAGMA table_info(PlayerSettings)";
-        bool columnExists = false;
-
-        using (var command = new SQLiteCommand(checkColumnQuery, connection))
-        {
-          using (var reader = command.ExecuteReader())
-          {
-            while (reader.Read())
-            {
-              string columnName = reader["name"].ToString();
-              if (columnName == "SelectedPetId")
-              {
-                columnExists = true;
-                break;
-              }
-            }
-          }
-        }
-
-        // Add SelectedPetId column if it doesn't exist
-        if (!columnExists)
-        {
-          string addColumnQuery = "ALTER TABLE PlayerSettings ADD COLUMN SelectedPetId INTEGER DEFAULT 0";
-          using (var command = new SQLiteCommand(addColumnQuery, connection))
-          {
-            command.ExecuteNonQuery();
-            Debug.WriteLine("Added SelectedPetId column to PlayerSettings table");
-          }
-        }
-      }
-    }
-
 
     public List<Skill> GetSkillsByMenpai(string menpai)
     {
@@ -137,29 +95,28 @@ namespace OathAuto.Services
       return skills;
     }
 
-    public void SavePlayerSettings(PlayerSettings settings)
+    public void SavePlayerSettings(PlayerSettings settings, string playerName)
     {
-      Debug.WriteLine("SavePlayerSettings " + settings.PlayerId.ToString());
       using (var connection = new SQLiteConnection(_connectionString))
       {
         connection.Open();
-
         string query = @"
           INSERT OR REPLACE INTO PlayerSettings (
-            PlayerId, Mode, IsAutoUpLevel, IsAutoUseX2Exp, IsAutoUseResetLevelItem, IsAutoUseAddPointItem, MaxLevel,
+            PlayerId, PlayerName, Mode, IsAutoUpLevel, IsAutoUseX2Exp, IsAutoUseResetLevelItem, IsAutoUseAddPointItem, MaxLevel,
             FixedX, FixedY, FixedMapId, FixedMapName,
             IsAutoMoveEnabled,
-            TowerPositionsJson, SelectedSkillIdsJson, CheckedItemIdsJson, SelectedPetId
+            TowerPositionId, SelectedSkillIdsJson, CheckedItemIdsJson, SelectedPetId
           ) VALUES (
-            @PlayerId, @Mode, @IsAutoUpLevel, @IsAutoUseX2Exp, @IsAutoUseResetLevelItem, @IsAutoUseAddPointItem, @MaxLevel,
+            @PlayerId, @PlayerName, @Mode, @IsAutoUpLevel, @IsAutoUseX2Exp, @IsAutoUseResetLevelItem, @IsAutoUseAddPointItem, @MaxLevel,
             @FixedX, @FixedY, @FixedMapId, @FixedMapName,
             @IsAutoMoveEnabled,
-            @TowerPositionsJson, @SelectedSkillIdsJson, @CheckedItemIdsJson, @SelectedPetId
+            @TowerPositionId, @SelectedSkillIdsJson, @CheckedItemIdsJson, @SelectedPetId
           )";
 
         using (var command = new SQLiteCommand(query, connection))
         {
           command.Parameters.AddWithValue("@PlayerId", settings.PlayerId);
+          command.Parameters.AddWithValue("@PlayerName", playerName);
           command.Parameters.AddWithValue("@Mode", (int)settings.Mode);
           command.Parameters.AddWithValue("@IsAutoUpLevel", settings.IsAutoUpLevel ? 1 : 0);
           command.Parameters.AddWithValue("@IsAutoUseX2Exp", settings.IsAutoUseX2Exp ? 1 : 0);
@@ -171,17 +128,17 @@ namespace OathAuto.Services
           command.Parameters.AddWithValue("@FixedMapId", settings.FixedMapId);
           command.Parameters.AddWithValue("@FixedMapName", settings.FixedMapName ?? "");
           command.Parameters.AddWithValue("@IsAutoMoveEnabled", settings.IsAutoMoveEnabled ? 1 : 0);
-          command.Parameters.AddWithValue("@TowerPositionsJson", settings.TowerPositionsJson ?? "");
           command.Parameters.AddWithValue("@SelectedSkillIdsJson", settings.SelectedSkillIdsJson ?? "");
+          command.Parameters.AddWithValue("@TowerPositionId", settings.TowerPositionId);
           command.Parameters.AddWithValue("@CheckedItemIdsJson", settings.CheckedItemIdsJson ?? "");
           command.Parameters.AddWithValue("@SelectedPetId", settings.SelectedPetId);
-
           command.ExecuteNonQuery();
+          Debug.WriteLine($"Save settings success for: {playerName}");
         }
       }
     }
 
-    public PlayerSettings LoadPlayerSettings(int playerId)
+    public PlayerSettings LoadPlayerSettings(int playerId, string playerName)
     {
       using (var connection = new SQLiteConnection(_connectionString))
       {
@@ -191,7 +148,7 @@ namespace OathAuto.Services
           SELECT PlayerId, Mode, IsAutoUpLevel, IsAutoUseX2Exp, IsAutoUseResetLevelItem, IsAutoUseAddPointItem, MaxLevel,
                  FixedX, FixedY, FixedMapId, FixedMapName,
                  IsAutoMoveEnabled,
-                 TowerPositionsJson, SelectedSkillIdsJson, CheckedItemIdsJson, SelectedPetId
+                 TowerPositionId, SelectedSkillIdsJson, CheckedItemIdsJson, SelectedPetId
           FROM PlayerSettings
           WHERE PlayerId = @PlayerId";
 
@@ -217,7 +174,7 @@ namespace OathAuto.Services
                 FixedMapId = Convert.ToInt32(reader["FixedMapId"]),
                 FixedMapName = reader["FixedMapName"]?.ToString() ?? "",
                 IsAutoMoveEnabled = Convert.ToInt32(reader["IsAutoMoveEnabled"]) == 1,
-                TowerPositionsJson = reader["TowerPositionsJson"]?.ToString() ?? "",
+                TowerPositionId = Convert.ToInt32(reader["TowerPositionId"]),
                 SelectedSkillIdsJson = reader["SelectedSkillIdsJson"]?.ToString() ?? "",
                 CheckedItemIdsJson = reader["CheckedItemIdsJson"]?.ToString() ?? "",
                 SelectedPetId = reader["SelectedPetId"] != DBNull.Value ? Convert.ToInt32(reader["SelectedPetId"]) : 0
@@ -227,8 +184,8 @@ namespace OathAuto.Services
         }
       }
 
-      // Return default settings if not found
-      return new PlayerSettings
+      // No record found, create new record with default values
+      var defaultSettings = new PlayerSettings
       {
         PlayerId = playerId,
         Mode = PlayerMode.None,
@@ -242,11 +199,16 @@ namespace OathAuto.Services
         FixedMapId = 0,
         FixedMapName = "",
         IsAutoMoveEnabled = true,
-        TowerPositionsJson = "",
+        TowerPositionId= 0,
         SelectedSkillIdsJson = "",
         CheckedItemIdsJson = "",
         SelectedPetId = 0
       };
+
+      // Save the default settings to database
+      SavePlayerSettings(defaultSettings, playerName);
+
+      return defaultSettings;
     }
   }
 }

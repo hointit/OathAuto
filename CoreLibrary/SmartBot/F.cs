@@ -179,23 +179,9 @@ public class F
     try
     {
       long elapsedMilliseconds = frmLogin.GlobalTimer.ElapsedMilliseconds;
-      while (account.BGThread != null)
-      {
-        account.Target.BGRunner = false;
-        Thread.Sleep(20);
-        if (!account.MyFlag.EndBG)
-        {
-          Thread.Sleep(10);
-          if (frmLogin.GlobalTimer.ElapsedMilliseconds - elapsedMilliseconds >= 200L)
-            break;
-        }
-        else
-          break;
-      }
-      if (account.BGThread == null)
-        return;
-      account.BGThread.Abort();
-      account.BGThread = (Thread) null;
+      
+      account.BGThreadTimer.Stop();
+      account.BGThreadTimer = null;
     }
     catch (Exception ex)
     {
@@ -225,24 +211,8 @@ public class F
   {
     try
     {
-      long elapsedMilliseconds = frmLogin.GlobalTimer.ElapsedMilliseconds;
-      while (account.AIThread != null)
-      {
-        account.Settings.AIWhileLoop = false;
-        Thread.Sleep(20);
-        if (!account.MyFlag.EndAI)
-        {
-          Thread.Sleep(10);
-          if (frmLogin.GlobalTimer.ElapsedMilliseconds - elapsedMilliseconds >= 200L)
-            break;
-        }
-        else
-          break;
-      }
-      if (account.AIThread == null)
-        return;
-      account.AIThread.Abort();
-      account.AIThread = (Thread) null;
+      account.AIThreadTimer.Stop();
+      account.AIThreadTimer = null;
     }
     catch (Exception ex)
     {

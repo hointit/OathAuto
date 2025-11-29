@@ -5535,7 +5535,7 @@ label_239:
 
   public static double CalculateDistance(double fromX, double fromY, double ToX, double ToY)
   {
-    return Math.Sqrt((fromX - ToX) * (fromX - ToX) + (fromY - ToY) * (fromY - ToY));
+    return Math.Sqrt(Math.Pow((fromX - ToX), 2) + Math.Pow(fromY - ToY, 2));
   }
 
   public static bool IsInPhuBan(int mapID, AutoAccount myAccount = null)

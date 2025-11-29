@@ -1,0 +1,494 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+ <html xmlns:msxsl="urn:schemas-microsoft-com:xslt"><head><meta content="en-us" http-equiv="Content-Language" /><meta content="text/html; charset=utf-16" http-equiv="Content-Type" /><title _locID="ConversionReport0">
+          Migration Report
+        </title><style> 
+                    /* Body style, for the entire document */
+                    body
+                    {
+                        background: #F3F3F4;
+                        color: #1E1E1F;
+                        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                        padding: 0;
+                        margin: 0;
+                    }
+
+                    /* Header1 style, used for the main title */
+                    h1
+                    {
+                        padding: 10px 0px 10px 10px;
+                        font-size: 21pt;
+                        background-color: #E2E2E2;
+                        border-bottom: 1px #C1C1C2 solid; 
+                        color: #201F20;
+                        margin: 0;
+                        font-weight: normal;
+                    }
+
+                    /* Header2 style, used for "Overview" and other sections */
+                    h2
+                    {
+                        font-size: 18pt;
+                        font-weight: normal;
+                        padding: 15px 0 5px 0;
+                        margin: 0;
+                    }
+
+                    /* Header3 style, used for sub-sections, such as project name */
+                    h3
+                    {
+                        font-weight: normal;
+                        font-size: 15pt;
+                        margin: 0;
+                        padding: 15px 0 5px 0;
+                        background-color: transparent;
+                    }
+
+                    /* Color all hyperlinks one color */
+                    a
+                    {
+                        color: #1382CE;
+                    }
+
+                    /* Table styles */ 
+                    table
+                    {
+                        border-spacing: 0 0;
+                        border-collapse: collapse;
+                        font-size: 10pt;
+                    }
+
+                    table th
+                    {
+                        background: #E7E7E8;
+                        text-align: left;
+                        text-decoration: none;
+                        font-weight: normal;
+                        padding: 3px 6px 3px 6px;
+                    }
+
+                    table td
+                    {
+                        vertical-align: top;
+                        padding: 3px 6px 5px 5px;
+                        margin: 0px;
+                        border: 1px solid #E7E7E8;
+                        background: #F7F7F8;
+                    }
+
+                    /* Local link is a style for hyperlinks that link to file:/// content, there are lots so color them as 'normal' text until the user mouse overs */
+                    .localLink
+                    {
+                        color: #1E1E1F;
+                        background: #EEEEED;
+                        text-decoration: none;
+                    }
+
+                    .localLink:hover
+                    {
+                        color: #1382CE;
+                        background: #FFFF99;
+                        text-decoration: none;
+                    }
+
+                    /* Center text, used in the over views cells that contain message level counts */ 
+                    .textCentered
+                    {
+                        text-align: center;
+                    }
+
+                    /* The message cells in message tables should take up all avaliable space */
+                    .messageCell
+                    {
+                        width: 100%;
+                    }
+
+                    /* Padding around the content after the h1 */ 
+                    #content 
+                    {
+	                    padding: 0px 12px 12px 12px; 
+                    }
+
+                    /* The overview table expands to width, with a max width of 97% */ 
+                    #overview table
+                    {
+                        width: auto;
+                        max-width: 75%; 
+                    }
+
+                    /* The messages tables are always 97% width */
+                    #messages table
+                    {
+                        width: 97%;
+                    }
+
+                    /* All Icons */
+                    .IconSuccessEncoded, .IconInfoEncoded, .IconWarningEncoded, .IconErrorEncoded
+                    {
+                        min-width:18px;
+                        min-height:18px; 
+                        background-repeat:no-repeat;
+                        background-position:center;
+                    }
+
+                    /* Success icon encoded */
+                    .IconSuccessEncoded
+                    {
+                        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+                        /* [---XsltValidateInternal-Base64EncodedImage:IconSuccess#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+                        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAA7EAAAOxAGVKw4bAAABcElEQVR4Xq2TsUsCURzHv15g8ZJcBWlyiYYgCIWcb9DFRRwMW5TA2c0/QEFwFkxxUQdxVlBwCYWOi6IhWgQhBLHJUCkhLr/BW8S7gvrAg+N+v8/v+x68Z8MGy+XSCyABQAXgBgHGALoASkIIDWSLeLBetdHryMjd5IxQPWT4rn1c/P7+xxp72Cs9m5SZ0Bq2vPnbPFafK2zDvmNHypdC0BPkLlQhxJsCAhQoZwdZU5mwxh720qGo8MzTxTTKZDPCx2HoVzp6lz0Q9tKhyx0kGs8Ny+TkWRKk8lCROwEduhyg9l/6lunOPSfmH3NUH6uQ0KHLAe7JYvJjevm+DAMGJHToKtigE+vwvIidxLamb8IBY9e+C5LiXREkfho3TSd06HJA13/oh6T51MTsfQbHrsMynQ5dDihFjiK8JJAU9AKIWTp76dCVN7HWHrajmUEGvyF9nkbAE6gLIS7kTUyuf2gscLoJrElZo/Mvj+nPz/kLTmfnEwP3tB0AAAAASUVORK5CYII=);
+                    }
+
+                    /* Information icon encoded */
+                    .IconInfoEncoded
+                    {
+                        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+                        /* [---XsltValidateInternal-Base64EncodedImage:IconInformation#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+                        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABHElEQVR4Xs2TsUoDQRRF7wwoziokjZUKadInhdhukR9YP8DMX1hYW+QvdsXa/QHBbcXC7W0CamWTQnclFutceIQJwwaWNLlwm5k5d94M76mmaeCrrmsLYOocY12FcxZFUeozCqKqqgYA8uevv1H6VuPxcwlfk5N92KHBxfFeCSAxxswlYAW/Xr989x/mv9gkhtyMDhcAxgzRsp7flj8B/HF1RsMXq+NZMkopaHe7lbKxQUEIGbKsYNoGn969060hZBkQex/W8oRQwsQaW2o3Ago2SVcJUzAgY3N0lTCZZm+zPS8HB51gMmS1DEYyOz9acKO1D8JWTlafKIMxdhvlfdyT94Vv5h7P8Ky7nQzACmhvKq3zk3PjW9asz9D/1oigecsioooAAAAASUVORK5CYII=);
+                    }
+
+                    /* Warning icon encoded */
+                    .IconWarningEncoded
+                    {
+                        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+                        /* [---XsltValidateInternal-Base64EncodedImage:IconWarning#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+                        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAx0lEQVR4XpWSMQ7CMAxFf4xAyBMLCxMrO8dhaBcuwdCJS3RJBw7SA/QGTCxdWJgiQYWKXJWKIXHIlyw5lqr34tQgEOdcBsCOx5yZK3hCCKdYXneQkh4pEfqzLfu+wVDSyyzFoJjfz9NB+pAF+eizx2Vruts0k15mPgvS6GYvpVtQhB61IB/dk6AF6fS4Ben0uIX5odtFe8Q/eW1KvFeH4e8khT6+gm5B+t3juyDt7n0jpe+CANTd+oTUjN/U3yVaABnSUjFz/gFq44JaVSCXeQAAAABJRU5ErkJggg==);
+                    }
+
+                    /* Error icon encoded */
+                    .IconErrorEncoded
+                    {
+                        /* Note: Do not delete the comment below. It is used to verify the correctness of the encoded image resource below before the product is released */
+                        /* [---XsltValidateInternal-Base64EncodedImage:IconError#Begin#background-image: url(data:image/png;base64,#Separator#);#End#] */
+                        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABQElEQVR4XqWTvUoEQRCE6wYPZUA80AfwAQz23uCMjA7MDRQEIzPBVEyNTQUFIw00vcQTTMzuAh/AxEQQT8HF/3G/oGGnEUGuoNnd6qoZuqltyKEsyzVJq5I6rnUp6SjGeGhESikzzlc1eL7opfuVbrqbU1Zw9NCgtQMaZpY0eNnaaL2fHusvTK5vKu7sjSS1Y4y3QUA6K3e3Mau5UFDyMP7tYF9o8cAHZv68vipoIJg971PZIZ5HiwdvYGGvFVFHmGmZ2MxwmQYPXubPl9Up0tfoMQGetXd6mRbvhBw+boZ6WF7Mbv1+GsHRk0fQmPAH1GfmZirbCfDJ61tw3Px8/8pZsPAG4jlVhcPgZ7adwNWBB68lkRQWFiTgFlbnLY3DGGM7izIJIyT/jjIvEJw6fdJTc6krDzh6aMwMP9bvDH4ADSsa9uSWVJkAAAAASUVORK5CYII=);
+                    }
+                 </style><script type="text/javascript" language="javascript"> 
+          
+            // Startup 
+            // Hook up the the loaded event for the document/window, to linkify the document content
+            var startupFunction = function() { linkifyElement("messages"); };
+            
+            if(window.attachEvent)
+            {
+              window.attachEvent('onload', startupFunction);
+            }
+            else if (window.addEventListener) 
+            {
+              window.addEventListener('load', startupFunction, false);
+            }
+            else 
+            {
+              document.addEventListener('load', startupFunction, false);
+            } 
+            
+            // Toggles the visibility of table rows with the specified name 
+            function toggleTableRowsByName(name)
+            {
+               var allRows = document.getElementsByTagName('tr');
+               for (i=0; i < allRows.length; i++)
+               {
+                  var currentName = allRows[i].getAttribute('name');
+                  if(!!currentName && currentName.indexOf(name) == 0)
+                  {
+                      var isVisible = allRows[i].style.display == ''; 
+                      isVisible ? allRows[i].style.display = 'none' : allRows[i].style.display = '';
+                  }
+               }
+            }
+            
+            function scrollToFirstVisibleRow(name) 
+            {
+               var allRows = document.getElementsByTagName('tr');
+               for (i=0; i < allRows.length; i++)
+               {
+                  var currentName = allRows[i].getAttribute('name');
+                  var isVisible = allRows[i].style.display == ''; 
+                  if(!!currentName && currentName.indexOf(name) == 0 && isVisible)
+                  {
+                     allRows[i].scrollIntoView(true); 
+                     return true; 
+                  }
+               }
+               
+               return false;
+            }
+            
+            // Linkifies the specified text content, replaces candidate links with html links 
+            function linkify(text)
+            {
+                 if(!text || 0 === text.length)
+                 {
+                     return text; 
+                 }
+
+                 // Find http, https and ftp links and replace them with hyper links 
+                 var urlLink = /(http|https|ftp)\:\/\/[a-zA-Z0-9\-\.]+(:[a-zA-Z0-9]*)?\/?([a-zA-Z0-9\-\._\?\,\/\\\+&%\$#\=~;\{\}])*/gi;
+                 
+                 return text.replace(urlLink, '<a href="$&">$&</a>') ;
+            }
+            
+            // Linkifies the specified element by ID
+            function linkifyElement(id)
+            {
+                var element = document.getElementById(id);
+                if(!!element)
+                {
+                  element.innerHTML = linkify(element.innerHTML); 
+                }
+            }
+            
+            function ToggleMessageVisibility(projectName)
+            {
+              if(!projectName || 0 === projectName.length)
+              {
+                return; 
+              }
+              
+              toggleTableRowsByName("MessageRowClass" + projectName);
+              toggleTableRowsByName('MessageRowHeaderShow' + projectName);
+              toggleTableRowsByName('MessageRowHeaderHide' + projectName); 
+            }
+            
+            function ScrollToFirstVisibleMessage(projectName)
+            {
+              if(!projectName || 0 === projectName.length)
+              {
+                return; 
+              }
+              
+              // First try the 'Show messages' row
+              if(!scrollToFirstVisibleRow('MessageRowHeaderShow' + projectName))
+              {
+                // Failed to find a visible row for 'Show messages', try an actual message row 
+                scrollToFirstVisibleRow('MessageRowClass' + projectName); 
+              }
+            }
+           </script></head><body><h1 _locID="ConversionReport">
+          Migration Report - OathAuto</h1><div id="content"><h2 _locID="OverviewTitle">Overview</h2><div id="overview"><table><tr><th></th><th _locID="ProjectTableHeader">Project</th><th _locID="PathTableHeader">Path</th><th _locID="ErrorsTableHeader">Errors</th><th _locID="WarningsTableHeader">Warnings</th><th _locID="MessagesTableHeader">Messages</th></tr><tr><td class="IconWarningEncoded" /><td><strong><a href="#Solution"><span _locID="OverviewSolutionSpan">Solution</span></a></strong></td><td>OathAuto.slnx</td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#SolutionWarning">1</a></td><td class="textCentered"><a href="#" onclick="ScrollToFirstVisibleMessage('Solution'); return false;">2</a></td></tr><tr><td class="IconSuccessEncoded" /><td><strong><a href="#CoreLibrary">CoreLibrary</a></strong></td><td>CoreLibrary\CoreLibrary.csproj</td><td class="textCentered"><a>0</a></td><td class="textCentered"><a>0</a></td><td class="textCentered"><a href="#" onclick="ScrollToFirstVisibleMessage('CoreLibrary'); return false;">216</a></td></tr></table></div><h2 _locID="SolutionAndProjectsTitle">Solution and projects</h2><div id="messages"><a name="Solution" /><h3 _locID="ProjectDisplayNameHeader">Solution</h3><table><tr id="SolutionHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Message</th></tr><tr name="WarningRowClassSolution"><td class="IconWarningEncoded"><a name="SolutionWarning" /></td><td class="messageCell"><strong>OathAuto.slnx:
+        </strong><span>Visual Studio needs to make non-functional changes to this project in order to enable the project to open in released versions of Visual Studio newer than Visual Studio 2010 SP1 without impacting project behavior.</span></td></tr><tr name="MessageRowHeaderShowSolution"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="ShowAdditionalMessages" href="#" name="SolutionMessage" onclick="ToggleMessageVisibility('Solution'); return false;">
+          Show 2 additional messages
+        </a></td></tr><tr name="MessageRowClassSolution" style="display: none"><td class="IconInfoEncoded"><a name="SolutionMessage" /></td><td class="messageCell"><strong>OathAuto.slnx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\OathAuto.slnx</span></td></tr><tr name="MessageRowClassSolution" style="display: none"><td class="IconInfoEncoded"><a name="SolutionMessage" /></td><td class="messageCell"><strong>OathAuto.slnx:
+        </strong><span>Solution migrated successfully</span></td></tr><tr style="display: none" name="MessageRowHeaderHideSolution"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="HideAdditionalMessages" href="#" name="SolutionMessage" onclick="ToggleMessageVisibility('Solution'); return false;">
+          Hide 2 additional messages
+        </a></td></tr></table><a name="CoreLibrary" /><h3>CoreLibrary</h3><table><tr id="CoreLibraryHeaderRow"><th></th><th class="messageCell" _locID="MessageTableHeader">Message</th></tr><tr name="MessageRowHeaderShowCoreLibrary"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="ShowAdditionalMessages" href="#" name="CoreLibraryMessage" onclick="ToggleMessageVisibility('CoreLibrary'); return false;">
+          Show 216 additional messages
+        </a></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\CoreLibrary.csproj:
+        </strong><span>Project file successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\CoreLibrary.csproj</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\Properties\Resources.Designer.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\Properties\Resources.Designer.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\Properties\Settings.Designer.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\Properties\Settings.Designer.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\AccountBalance.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\AccountBalance.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\ActionLogClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\ActionLogClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\ActiveBocItems.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\ActiveBocItems.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\AdvancedPath.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\AdvancedPath.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\AdvancedPathElement.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\AdvancedPathElement.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\AESKeyset.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\AESKeyset.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\AllEnums.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\AllEnums.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\ArmyClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\ArmyClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\AutoAccount.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\AutoAccount.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\AutoSettings.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\AutoSettings.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\BaseInfo.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\BaseInfo.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\BGMessageButtons.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\BGMessageButtons.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\BocClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\BocClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\BuffedPlayer.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\BuffedPlayer.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\BuyItem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\BuyItem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\DBInfoClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\DBInfoClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\DuaHauDBElement.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\DuaHauDBElement.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\F.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\F.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\ForwardInfo.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\ForwardInfo.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmAbout.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmAbout.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmAutoPK.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmAutoPK.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmBuffList.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmBuffList.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmGLogin.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmGLogin.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmHashPick.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmHashPick.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmHotKeys.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmHotKeys.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmItemList.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmItemList.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmLiteBuy.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmLiteBuy.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmLiteVersion.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmLiteVersion.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmLogin.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmLogin.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmMain.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmMain.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmNapThe.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmNapThe.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmNewUserInfo.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmNewUserInfo.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmPickSession.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmPickSession.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmPlayerPick.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmPlayerPick.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmProfileManager.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmProfileManager.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmReg.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmReg.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmSupport.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmSupport.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmThongBao_FW.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmThongBao_FW.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmUserInfo.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmUserInfo.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmVersions_FW.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmVersions_FW.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\GA.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\GA.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\GABitConverter.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\GABitConverter.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\GADB.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\GADB.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\GameHash.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\GameHash.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\GAutoList.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\GAutoList.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\GAutoServer.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\GAutoServer.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\GEventClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\GEventClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\GGameMemory.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\GGameMemory.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\GlobalSettings.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\GlobalSettings.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\GMemBase.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\GMemBase.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\GOpcode.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\GOpcode.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\GPattern.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\GPattern.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\GReadMem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\GReadMem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\GScript.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\GScript.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\GScriptCommand.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\GScriptCommand.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\GScriptEngine.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\GScriptEngine.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\GUITranslation.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\GUITranslation.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\HashAddressPatch.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\HashAddressPatch.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\HashDBElement.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\HashDBElement.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\HistoryItem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\HistoryItem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\HookProc.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\HookProc.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\HotKeyElement.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\HotKeyElement.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\IgnoredAreaDBElement.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\IgnoredAreaDBElement.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\IgnoredProcess.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\IgnoredProcess.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\InMapPoint.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\InMapPoint.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\INPUT.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\INPUT.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\InventoryClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\InventoryClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\InventoryItem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\InventoryItem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\ItemDBElement.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\ItemDBElement.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\ItemNhiemVuElement.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\ItemNhiemVuElement.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\ItemToBuy.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\ItemToBuy.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\ItemToUse.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\ItemToUse.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\ItemTrongBoc.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\ItemTrongBoc.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\KhoangDuocDBElement.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\KhoangDuocDBElement.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\KhoangDuocEntry.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\KhoangDuocEntry.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\LicenseManager.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\LicenseManager.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\LicenseSlot.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\LicenseSlot.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\ListViewEx.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\ListViewEx.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\LoginParams.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\LoginParams.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\LoginProfileClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\LoginProfileClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\LoginResult.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\LoginResult.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\LoginSettingsClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\LoginSettingsClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\MainPlayerClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\MainPlayerClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\MapDBElement.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\MapDBElement.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\MEMORY_BASIC_INFORMATION.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\MEMORY_BASIC_INFORMATION.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\MessageFunc.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\MessageFunc.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\MOUSEINPUT.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\MOUSEINPUT.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\MOUSEKEYBDHARDWAREINPUT.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\MOUSEKEYBDHARDWAREINPUT.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\MovingPath.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\MovingPath.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\MovingPoint.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\MovingPoint.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\MyControlClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\MyControlClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\MyDLL.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\MyDLL.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\MyFlagClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\MyFlagClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\MyParamsClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\MyParamsClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\NapTheClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\NapTheClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\NewBoc.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\NewBoc.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\PartyClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\PartyClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\PartyMember.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\PartyMember.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\PetClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\PetClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\PetSkillPlay.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\PetSkillPlay.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\PhuBanPath.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\PhuBanPath.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\PhuBanPathDBNewElement.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\PhuBanPathDBNewElement.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\PlayerIndividual.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\PlayerIndividual.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\PlayerInfo.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\PlayerInfo.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\PlayerListItem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\PlayerListItem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\PlayerVIP.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\PlayerVIP.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\PriceItem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\PriceItem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Program.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Program.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\QuaiClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\QuaiClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\QuaiIndividual.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\QuaiIndividual.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\QuangCaoMessage.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\QuangCaoMessage.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\ReadMemEntry.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\ReadMemEntry.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\RingBocBuffer.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\RingBocBuffer.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\RingHKBuffer.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\RingHKBuffer.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\RingMsgBuffer.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\RingMsgBuffer.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\RingNguoiBuffer.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\RingNguoiBuffer.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\RingQuaiBuffer.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\RingQuaiBuffer.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\RunningApp.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\RunningApp.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\SavedAI.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\SavedAI.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\SecurityHelper.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\SecurityHelper.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\SessionPick.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\SessionPick.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\SinglePetClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\SinglePetClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\SingleSkill.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\SingleSkill.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\SkillBookElement.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\SkillBookElement.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\SkillBufferItem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\SkillBufferItem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\SkillDBElement.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\SkillDBElement.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\SkillItemDelay.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\SkillItemDelay.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\SkillPlayItem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\SkillPlayItem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\SkillsClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\SkillsClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\SkillTransItem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\SkillTransItem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\SmartClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\SmartClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\TargetProcess.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\TargetProcess.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\TcpForwarderSlim.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\TcpForwarderSlim.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\TinhNang.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\TinhNang.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\TinhNangElement.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\TinhNangElement.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\TLBBServer.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\TLBBServer.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\TNItemDBElement.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\TNItemDBElement.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\TNNPCShopClass.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\TNNPCShopClass.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\TNNPCShopItem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\TNNPCShopItem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\TrongTrotDBElement.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\TrongTrotDBElement.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\UserPathPoint.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\UserPathPoint.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Class\Auto\LanguageTest.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Class\Auto\LanguageTest.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Forms\frmCheDo.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Forms\frmCheDo.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Forms\frmGGConfirm.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Forms\frmGGConfirm.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Forms\frmGiftCode.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Forms\frmGiftCode.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Forms\frmMuaBlock.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Forms\frmMuaBlock.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Forms\frmNVTanThu.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Forms\frmNVTanThu.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Forms\frmScheduler.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Forms\frmScheduler.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Forms\frmScriptEditor.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Forms\frmScriptEditor.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Forms\frmUpdateNewVersion.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Forms\frmUpdateNewVersion.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\CS2PHPCryptography\AEStoPHPCryptography.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\CS2PHPCryptography\AEStoPHPCryptography.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\CS2PHPCryptography\AsyncHttpControl.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\CS2PHPCryptography\AsyncHttpControl.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\CS2PHPCryptography\HttpAsyncInfo.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\CS2PHPCryptography\HttpAsyncInfo.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\CS2PHPCryptography\HttpControl.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\CS2PHPCryptography\HttpControl.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\CS2PHPCryptography\OnConnectionEstablishedEventArgs.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\CS2PHPCryptography\OnConnectionEstablishedEventArgs.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\CS2PHPCryptography\OnHttpResponseEventArgs.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\CS2PHPCryptography\OnHttpResponseEventArgs.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\CS2PHPCryptography\PostPackageBuilder.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\CS2PHPCryptography\PostPackageBuilder.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\CS2PHPCryptography\ProxySettings.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\CS2PHPCryptography\ProxySettings.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\CS2PHPCryptography\RequestOption.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\CS2PHPCryptography\RequestOption.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\CS2PHPCryptography\ResponseReceivedEventArgs.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\CS2PHPCryptography\ResponseReceivedEventArgs.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\CS2PHPCryptography\RSAtoPHPCryptography.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\CS2PHPCryptography\RSAtoPHPCryptography.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\CS2PHPCryptography\SecurePHPConnection.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\CS2PHPCryptography\SecurePHPConnection.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\CS2PHPCryptography\Utility.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\CS2PHPCryptography\Utility.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\EXControls\EXColumnHeader.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\EXControls\EXColumnHeader.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\EXControls\EXBoolColumnHeader.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\EXControls\EXBoolColumnHeader.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\EXControls\EXListViewSubItemAB.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\EXControls\EXListViewSubItemAB.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\EXControls\EXBoolListViewSubItem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\EXControls\EXBoolListViewSubItem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\EXControls\EXComboBox.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\EXControls\EXComboBox.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\EXControls\EXControlListViewSubItem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\EXControls\EXControlListViewSubItem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\EXControls\EXEditableColumnHeader.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\EXControls\EXEditableColumnHeader.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\EXControls\EXListViewItem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\EXControls\EXListViewItem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\EXControls\EXImageListViewItem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\EXControls\EXImageListViewItem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\EXControls\EXImageListViewSubItem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\EXControls\EXImageListViewSubItem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\EXControls\EXListView.Designer.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\EXControls\EXListView.Designer.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\EXControls\EXListViewSubItem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\EXControls\EXListViewSubItem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\EXControls\EXMultipleImagesListViewItem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\EXControls\EXMultipleImagesListViewItem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\EXControls\EXMultipleImagesListViewSubItem.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\EXControls\EXMultipleImagesListViewSubItem.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\NotEncrypted\BlogServers.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\NotEncrypted\BlogServers.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\NotEncrypted\BlogSpotFun.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\NotEncrypted\BlogSpotFun.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\NotEncrypted\BlogSpotLogin.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\NotEncrypted\BlogSpotLogin.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\AssemblyInfo.cs:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\AssemblyInfo.cs</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\packages.config:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\packages.config</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\GAuto_Auto_None\EXControls\EXListView.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\GAuto_Auto_None\EXControls\EXListView.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\GAuto_Auto_None\Properties\Resources.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\GAuto_Auto_None\Properties\Resources.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Forms\frmCheDo.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Forms\frmCheDo.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Forms\frmGGConfirm.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Forms\frmGGConfirm.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Forms\frmGiftCode.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Forms\frmGiftCode.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Forms\frmMuaBlock.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Forms\frmMuaBlock.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Forms\frmNVTanThu.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Forms\frmNVTanThu.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Forms\frmScriptEditor.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Forms\frmScriptEditor.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Forms\frmScheduler.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Forms\frmScheduler.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\Forms\frmUpdateNewVersion.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\Forms\frmUpdateNewVersion.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmAbout.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmAbout.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmAutoPK.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmAutoPK.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmBuffList.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmBuffList.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmGLogin.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmGLogin.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmHashPick.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmHashPick.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmHotKeys.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmHotKeys.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmItemList.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmItemList.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmLiteBuy.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmLiteBuy.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmLiteVersion.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmLiteVersion.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmLogin.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmLogin.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmMain.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmMain.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmNapThe.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmNapThe.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmNewUserInfo.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmNewUserInfo.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmPickSession.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmPickSession.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmPlayerPick.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmPlayerPick.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmProfileManager.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmProfileManager.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmReg.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmReg.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmSupport.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmSupport.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmThongBao_FW.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmThongBao_FW.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmUserInfo.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmUserInfo.resx</span></td></tr><tr name="MessageRowClassCoreLibrary" style="display: none"><td class="IconInfoEncoded"><a name="CoreLibraryMessage" /></td><td class="messageCell"><strong>CoreLibrary\SmartBot\frmVersions_FW.resx:
+        </strong><span>File successfully backed up as D:\Repositories\OathAuto\Backup1\CoreLibrary\SmartBot\frmVersions_FW.resx</span></td></tr><tr style="display: none" name="MessageRowHeaderHideCoreLibrary"><td class="IconInfoEncoded" /><td class="messageCell"><a _locID="HideAdditionalMessages" href="#" name="CoreLibraryMessage" onclick="ToggleMessageVisibility('CoreLibrary'); return false;">
+          Hide 216 additional messages
+        </a></td></tr></table></div></div></body></html>

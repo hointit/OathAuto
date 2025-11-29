@@ -6,20 +6,66 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 
 namespace OathAuto.ViewModels
 {
+  enum MovingStatus
+  {
+    None = 0,
+    ToMiddlePosition = 1,
+    ToPosition = 2,
+    Arrived = 3
+  }
   public partial class PlayerViewModel
   {
-    // Tower mode fields
-    private int _currentPositionIndex = 0;
-    private bool _isMovingForward = true; // True = 0→N, False = N→0
     private const string MONSTER_KEY_NAME = "lần tấn công"; // Adjust this based on actual monster name pattern
-    private readonly LockStatus _lock = new LockStatus();
-    private ObservableCollection<TowerPosition> _towerPositions;
+    private const string _firstWaveMonsterName = "lần tấn công: thứ 1";
+    private readonly LockStatus _lockTower = new LockStatus();
+    private MovingStatus _movingStatus = MovingStatus.Arrived;
+
+    private string _currentMonsterName = "";
+
+    private ObservableCollection<TowerPosition> _towerPositions = new()
+      {
+        // vị trí đầu tiên khi vào map, 46,35
+        new () {
+          Id = 1, 
+          Name = "Vị trí 1", 
+          Position = new () { X = 26, Y = 36 },
+          SubPostion = new () { X = 25, Y = 38},
+          IsSelected = false
+        },
+        new () 
+        {
+          Id = 2, 
+          Name = "Vị trí 2", 
+          Position = new () { X = 36, Y = 34 },
+          SubPostion = new () { X = 41, Y = 37},
+          IsSelected = false 
+        },
+        new () 
+        { 
+          Id = 3, 
+          Name = "Vị trí 3",
+          Position = new () { X = 36, Y = 24 },
+          MiddlePosition = new () { X = 47, Y = 22 },
+          SubPostion = new () { X = 39, Y = 21},
+          IsSelected = false 
+        },
+        new () 
+        { 
+          Id = 4, 
+          Name = "Vị trí 4", 
+          Position = new () { X = 24, Y = 24 },
+          MiddlePosition = new () { X = 47, Y = 22 },
+          SubPostion = new () { X = 22, Y = 22},
+          IsSelected = false 
+        }
+      };
 
     public ObservableCollection<TowerPosition> TowerPositions
     {
@@ -37,81 +83,113 @@ namespace OathAuto.ViewModels
     #region Tower Methods
     private void HandleTowerTrainingUpdate()
     {
-      // Exit if tower mode is disabled
-      // Nếu đang ở đại lý, return
       if (_playerMode != PlayerMode.FightTower) return;
-
-      if (this.Player.MapID == 2)
+      lock (_lockTower)
       {
-        SetTrainingState(false);
-
-        //lock (_lock)
-        //{
-        //  _lock.Status = "open";
-          
-
-        //  IntPtr gameWindow = Player.AutoAccount.Target.MainWindowHandle;
-
-        //  // Method 1: Try custom protocol (most likely to work)
-          
-
-        //  for (int i = 0; i <200; i++)
-        //  {
-        //    MouseInputService.ClickGameButton(gameWindow, i);
-        //  }
-
-        //  MouseInputService.SendClickWithChildWindow(gameWindow, 38, 76);
-        //  Thread.Sleep(3000);
-        //}
-
-
-        return;
-      }
-
-      try
-      {
-        this.Player.AutoAccount.Settings.AIMode = AllEnums.AIModes.DANHTUDO;
-        
-        bool hasMonsters = CheckForMonsters();
-        if (hasMonsters)
+        if (this.Player.MapID == Constant.DaiLyMapId)
         {
-          SetTrainingState(true);
+          _currentMonsterName = "";
+          return;
         }
-        else
+        try
         {
-          var currentPosition = TowerPositions.First(p => p.IsSelected);
-          if (currentPosition != null)
+          if (_settings == null)
           {
-            if (this.Player.AutoAccount.Settings.CenterX != currentPosition.X || this.Player.AutoAccount.Settings.CenterY != currentPosition.Y)
-            {
-              this.Player.AutoAccount.Settings.CenterX = currentPosition.X;
-              this.Player.AutoAccount.Settings.CenterY = currentPosition.Y;
-            }
+            Debug.WriteLine($"Settings is null: {_player.Name}");
+            return;
           }
-          MoveCurrentPosition();
+          bool hasMonsters = CheckAndSetStateMonsters();
+          if (hasMonsters)
+          {
+            SetTrainingState(true);
+            return;
+          }
+
+          var target = _towerPositions.FirstOrDefault(p => p.Id == _settings.TowerPositionId);
+          var distance = GA.CalculateDistance(_player.PosX, _player.PosY, target.Position.X, target.Position.Y);
+          switch (_movingStatus)
+          {
+            case MovingStatus.ToMiddlePosition:
+              var distanceToMidlle = GA.CalculateDistance(_player.PosX, _player.PosY, target.MiddlePosition.X, target.MiddlePosition.Y);
+              if (distanceToMidlle < 2.5)
+              {
+                // nếu tới rồi thì move tới vị trí cố định
+                _movingStatus = MovingStatus.ToPosition;
+              }
+              else
+              {
+                // nếu chưa tới thì tiếp tục di chuyển
+                _player.AutoAccount.CallMoveTo((int)target.MiddlePosition.X, (int)target.MiddlePosition.Y);
+                Thread.Sleep(5000);
+                _movingStatus = MovingStatus.ToPosition;
+              }
+              break;
+            case MovingStatus.ToPosition:
+              if (distance < 2.5)
+              {
+                _movingStatus = MovingStatus.Arrived;
+              }
+              else
+              {
+                _player.AutoAccount.CallMoveTo((int)target.Position.X, (int)target.Position.Y);
+                Thread.Sleep(6000);
+                _movingStatus = MovingStatus.Arrived;
+              }
+              break;
+            case MovingStatus.Arrived:
+              // check lại distance xem có bị tự động di chuyển quá xa không
+              if (distance < 2.5)
+              {
+                bool hasMonsters1 = CheckAndSetStateMonsters();
+                if (hasMonsters1)
+                {
+                  SetTrainingState(true);
+                }
+                else
+                {
+                  if (_currentMonsterName == "" || _currentMonsterName == _firstWaveMonsterName)
+                  {
+                    if (target.Id == 3 || target.Id == 4)
+                    {
+                      _movingStatus = MovingStatus.ToMiddlePosition;
+                    }
+                    else
+                    {
+
+                      _movingStatus = MovingStatus.ToPosition;
+                    }
+                  }
+                  else
+                  {
+                    if (target.SubPostion != null)
+                    {
+                      _player.AutoAccount.CallMoveTo((int)target.SubPostion.X, (int)target.SubPostion.Y);
+                      Thread.Sleep(2000);
+                    }
+                    _movingStatus = MovingStatus.ToPosition;
+                  }
+                  // TODO: check xem nếu quá lâu không thấy quái thì làm gì
+                }
+              }
+              else
+              {
+                _movingStatus = MovingStatus.ToPosition;
+                _player.AutoAccount.CallMoveTo((int)target.Position.X, (int)target.Position.Y);
+                Thread.Sleep(1000);
+              }
+              break;
+            default:
+              return;
+          }
+        }
+        catch (Exception ex)
+        {
+          Debug.WriteLine($"Error in HandleTowerTrainingUpdate: {ex.Message}");
         }
       }
-      catch (Exception ex)
-      {
-        Debug.WriteLine($"Error in HandleTowerTrainingUpdate: {ex.Message}");
-      }
     }
 
-    /// <summary>
-    /// Check if player is near the target position (within 2 units)
-    /// </summary>
-    private bool IsNearPosition(TowerPosition targetPosition)
-    {
-      if (_player == null || targetPosition == null)
-        return false;
-
-      float deltaX = Math.Abs(_player.PosX - targetPosition.X);
-      float deltaY = Math.Abs(_player.PosY - targetPosition.Y);
-
-      return deltaX <= 2 && deltaY <= 2;
-    }
-
-    private bool CheckForMonsters()
+    private bool CheckAndSetStateMonsters()
     {
       if (_player?.Monsters == null)
       {
@@ -121,79 +199,21 @@ namespace OathAuto.ViewModels
       try
       {
         int totalMonsters = _player.Monsters.Count;
-        // Use LINQ to check if any monsters match the key name
-        var matchingMonsters = _player.Monsters.Where(m => !string.IsNullOrEmpty(m.Name) && m.Name.ToLower().Contains(MONSTER_KEY_NAME)).ToList();
-        int matchCount = matchingMonsters.Count;
-        return matchCount > 0;
+        var matchingMonsters = _player.Monsters
+          .Where(m => !string.IsNullOrEmpty(m.Name) && m.Name.ToLower().Contains(MONSTER_KEY_NAME)).ToList();
+        if (matchingMonsters.Count > 0)
+        {
+          _currentMonsterName = matchingMonsters.FirstOrDefault().Name.ToLower();
+        }
+
+        return matchingMonsters.Count > 0;
       }
       catch (Exception ex)
       {
         Debug.WriteLine($"Error checking monsters: {ex.Message}");
         return false;
       }
-    }
-
-    private void MoveCurrentPosition()
-    {
-      try
-      {
-        // Get only checked positions
-        var checkedPositions = TowerPositions.Where(p => p.IsSelected).ToList();
-
-        if (checkedPositions.Count == 0)
-        {
-          Debug.WriteLine("No positions checked for tower mode");
-          return;
-        }
-
-        // Ensure current index is within bounds
-        if (_currentPositionIndex >= checkedPositions.Count)
-        {
-          _currentPositionIndex = checkedPositions.Count - 1;
-          _isMovingForward = false;
-        }
-        else if (_currentPositionIndex < 0)
-        {
-          _currentPositionIndex = 0;
-          _isMovingForward = true;
-        }
-
-        var targetPosition = checkedPositions[_currentPositionIndex];
-        bool isArrived = IsNearPosition(targetPosition);
-
-        if (!isArrived)
-        {
-          Debug.WriteLine($"{this.Player.Name} is moving to tower position: {targetPosition.X}, {targetPosition.Y}");
-          // Not arrived yet, keep moving to current target
-          _player.AutoAccount.CallMoveTo((int)targetPosition.X, (int)targetPosition.Y);
-          return;
-        }
-
-        // Arrived at position, move to next checked position (ping-pong)
-        if (_isMovingForward)
-        {
-          _currentPositionIndex++;
-          if (_currentPositionIndex >= checkedPositions.Count - 1)
-          {
-            _currentPositionIndex = checkedPositions.Count - 1;
-            _isMovingForward = false;
-          }
-        }
-        else
-        {
-          _currentPositionIndex--;
-          if (_currentPositionIndex <= 0)
-          {
-            _currentPositionIndex = 0;
-            _isMovingForward = true;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Debug.WriteLine($"Error moving to tower position: {ex.Message}");
-      }
-    }
+    }    
     #endregion
   }
 }

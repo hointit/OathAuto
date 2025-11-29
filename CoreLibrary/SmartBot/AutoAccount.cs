@@ -13,13 +13,14 @@ using System.Security;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
+using Timer = System.Timers.Timer;
 
 #nullable disable
 namespace SmartBot;
 
 public class AutoAccount : AllEnums
 {
-  public Thread BGThread;
+  public Timer BGThreadTimer;
   public bool firstGame = true;
   public TargetProcess Target;
   public object UpdateLocker = new object();
@@ -27,7 +28,7 @@ public class AutoAccount : AllEnums
   private bool _isAIEnabled;
   public ListViewItem lvItem = new ListViewItem();
   public AutoSettings Settings = new AutoSettings();
-  public Thread AIThread;
+  public Timer AIThreadTimer;
   public MyFlagClass MyFlag;
   public MainPlayerClass Myself = new MainPlayerClass();
   public GScriptEngine ScriptEngine = new GScriptEngine();
@@ -10085,6 +10086,7 @@ label_17:
           {
             for (int index = this.MyQuai.AllQuai.Count - 1; index >= 0; --index)
             {
+              // TODO: Lỗi
               if ((this.MyQuai.AllQuai[index].Name.Contains("Ác Tăng") || this.MyQuai.AllQuai[index].Name.Contains("Evil Monk") || this.MyQuai.AllQuai[index].Name.Contains("Thị Ma Giả") || this.MyQuai.AllQuai[index].Name.Contains("Đào Thoán Phỉ Loại") || this.MyQuai.AllQuai[index].Name.Contains("Fleeing Gangsters")) && this.Myself.TempFightMode == AllEnums.FightingModes.DANHTUNGCON)
               {
                 quai1 = this.MyQuai.AllQuai[index];
@@ -24694,56 +24696,185 @@ label_104:
 
   public string SystemID { get; set; }
 
+  public void OnAIThreadTimerElapsed(object sender, ElapsedEventArgs e)
+  {
+    AIThreadFunction();
+  }
+
   public void AIThreadFunction()
   {
-    if (this == null)
-      return;
-    while (this.Settings.AIWhileLoop)
+    try
     {
-      if (!this.Target.CyberBlacklisted)
+      if (this.Target.HasActiveProfile && this.Myself.MaxHP > 0 && this.Myself.Name != "" && !this.Target.GLoginAttached && !this.Target.GLoginAIReady)
+        this.Target.GLoginAIReady = true;
+      if (!this.Target.GLoginAIReady && !this.Target.HasActiveProfile && this.Myself.MaxHP > 0 && this.Myself.Name != "" && !this.Target.GLoginAttached)
+        this.Target.GLoginAIReady = true;
+      if (!this.Target.TempRemoved)
       {
-        try
+        if (!this.Target.IsReset)
         {
-          if (this.Target.HasActiveProfile && this.Myself.MaxHP > 0 && this.Myself.Name != "" && !this.Target.GLoginAttached && !this.Target.GLoginAIReady)
-            this.Target.GLoginAIReady = true;
-          if (!this.Target.GLoginAIReady && !this.Target.HasActiveProfile && this.Myself.MaxHP > 0 && this.Myself.Name != "" && !this.Target.GLoginAttached)
-            this.Target.GLoginAIReady = true;
-          if (this.IsLicensed)
+          if (this.Target.CyberStamp > 0L)
+            AutoAccount.CreatePseudo(this);
+          // hoint: no need to update Name to "Bouya"
+          //if (!(this.Myself.Name == "GAutoPR"))
+          //  this.Myself.Name = "Bouya";
+          if (this.MyFlag.IsInGame && this.Target.GLoginAIReady)
           {
-            if (!this.Target.TempRemoved)
+            if (this.Myself.StartingStamp == 0L)
+              this.Myself.StartingStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+            if (this.Myself.Name != "")
             {
-              if (!this.Target.IsReset)
+              if ((frmLogin.GlobalTimer.ElapsedMilliseconds - this.MyFlag.PMStamp >= 5000L || this.MyFlag.PMStamp == 0L) && GA.isVipMember() && frmLogin.CompilingLanguage == "CN" && this.Settings.cboxVIPPM && (this.Target.VersionNum == 7 || this.Target.VersionNum == 8))
               {
-                if (this.Target.CyberStamp > 0L)
-                  AutoAccount.CreatePseudo(this);
-                // hoint: no need to update Name to "Bouya"
-                //if (!(this.Myself.Name == "GAutoPR"))
-                //  this.Myself.Name = "Bouya";
-                if (this.MyFlag.IsInGame && this.Target.GLoginAIReady)
+                if (!this.MyFlag.IsBlockedChat)
                 {
-                  if (this.Myself.StartingStamp == 0L)
-                    this.Myself.StartingStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                  if (this.Myself.Name != "")
+                  try
                   {
-                    if ((frmLogin.GlobalTimer.ElapsedMilliseconds - this.MyFlag.PMStamp >= 5000L || this.MyFlag.PMStamp == 0L) && GA.isVipMember() && frmLogin.CompilingLanguage == "CN" && this.Settings.cboxVIPPM && (this.Target.VersionNum == 7 || this.Target.VersionNum == 8))
+                    if (this.Myself.PlayerAroundList.Count > 0)
                     {
-                      if (!this.MyFlag.IsBlockedChat)
+                      for (int index = this.Myself.PlayerAroundList.Count - 1; index >= 0; --index)
+                      {
+                        if ((this.Myself.PlayerAroundList[index].LastPM == 0L || this.Myself.PlayerAroundList[index].LastPM != 0L) && this.Myself.PlayerAroundList[index].Name != "")
+                        {
+                          ++this.MyFlag.SpamCount;
+                          this.Myself.PlayerAroundList[index].LastPM = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                          this.CallSendAdsPM(this.Myself.PlayerAroundList[index].Name, GA.GenerateRandomName(5) + this.Settings.AutoChatContent + GA.GenerateRandomName(5));
+                          this.MyFlag.PMStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                          GA.WriteUserLog($"Đã rao {this.MyFlag.SpamCount.ToString()} to {this.Myself.PlayerAroundList[index].Name}", this);
+                          break;
+                        }
+                      }
+                    }
+                  }
+                  catch (Exception ex)
+                  {
+                  }
+                }
+              }
+              if (GA.isVipMember() && this.IsAIEnabled)
+              {
+                int num = this.Settings.cboxTNRunOnly ? 1 : 0;
+              }
+              if (this.MyFlag.JustNewAccount && !this.firstGame)
+              {
+                GADB.LoadAllSettings(this);
+                this.Settings.AllInformationLoaded = true;
+                this.MyPet.AllInformationLoaded = true;
+                try
+                {
+                  this.MyFlag.JustNewAccount = false;
+                }
+                catch (Exception ex)
+                {
+                }
+              }
+            }
+            if (this.Myself.Level >= 10 && this.Myself.Menpai == AllEnums.Menpais.NOMENPAI)
+              this.Myself.Initialized = true;
+            if (!this.Myself.ReadyToAttack && this.Myself.ResetTimeStamp.ElapsedMilliseconds >= 5000L)
+            {
+              this.Myself.ResetTimeStamp.Reset();
+              this.Myself.ResetTimeStamp.Start();
+              this.Myself.ReadyToAttack = true;
+            }
+            if (this.Myself.Level == 0 && this.Myself.TransitioningStamp.ElapsedMilliseconds == 0L)
+              this.Myself.TransitioningStamp.Start();
+            if (this.Myself.prevNotTransitioning == 1 && this.Myself.isSceneTrans <= 0)
+            {
+              Thread.Sleep(2000);
+              this.Myself.prevNotTransitioning = 0;
+            }
+            if (this.Myself.ActionStatus >= (byte)5 && this.Myself.ActionStatus <= (byte)8)
+            {
+              this.Myself.LastPostStamp.Reset();
+              this.Myself.LastPostStamp.Start();
+            }
+            if (this.Myself.isSceneTrans == 1)
+            {
+              this.Myself.LastPostStamp.Reset();
+              this.Myself.LastPostStamp.Start();
+              lock (this.Myself.JustWarpedLock)
+              {
+                this.Myself.WarpStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                this.Myself.JustWarped = true;
+                this.Myself.JustWarpedStamp.Reset();
+                this.Myself.JustWarpedStamp.Start();
+                this.SetJustWarpedFlag(1);
+              }
+            }
+            this.ResetJustWarped();
+            if (this.MyFlag.actionAI == 1)
+            {
+              this.MyFlag.ToaDoTrongHoaList.Clear();
+              this.MyFlag.TrongHoaListMax = (frmLogin.GAuto.Settings.soHangTrongHoa - 1) * 6;
+              this.MyFlag.TrongHoaFirstMove = false;
+              this.MyFlag.actionAI = 0;
+            }
+            if (!this.Myself.JustWarped && this.Myself.MapID != -1 && this.Myself.ID > 0)
+            {
+              if (this.Target.VersionNum == 3 && this.Myself.isMuaDoTrain)
+              {
+                this.BuyListItemKNB();
+                this.Myself.isMuaDoTrain = false;
+              }
+              if (this.Myself.isBanDoChoNPC)
+              {
+                if (!this.IsAIEnabled)
+                  this.Myself.isBanDoChoNPC = false;
+                this.BanDoChoNPC();
+              }
+              if (this.Myself.IsPartyFollowed == (byte)1 && !this.IsPartyKey())
+              {
+                this.Myself.Status = AllEnums.CharStatuses.IDLE;
+                this.Myself.SavedStatus = AllEnums.CharStatuses.IDLE;
+                this.Myself.MinorStatus2 = AllEnums.CharStatuses.IDLE;
+                this.Myself.MinorStatus = AllEnums.CharStatuses.IDLE;
+                this.Myself.TargetX = 0.0f;
+                this.Myself.TargetY = 0.0f;
+                this.Myself.TargetMapID = -1;
+                this.Myself.MoveLongTrigger = false;
+                this.Myself.SavedPosX = 0.0f;
+                this.Myself.SavedPosY = 0.0f;
+                this.Myself.SavedMapID = -1;
+                this.Myself.LongMoveX = 0;
+                this.Myself.LongMoveY = 0;
+                this.Myself.LongMoveMapID = -1;
+                this.Myself.MoveAcrossMap = false;
+                this.Myself.UseAutoMove = false;
+                this.Myself.MoveFlashPos = false;
+                this.Myself.IsPK = false;
+                this.Myself.IsLongMove = false;
+                this.Myself.CurrentTarget = (QuaiIndividual)null;
+                this.Myself.CurrentTargetID = -1;
+                this.ResetXYnow();
+              }
+              if (this.Myself.PartyKeyLock && this.MyFlag.StartReconnectStamp < this.nowStamp())
+              {
+                if (this.IsPartyKeyInt() == 1)
+                  GA.PartyGiveKeyToMe(this);
+                if (this.IsPartyKeyInt() == 2)
+                  this.Myself.PartyKeyLock = false;
+              }
+              if (this.Myself.IDLEStamp - frmLogin.GlobalTimer.ElapsedMilliseconds <= 0L)
+              {
+                if (frmLogin.GAuto.Settings.IsPro1)
+                {
+                  if (this.MyParty.PartyNumbers == 0 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.PTInviteStamp >= 300L)
+                  {
+                    this.Myself.PTInviteStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                    if (this.MyParty.InviterDB != 0 && this.MyParty.Name != "")
+                    {
+                      bool flag = false;
+                      if (frmLogin.GAuto.AllAutoAccounts.Count > 1)
                       {
                         try
                         {
-                          if (this.Myself.PlayerAroundList.Count > 0)
+                          for (int index = frmLogin.GAuto.AllAutoAccounts.Count - 1; index >= 0; --index)
                           {
-                            for (int index = this.Myself.PlayerAroundList.Count - 1; index >= 0; --index)
+                            if (frmLogin.GAuto.AllAutoAccounts[index].Myself.Name == this.MyParty.Name)
                             {
-                              if ((this.Myself.PlayerAroundList[index].LastPM == 0L || this.Myself.PlayerAroundList[index].LastPM != 0L) && this.Myself.PlayerAroundList[index].Name != "")
-                              {
-                                ++this.MyFlag.SpamCount;
-                                this.Myself.PlayerAroundList[index].LastPM = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                this.CallSendAdsPM(this.Myself.PlayerAroundList[index].Name, GA.GenerateRandomName(5) + this.Settings.AutoChatContent + GA.GenerateRandomName(5));
-                                this.MyFlag.PMStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                GA.WriteUserLog($"Đã rao {this.MyFlag.SpamCount.ToString()} to {this.Myself.PlayerAroundList[index].Name}", this);
-                                break;
-                              }
+                              flag = true;
+                              break;
                             }
                           }
                         }
@@ -24751,2886 +24882,2729 @@ label_104:
                         {
                         }
                       }
+                      bool blacklist = false;
+                      if (this.Settings.PTBlacklist.Contains(this.MyParty.Name))
+                      {
+                        blacklist = true;
+                        this.CallDenyPartyInvite(blacklist);
+                      }
+                      if (!blacklist)
+                      {
+                        if (this.Settings.cboxPTLevel && this.MyParty.InviterLevel >= this.Settings.numPTLevel)
+                          flag = true;
+                        if (!flag && this.Settings.cboxTuVaoPT && this.Settings.AutoPartyList.Count > 0 && this.Settings.AutoPartyList.Contains(this.MyParty.Name))
+                          flag = true;
+                        if (flag)
+                        {
+                          GA.WriteUserLog(frmMain.langAcceptPTMsg, this, (object)this.MyParty.Name, (object)this.MyParty.InviterLevel);
+                          this.CallAcceptPartyInvite(this.MyParty.InviterDB);
+                        }
+                        else if (this.Target.VersionNum != 3 && this.Target.VersionNum != 4 && (this.Settings.cboxPTLevel || this.Settings.cboxTuVaoPT || this.Settings.cboxPTChoVao))
+                        {
+                          GA.WriteUserLog(frmMain.langDenyPTMsg, this, (object)this.MyParty.Name, (object)this.MyParty.InviterLevel);
+                          this.CallDenyPartyInvite();
+                        }
+                      }
                     }
-                    if (GA.isVipMember() && this.IsAIEnabled)
+                  }
+                  if (this.Myself.CaptchaAlerted)
+                  {
+                    if (this.Myself.CaptchaAlertStamp.ElapsedMilliseconds >= 10000L)
+                      this.Myself.CaptchaGUI = false;
+                    if (this.Myself.CaptchaAlertStamp.ElapsedMilliseconds >= 70000L)
+                      this.Myself.CaptchaAlerted = false;
+                  }
+                  if (!this.ProcessCaptcha())
+                  {
+                    if (this.Myself.PKAlerted && this.Myself.PKAlertStamp.ElapsedMilliseconds >= 10000L)
+                      this.Myself.PKAlerted = false;
+                    if (this.Myself.IsAttacked == 1 && !this.Myself.PKAlerted)
                     {
-                      int num = this.Settings.cboxTNRunOnly ? 1 : 0;
+                      this.Myself.PKAlertStamp.Reset();
+                      this.Myself.PKAlertStamp.Start();
+                      this.Myself.PKAlerted = true;
+                      this.Myself.IsPK = true;
+                      this.Myself.LastPKStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                      if (this.Settings.cboxTNAlertPK)
+                      {
+                        try
+                        {
+                          new SoundPlayer("pk.wav").Play();
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                      }
+                      PlayerIndividual playerIndividual = (PlayerIndividual)null;
+                      double num = 999.0;
+                      for (int index1 = 0; index1 < 30; ++index1)
+                      {
+                        int green = this.Myself.GreenList[index1];
+                        if (green != -1)
+                        {
+                          if (this.MyPlayers.AllPlayers.Count > 0)
+                          {
+                            try
+                            {
+                              for (int index2 = this.MyPlayers.AllPlayers.Count - 1; index2 >= 0; --index2)
+                              {
+                                PlayerIndividual allPlayer = this.MyPlayers.AllPlayers[index2];
+                                int databaseId = allPlayer.DatabaseID;
+                                if (databaseId == green && databaseId > 0 && (double)allPlayer.HPPercent > 0.0)
+                                {
+                                  playerIndividual = allPlayer;
+                                  break;
+                                }
+                              }
+                            }
+                            catch (Exception ex)
+                            {
+                            }
+                          }
+                          if (playerIndividual != null && playerIndividual.MapID == this.Myself.MapID && (double)playerIndividual.PosX != 0.0 && (double)playerIndividual.PosY != 0.0)
+                          {
+                            GA.ShowBalloon(playerIndividual.Name + frmMain.langIsAttackingYou, frmMain.langUnderPK, this, 600000);
+                            if (playerIndividual.Name != this.MyFlag.PlayerPKMe)
+                            {
+                              this.MyFlag.PlayerPKMe = playerIndividual.Name;
+                              GA.WriteUserLog(playerIndividual.Name + frmMain.langIsAttackingYou, this);
+                            }
+                            double distance = GA.CalculateDistance((double)playerIndividual.PosX, (double)playerIndividual.PosY, (double)this.Myself.PosX, (double)this.Myself.PosY);
+                            if (distance < num)
+                            {
+                              num = distance;
+                              playerIndividual = (PlayerIndividual)null;
+                            }
+                          }
+                        }
+                      }
                     }
-                    if (this.MyFlag.JustNewAccount && !this.firstGame)
+                  }
+                  else
+                    goto label_1076;
+                }
+                if (this.Myself.CanNhatBocStamp > 0L && !this.Myself.CanNhatBoc && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.CanNhatBocStamp >= (long)(this.Settings.numFullThung * 60000))
+                {
+                  this.Myself.CanNhatBoc = true;
+                  this.Myself.CanNhatBocStamp = 0L;
+                }
+                if (this.Myself.FlagFullBoc && this.Settings.cboxFullStopNhat)
+                {
+                  this.Myself.CanNhatBoc = false;
+                  this.Myself.CanNhatBocStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                }
+                if ((this.Settings.cboxHelpChat || frmLogin.GAuto.Settings.AppMode == AllEnums.AutoModes.Lite) && this.Myself.HPPercent > 0.0 && !this.Myself.JustWarped && this.Myself.Name != "" && !frmLogin.GAuto.Settings.IsPro1 && frmLogin.GAuto.Settings.QuangCaoContent.Count > 0 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.ChatQuangCaoStamp >= (long)(frmLogin.GAuto.Settings.ChatQuangCaoDelay + this.Myself.ChatQuangCaoDelayDelta))
+                {
+                  this.Myself.ChatQuangCaoStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                  this.Myself.AutoChatStamp.Reset();
+                  this.Myself.AutoChatStamp.Start();
+                  List<int> intList = new List<int>();
+                  if (frmLogin.GAuto.Settings.QuangCaoContent.Count > 0)
+                  {
+                    for (int index = 0; index < frmLogin.GAuto.Settings.QuangCaoContent.Count; ++index)
                     {
-                      GADB.LoadAllSettings(this);
-                      this.Settings.AllInformationLoaded = true;
-                      this.MyPet.AllInformationLoaded = true;
+                      if (this.Target.VersionNum == frmLogin.GAuto.Settings.QuangCaoContent[index].VersionNum && this.Target.SubVersion == frmLogin.GAuto.Settings.QuangCaoContent[index].SubVersion)
+                        intList.Add(index);
+                    }
+                    if (intList.Count == 0)
+                    {
+                      for (int index = 0; index < frmLogin.GAuto.Settings.QuangCaoContent.Count; ++index)
+                      {
+                        if (this.Target.VersionNum == frmLogin.GAuto.Settings.QuangCaoContent[index].VersionNum && frmLogin.GAuto.Settings.QuangCaoContent[index].SubVersion == 0)
+                          intList.Add(index);
+                      }
+                    }
+                  }
+                  if (intList.Count > 0)
+                  {
+                    int index = frmLogin.random.Next(0, intList.Count);
+                    try
+                    {
+                      if (intList[index] < frmLogin.GAuto.Settings.QuangCaoContent.Count)
+                        this.CallSendMessage(2, GA.ConvertToVISCII(frmLogin.GAuto.Settings.QuangCaoContent[intList[index]].Message, this.Target.VersionNum));
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                  }
+                }
+                if (this.Settings.cboxAutoChat && this.Myself.HPPercent > 0.0 && !this.Myself.JustWarped)
+                {
+                  bool flag1 = false;
+                  if (string.IsNullOrEmpty(this.Settings.AutoChatContent) && !frmLogin.GAuto.Settings.IsPro1 && !this.Settings.cboxChatSavedMsg)
+                  {
+                    List<int> intList = new List<int>();
+                    if (frmLogin.GAuto.Settings.QuangCaoContent.Count > 0)
+                    {
+                      for (int index = 0; index < frmLogin.GAuto.Settings.QuangCaoContent.Count; ++index)
+                      {
+                        if (frmLogin.GAuto.Settings.QuangCaoContent[index].VersionNum == 3 && this.Target.VersionNum == 3 && this.Target.SubVersion != 4 && this.Target.SubVersion != 5 || frmLogin.GAuto.Settings.QuangCaoContent[index].VersionNum != 3 && this.Target.VersionNum != 3)
+                          intList.Add(index);
+                      }
+                    }
+                    if (intList.Count > 0)
+                    {
                       try
                       {
-                        this.MyFlag.JustNewAccount = false;
+                        int index = frmLogin.random.Next(0, intList.Count);
+                        if (intList[index] < frmLogin.GAuto.Settings.QuangCaoContent.Count)
+                          this.Settings.AutoChatContent = frmLogin.GAuto.Settings.QuangCaoContent[intList[index]].Message;
+                      }
+                      catch (Exception ex)
+                      {
+                      }
+                    }
+                    this.Settings.cboKenhChat = 2;
+                    flag1 = true;
+                  }
+                  bool flag2 = false;
+                  if (this.MyFlag.ChatRecorded && this.Myself.ChatRecordedMessage != "")
+                    flag2 = true;
+                  if (!string.IsNullOrEmpty(this.Settings.AutoChatContent) || flag2 && this.Settings.cboxChatSavedMsg)
+                  {
+                    this.Myself.RemainingChatTime = (long)(this.Settings.numAutoChat * 1000) - this.Myself.AutoChatStamp.ElapsedMilliseconds;
+                    if (this.Myself.RemainingChatTime <= 0L || this.Myself.ChatTimes == 0)
+                    {
+                      ++this.Myself.ChatTimes;
+                      this.Myself.AutoChatStamp.Reset();
+                      this.Myself.AutoChatStamp.Start();
+                      bool userSend = frmLogin.GAuto.Settings.AppMode == AllEnums.AutoModes.Lite;
+                      if (this.Settings.cboxChatSavedMsg && flag2)
+                      {
+                        this.CallSendSavedChat();
+                      }
+                      else
+                      {
+                        this.CallSendMessage(this.Settings.cboKenhChat, GA.ConvertToVISCII(this.Settings.AutoChatContent, this.Target.VersionNum), userSend);
+                        if (flag1)
+                          this.Settings.AutoChatContent = "";
+                      }
+                    }
+                  }
+                }
+                for (int index = 1; index < this.MySkills.AllSkills.Count; ++index)
+                {
+                  SingleSkill allSkill = this.MySkills.AllSkills[index];
+                  if (allSkill.RemainWaitingTime > 0)
+                  {
+                    allSkill.RemainWaitingTime -= this.Target.ThreadDelay;
+                    if (allSkill.RemainWaitingTime < 0)
+                      allSkill.RemainWaitingTime = 0;
+                  }
+                }
+                if (this.Myself.CheckSkillDelayStamp.ElapsedMilliseconds >= 1500L)
+                {
+                  foreach (SkillPlayItem skillPlay in (List<SkillPlayItem>)this.Settings.SkillPlayList)
+                  {
+                    if (frmLogin.GlobalTimer.ElapsedMilliseconds - skillPlay.LastPlayTimeStamp >= (long)(skillPlay.SkillDelayInSecond * 1000) && skillPlay.Played)
+                      skillPlay.Played = false;
+                  }
+                  foreach (SkillPlayItem skillPk in (List<SkillPlayItem>)this.Settings.SkillPKList)
+                  {
+                    if (frmLogin.GlobalTimer.ElapsedMilliseconds - skillPk.LastPlayTimeStamp >= (long)(skillPk.SkillDelayInSecond * 1000) && skillPk.Played)
+                      skillPk.Played = false;
+                  }
+                  try
+                  {
+                    foreach (SkillPlayItem skillBuff in (List<SkillPlayItem>)this.Settings.SkillBuffList)
+                    {
+                      if (frmLogin.GlobalTimer.ElapsedMilliseconds - skillBuff.LastPlayTimeStamp >= (long)(skillBuff.SkillDelayInSecond * 1000))
+                      {
+                        skillBuff.Played = false;
+                        if (skillBuff.BuffPlayerList.Count > 0)
+                        {
+                          for (int index = skillBuff.BuffPlayerList.Count - 1; index >= 0; --index)
+                          {
+                            BuffedPlayer buffPlayer = skillBuff.BuffPlayerList[index];
+                            if (frmLogin.GlobalTimer.ElapsedMilliseconds - buffPlayer.LastBuffTime >= (long)(skillBuff.WaitingTime * 60000))
+                              skillBuff.BuffPlayerList.RemoveAt(index);
+                          }
+                        }
+                      }
+                    }
+                  }
+                  catch (Exception ex)
+                  {
+                    GA.WriteUserLog(frmMain.langErrorPlayingSkills, this);
+                  }
+                  this.Myself.CheckSkillDelayStamp.Reset();
+                  this.Myself.CheckSkillDelayStamp.Start();
+                }
+                if (this.Myself.Pass2BoxShow == 1 && frmLogin.GAuto.Settings.IsPro2)
+                  this.CallMoPass2();
+                // hoint: update Name = SaveDisplayName
+                this.Myself.Name = this.Myself.SavedDisplayName;
+                if (this.IsAIEnabled && this.Myself.ID > 0)
+                {
+                  this.NhanQuaGame();
+                  if (this.Myself.isAcceptBox == 1)
+                    this.CallSendPortalConfirmationClick();
+                  if (this.Myself.isMessageBox_Self == 1 && !this.Myself.IsMuaKNB)
+                  {
+                    bool flag = false;
+                    int ToX = 65;
+                    int ToY = 270;
+                    if (GA.ClientVersion(this) == 10)
+                    {
+                      ToX = 32 /*0x20*/;
+                      ToY = 162;
+                    }
+                    if (GA.CalculateDistance((double)this.Myself.PosX, (double)this.Myself.PosY, (double)ToX, (double)ToY) < 8.0)
+                      flag = true;
+                    if (GA.CalculateDistance((double)this.Myself.PosX, (double)this.Myself.PosY, 283.0, 77.0) < 8.0)
+                      flag = true;
+                    if (GA.IsBangMapID(this.Myself.MapID) && GA.CalculateDistance((double)this.Myself.PosX, (double)this.Myself.PosY, 99.0, 157.0) < 8.0)
+                      flag = true;
+                    if (flag || this.Settings.cboxTuClickYes2 || this.MyFlag.ClickYesStamp > frmLogin.GlobalTimer.ElapsedMilliseconds)
+                    {
+                      this.CallStartAutoMoveClick();
+                      Thread.Sleep(500);
+                    }
+                  }
+                  if (this.MyFlag.AIAction == 1)
+                  {
+                    long elapsedMilliseconds = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                    int posX = (int)this.Myself.PosX;
+                    int posY = (int)this.Myself.PosY;
+                    while (this.IsAIEnabled)
+                    {
+                      Random random = new Random();
+                      this.CallMoveTo((int)this.Myself.PosX + random.Next(-2, 2), (int)this.Myself.PosY + random.Next(-2, 2));
+                      Thread.Sleep(280);
+                      if (posX != (int)this.Myself.PosX || posY != (int)this.Myself.PosY || this.nowStamp() - elapsedMilliseconds > 1200L)
+                        break;
+                    }
+                    this.AIActionSet(0);
+                  }
+                }
+                this.PhucHoiSkillNM();
+                if (!this.Myself.IsLuyenKim)
+                  this.FuncPetSupport();
+                if (!this.Myself.IsLuyenKim)
+                  this.FuncAnHPMP();
+                if (this.Myself.Status != AllEnums.CharStatuses.NMBUFFMAU && this.Myself.ActionStatus != (byte)5 && this.Myself.ActionStatus != (byte)6 && this.Myself.IsPartyFollowed == (byte)0)
+                {
+                  this.NhatBoc();
+                  if (this.Settings.cboxNhatHop && frmLogin.GAuto.Settings.IsPro1)
+                    this.DiTimBauVat(799);
+                }
+                if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.NhatHopBaoRuongStamp > 150000L && this.Settings.cboxNhatHop && !GA.isVipMember())
+                {
+                  this.Settings.cboxNhatHop = false;
+                  GA.WriteUserLog(frmMain.langTurnOffPickingBoxes, this);
+                }
+                this.FuncHuyItem();
+                if (frmLogin.GAuto.Settings.IsPro2 && !this.Myself.JustWarped)
+                {
+                  if (!this.IsInCity() && (this.Myself.Status == AllEnums.CharStatuses.LENLAIBAITRAIN || this.Myself.Status == AllEnums.CharStatuses.SELLING_NPC || this.Myself.Status == AllEnums.CharStatuses.BUYING_NPC) && this.Myself.IsPartyFollowed == (byte)0)
+                  {
+                    this.Myself.Status = AllEnums.CharStatuses.IDLE;
+                    this.Myself.SavedStatus = AllEnums.CharStatuses.IDLE;
+                  }
+                  if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.CleanUpInventoryStamp >= 3000L && this.Settings.cboxVutDoKhiFull && !this.Myself.JustWarped && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.StartingStamp >= 5000L && this.Myself.StartingStamp != 0L)
+                  {
+                    this.Myself.CleanUpInventoryStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                    this.CleanUpInventory();
+                  }
+                }
+                if (this.MyParty.PartyNumbers > 0 && frmLogin.GAuto.Settings.IsPro2)
+                {
+                  if (this.Myself.FlagPartyFollowRequest == (byte)1 && this.Myself.IsPartyFollowed == (byte)0 && this.Settings.cboxTuTheoDoi && this.IsAIEnabled)
+                  {
+                    if (this.Settings.PartySavedPosX == 0 && this.Settings.PartySavedPosY == 0 && this.Settings.PartySavedMapID == -1)
+                    {
+                      this.Settings.PartySavedPosX = (int)this.Settings.CenterX;
+                      this.Settings.PartySavedPosY = (int)this.Settings.CenterY;
+                      this.Settings.PartySavedMapID = this.Settings.MapID;
+                    }
+                    this.CallAcceptPartyFollowClick();
+                    Thread.Sleep(1000);
+                  }
+                  if (this.Myself.IsPartyFollowed == (byte)0 && this.Myself.PreviousIsPartyFollowed != (int)this.Myself.IsPartyFollowed && this.MyParty.PartyNumbers > 0)
+                  {
+                    PartyMember allMember = this.MyParty.AllMembers[0];
+                  }
+                }
+                if (this.MyParty.PartyNumbers <= 0 && this.Settings.PartySavedPosX != 0 && this.Settings.PartySavedPosY != 0 && this.Settings.PartySavedMapID > 0)
+                {
+                  this.Settings.CenterX = (double)this.Settings.PartySavedPosX;
+                  this.Settings.CenterY = (double)this.Settings.PartySavedPosY;
+                  this.Settings.MapID = this.Settings.PartySavedMapID;
+                  this.Settings.PartySavedPosX = 0;
+                  this.Settings.PartySavedPosY = 0;
+                  this.Settings.PartySavedMapID = -1;
+                }
+                if (frmLogin.GAuto.Settings.IsPro2 && !this.Settings.cboxKhongResetGio && this.Myself.Status != AllEnums.CharStatuses.VETHANH)
+                {
+                  int num = 10740000;
+                  if (this.MyFlag.Random_ResetTime == 0)
+                    this.MyFlag.Random_ResetTime = GA.random.Next(20, 60) * 10000;
+                  if (this.Myself.OnlineTime >= num - this.MyFlag.Random_ResetTime && !this.Myself.JustWarped && this.Myself.IsPartyFollowed == (byte)0 && this.Target.VersionNum != 3 && (this.MyFlag.ResetStamp == 0L || this.MyFlag.ResetStamp != 0L && frmLogin.GlobalTimer.ElapsedMilliseconds - this.MyFlag.ResetStamp >= 7200000L))
+                  {
+                    bool flag = true;
+                    if (GA.IsInPhuBan(this.Myself.MapID, this) && (this.Myself.IsAcTac || this.Myself.IsAcBa || this.Myself.IsTKC || this.Myself.IsLinhThu || this.Myself.IsQ1 || this.Myself.IsQ2 || this.Myself.IsPHLM || this.Myself.isYTO || this.Myself.IsKyCuoc))
+                      flag = false;
+                    if (flag)
+                    {
+                      this.MyFlag.ResetStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                      this.ResetTimeAdvanced();
+                      goto label_1076;
+                    }
+                  }
+                }
+                this.ProcessPartyGrouping();
+                if (this.Myself.IsBuffMode && this.Myself.IsPartyFollowed == (byte)0 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.LastSkillTimeStamp >= 5000L)
+                  this.Myself.IsBuffMode = false;
+                if (frmLogin.GAuto.Settings.IsPro1 && this.Myself.IsPartyFollowed == (byte)0 && this.IsAIEnabled && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.LastSkillTimeStamp >= 2000L && this.Settings.SkillBuffList.Count > 0 && this.Myself.HorseType == -1 && this.Myself.MPPercent > 1.0 && this.Myself.IsPartyFollowed == (byte)0)
+                {
+                  if (this.Settings.cboxBuffHoTroOnOff)
+                  {
+                    try
+                    {
+                      foreach (SkillPlayItem skillBuff in (List<SkillPlayItem>)this.Settings.SkillBuffList)
+                      {
+                        if (skillBuff.IsEnabled)
+                        {
+                          BuffedPlayer buffTarget = (BuffedPlayer)null;
+                          double num = 99.0;
+                          if (skillBuff.BuffSelf)
+                          {
+                            bool flag = false;
+                            foreach (BuffedPlayer buffPlayer in (List<BuffedPlayer>)skillBuff.BuffPlayerList)
+                            {
+                              if (buffPlayer.Name == this.Myself.Name)
+                              {
+                                flag = true;
+                                break;
+                              }
+                            }
+                            if (!flag)
+                            {
+                              buffTarget = new BuffedPlayer();
+                              buffTarget.Name = this.Myself.Name;
+                              buffTarget.DatabaseID = this.Myself.DatabaseID;
+                              buffTarget.GameID = this.Myself.ID;
+                              num = 1.0;
+                            }
+                          }
+                          if (buffTarget == null && skillBuff.BuffParty && this.MyParty.PartyNumbers > 0 && this.MyParty.PartyNumbers < 6)
+                          {
+                            for (int index = 0; index <= this.MyParty.PartyNumbers; ++index)
+                            {
+                              PartyMember allMember = this.MyParty.AllMembers[index];
+                              if (this.BuffHoTro(skillBuff, buffTarget, allMember))
+                              {
+                                buffTarget = new BuffedPlayer();
+                                buffTarget.Name = allMember.Name;
+                                buffTarget.DatabaseID = allMember.DatabaseID;
+                                buffTarget.GameID = allMember.ID;
+                                break;
+                              }
+                            }
+                          }
+                          if (buffTarget == null && skillBuff.BuffArmy && this.MyArmy.HasQuanDoan && this.Target.VersionNum != 3 && this.Target.VersionNum != 4)
+                          {
+                            for (int index = 0; index < 30; ++index)
+                            {
+                              PartyMember allMember = this.MyArmy.AllMembers[index];
+                              if (this.BuffHoTro(skillBuff, buffTarget, allMember))
+                              {
+                                buffTarget = new BuffedPlayer();
+                                buffTarget.Name = allMember.Name;
+                                buffTarget.DatabaseID = allMember.DatabaseID;
+                                buffTarget.GameID = allMember.ID;
+                                break;
+                              }
+                            }
+                          }
+                          if (buffTarget != null)
+                          {
+                            if (skillBuff.SkillItem.DelayIndex != -1)
+                              skillBuff.SkillItem.SkillDelay = this.MySkills.SkillDelays[skillBuff.SkillItem.DelayIndex].SkillDelay;
+                            bool flag = true;
+                            if (this.Myself.Rage < skillBuff.SkillItem.RageRequired && skillBuff.SkillItem.RageRequired > 0)
+                              flag = false;
+                            if (flag)
+                            {
+                              if (num <= 11.0)
+                                this.AdjustShootList(skillBuff.SkillItem.ID, buffTarget.GameID);
+                              else
+                                this.AdjustShootList(skillBuff.SkillItem.ID, buffTarget.GameID, packet: false);
+                              skillBuff.LastPlayTimeStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                              buffTarget.LastBuffTime = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                              skillBuff.BuffPlayerList.Add(buffTarget);
+                              this.Myself.LastSkillTimeStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                              this.Myself.IsBuffMode = true;
+                              break;
+                            }
+                          }
+                          else if (buffTarget == null)
+                            this.Myself.IsBuffMode = false;
+                        }
+                      }
+                    }
+                    catch (Exception ex)
+                    {
+                      GA.WriteUserLog(frmMain.langErrorWhileCheckingSkills, this);
+                    }
+                  }
+                }
+                if (this.MyInventory.CheckItemBuffer.Count > 0 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.WarpStamp >= 15000L)
+                {
+                  if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.CheckItemStamp >= 400L)
+                  {
+                    try
+                    {
+                      this.Myself.CheckItemStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                      if (this.MyInventory.AllItems[this.MyInventory.CheckItemBuffer[0]].ItemID >= 0)
+                        this.CallInventoryItemDetail(this.MyInventory.CheckItemBuffer[0]);
+                    }
+                    catch (Exception ex)
+                    {
+                      GA.WriteUserLog(frmMain.langErrorCheckInventory + ex.Message, this);
+                    }
+                    this.MyInventory.CheckItemBuffer.RemoveAt(0);
+                  }
+                }
+                if (this.MySkills.SkillBuffer.Count > 0 && this.Myself.ActionStatus != (byte)5 && this.Myself.ActionStatus != (byte)6)
+                {
+                  bool flag3 = true;
+                  if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.MyFlag.MDPPlayDCTD <= 8000L)
+                  {
+                    if (this.Myself.ActionStatus == (byte)7)
+                      this.CallAttackTarget(-1, 34, 0, 0);
+                    flag3 = false;
+                  }
+                  if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.MyFlag.noAttackStamp <= 5000L)
+                    flag3 = false;
+                  if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.MyFlag.noPlaySkillStamp <= 7000L)
+                    flag3 = false;
+                  if (flag3 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.LastSkillSent >= 450L)
+                  {
+                    this.Myself.LastSkillSent = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                    QuaiIndividual quaiById = this.MyQuai.GetQuaiByID(this.MySkills.SkillBuffer[0].TargetID, true);
+                    QuaiIndividual quaiIndividual = (QuaiIndividual)null;
+                    int targetId = this.MySkills.SkillBuffer[0].TargetID;
+                    bool flag4 = false;
+                    bool flag5 = false;
+                    if (quaiById == null)
+                    {
+                      quaiIndividual = this.MyPlayers.GetPlayerByIDAsQuai(this.MySkills.SkillBuffer[0].TargetID, true);
+                      if (quaiIndividual == null)
+                      {
+                        if (this.MySkills.SkillBuffer[0].TargetID == this.Myself.ID)
+                          flag5 = true;
+                        else if (this.MySkills.SkillBuffer[0].TargetID == -1)
+                          flag5 = true;
+                        else if (this.MyQuai.TargetID >= 0 && (double)this.MyQuai.TargetHPPercent > 0.0)
+                        {
+                          targetId = this.MyQuai.TargetID;
+                          flag4 = true;
+                          flag5 = true;
+                        }
+                      }
+                    }
+                    if (quaiById != null || quaiIndividual != null)
+                      flag5 = true;
+                    if (flag5)
+                    {
+                      if (this.MySkills.SkillBuffer[0].Packet)
+                      {
+                        if (!flag4)
+                          this.CallAttackTargetPacket(this.Myself.ID, this.MySkills.SkillBuffer[0].SkillID, targetId, this.MySkills.SkillBuffer[0].PosX, this.MySkills.SkillBuffer[0].PosY);
+                        else if (this.MyQuai.TargetID >= 0)
+                          this.CallAttackTargetPacket(this.Myself.ID, this.MySkills.SkillBuffer[0].SkillID, this.MyQuai.TargetID, this.MySkills.SkillBuffer[0].PosX, this.MySkills.SkillBuffer[0].PosY);
+                      }
+                      else if (!flag4)
+                        this.CallAttackTarget(targetId, this.MySkills.SkillBuffer[0].SkillID, this.MySkills.SkillBuffer[0].PosX, this.MySkills.SkillBuffer[0].PosY);
+                      else if (this.MyQuai.TargetID >= 0)
+                        this.CallAttackTarget(this.MyQuai.TargetID, this.MySkills.SkillBuffer[0].SkillID, this.MySkills.SkillBuffer[0].PosX, this.MySkills.SkillBuffer[0].PosY);
+                      this.MySkills.SkillBuffer.RemoveAt(0);
+                    }
+                  }
+                }
+                if (frmLogin.GAuto.Settings.IsPro2 && !this.Myself.IsLuyenKim && this.Myself.IsPartyFollowed == (byte)0 && this.IsAIEnabled)
+                {
+                  if (this.MyPet != null && this.MyPet.ActivePetID != 0 && this.CanAction() && this.MyPet.ActivePetIndex >= 0 && this.MyPet.ActivePetIndex < this.MyPet.AllPets.Count)
+                  {
+                    if (!this.MyPet.NoToy)
+                    {
+                      try
+                      {
+                        long elapsedMilliseconds = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                        while (this.MyPet.AllPets[this.MyPet.ActivePetIndex].Happiness < this.Settings.numPetChoi)
+                        {
+                          if (this.CallPlayMyPet(this.MyPet.AllPets[this.MyPet.ActivePetIndex].DatabaseID, this.MyPet.AllPets[this.MyPet.ActivePetIndex].PetOwnerDBID))
+                          {
+                            Thread.Sleep(300);
+                            if (frmLogin.GlobalTimer.ElapsedMilliseconds - elapsedMilliseconds >= 5000L)
+                              break;
+                          }
+                          else
+                            break;
+                        }
+                      }
+                      catch (Exception ex)
+                      {
+                        GA.WriteUserLog($"{frmMain.langErrorPlayingPet}. Message: {ex.Message}", this);
+                      }
+                    }
+                  }
+                  if (this.MyPet != null && this.MyPet.ActivePetIndex >= 0 && this.MyPet.ActivePetIndex < this.MyPet.AllPets.Count)
+                  {
+                    if (this.MyPet.AlwaysActivePetName == string.Empty)
+                    {
+                      try
+                      {
+                        this.MyPet.AlwaysActivePetName = this.MyPet.AllPets[this.MyPet.ActivePetIndex].PetName;
+                      }
+                      catch (Exception ex)
+                      {
+                        GA.WriteUserLog(frmMain.langErrorGettingPetName, this);
+                      }
+                    }
+                  }
+                  if (this.MyPet.AlwaysActivePetName != "" && this.MyPet.AlwaysActivePetName != frmLogin.GAuto.Settings.NoPetName && this.MyPet.PetAction == AllEnums.PetActions.XuatChien && this.Myself.HPPercent > 0.0 && !this.Myself.IsPK && this.CanAction() && this.MyPet.flagAllowPet && (this.Myself.ActionStatus == (byte)0 || (double)this.MyQuai.TargetHPPercent == 0.0) && (this.MyPet.ActivePetID == 0 || this.MyPet.ActivePetDBID != this.MyPet.AlwaysActivePetDBID || this.MyPet.ActivePetGuidID != this.MyPet.AlwaysActivePetGuidID))
+                  {
+                    SinglePetClass petByName = this.MyPet.GetPetByName(this.MyPet.AlwaysActivePetName);
+                    if (petByName != null)
+                    {
+                      bool flag = true;
+                      if (petByName.Happiness < 60)
+                      {
+                        int num = (70 - petByName.Happiness) / 10;
+                        for (int index = 0; index < num; ++index)
+                          flag = this.CallPlayMyPet(this.MyPet.AlwaysActivePetDBID, this.MyPet.AlwaysActivePetGuidID);
+                        if (flag)
+                          Thread.Sleep(500);
+                        flag = petByName.Happiness >= 60;
+                      }
+                      // hoint: check trạng thái đủ level mới call pet để chống lag
+                      if (this.Myself.ActionStatus != (byte)5 && flag && this.Myself.HorseType == -1)
+                        if (this.Myself.Level >= petByName.Level - 10)
+                        {
+                          this.CallPetSure(this.MyPet.AlwaysActivePetName);
+                        }
+                    }
+                  }
+                }
+                if (frmLogin.GAuto.Settings.AppMode != AllEnums.AutoModes.Lite && this.Settings.TraderMode != AllEnums.TraderModes.SellBuy && !this.Myself.IsPK && frmLogin.GAuto.Settings.IsPro2 && this.Myself.IsPartyFollowed == (byte)0 && (this.IsAIEnabled || this.Myself.Menpai == AllEnums.Menpais.NGAMI))
+                  this.PetCongSinh_HuyetTe();
+                if (this.Myself.Menpai == AllEnums.Menpais.NGAMI && this.Target.VersionNum == 3 && this.Target.SubVersion == 4)
+                {
+                  PlayerIndividual playerIndividual1 = (PlayerIndividual)null;
+                  PlayerIndividual playerIndividual2 = (PlayerIndividual)null;
+                  double num = 999.0;
+                  for (int index3 = 0; index3 < 30; ++index3)
+                  {
+                    int green = this.Myself.GreenList[index3];
+                    if (green > 0)
+                    {
+                      if (this.MyPlayers.AllPlayers.Count > 0)
+                      {
+                        try
+                        {
+                          for (int index4 = this.MyPlayers.AllPlayers.Count - 1; index4 >= 0; --index4)
+                          {
+                            PlayerIndividual allPlayer = this.MyPlayers.AllPlayers[index4];
+                            int databaseId = allPlayer.DatabaseID;
+                            if (databaseId == green && databaseId > 0 && (double)allPlayer.HPPercent > 0.0)
+                            {
+                              playerIndividual1 = allPlayer;
+                              break;
+                            }
+                          }
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                      }
+                      if (playerIndividual1 != null && playerIndividual1.MapID == this.Myself.MapID && (double)playerIndividual1.PosX != 0.0 && (double)playerIndividual1.PosY != 0.0)
+                      {
+                        double distance = GA.CalculateDistance((double)playerIndividual1.PosX, (double)playerIndividual1.PosY, (double)this.Myself.PosX, (double)this.Myself.PosY);
+                        if (distance < num)
+                        {
+                          num = distance;
+                          playerIndividual2 = playerIndividual1;
+                          playerIndividual1 = (PlayerIndividual)null;
+                        }
+                      }
+                    }
+                  }
+                  if (playerIndividual2 != null && !this.IsInCity() && !GA.IsInPhuBan(this.Myself.MapID, this))
+                    this.MyFlag.inPKTinhKiemStamp = this.nowStamp() + 900000L;
+                }
+                if (this.MyFlag.inPKTinhKiemStamp < this.nowStamp() || GA.IsInPhuBan(this.Myself.MapID, this) || this.IsInCity())
+                  this.FuncNgaMySupport();
+                else if (this.Myself.Menpai == AllEnums.Menpais.NGAMI)
+                {
+                  if (this.CustomSleep(11, 10000))
+                    GA.ShowBalloon("Đang ở trạng thái PK, Nga My sẽ không tự bơm máu đồng đội trong vòng 15 phút", "Chú ý", this, 7000);
+                  this.NgaMiBuffSelf();
+                  this.NgaMiBuffPet();
+                }
+                bool needVeThuHoach = false;
+                if (frmLogin.GAuto.Settings.IsPro2)
+                  this.TrongTrot(ref needVeThuHoach);
+                if (this.Myself.IsScheduled && this.Settings.ListScheduler.Count > 0 && this.Settings.ListScheduler.Count > 0)
+                {
+                  if (this.Myself.ScheduledStamp != 0L)
+                  {
+                    if (this.nowStamp() - this.Myself.ScheduledStamp < 600000L)
+                      goto label_458;
+                  }
+                  try
+                  {
+                    for (int index = 0; index < this.Settings.ListScheduler.Count; ++index)
+                    {
+                      GEventClass geventClass = this.Settings.ListScheduler[index];
+                      TimeSpan timeOfDay = DateTime.Now.TimeOfDay;
+                      int hours = timeOfDay.Hours;
+                      int minutes = timeOfDay.Minutes;
+                      if (geventClass.Hour == hours && (minutes == geventClass.Minute || minutes > geventClass.Minute && minutes <= geventClass.Minute + 6) && !GA.IsInPhuBan(this.Myself.MapID, this) && (geventClass.eventStamp == 0L || frmLogin.GlobalTimer.ElapsedMilliseconds - geventClass.eventStamp >= 600000L))
+                      {
+                        geventClass.eventStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                        if (this.MyParty.PartyNumbers > 1)
+                        {
+                          if (this.IsPartyKeyInt() == 1)
+                          {
+                            GA.PartyGiveKeyToMe(this);
+                            Thread.Sleep(5000);
+                          }
+                          GA.PartyDoSomething(this, mode: 25);
+                        }
+                        switch (geventClass.EventName)
+                        {
+                          case "Đi train cả party":
+                          case "Train level entire party":
+                          case "全部培训":
+                            frmMain.DisableNhiemVu(this);
+                            GA.PartyDoSomething(this, true, 24);
+                            break;
+                          case "Ác Tặc":
+                          case "Rebels":
+                          case "贼兵入侵":
+                            if (!this.Myself.IsAcTac)
+                            {
+                              frmMain.frmMainInstance.cboxIsAcTac.Invoke((Delegate)(() =>
+                              {
+                                this.MyFlag.DatLichFlag = true;
+                                frmMain.frmMainInstance.NVAcTac(this);
+                              }));
+                              break;
+                            }
+                            break;
+                          case "Tàng Kinh Các":
+                          case "藏经阁":
+                            if (!this.Myself.IsTKC)
+                            {
+                              frmMain.frmMainInstance.cboxIsTKC.Invoke((Delegate)(() =>
+                              {
+                                this.MyFlag.DatLichFlag = true;
+                                frmMain.frmMainInstance.NVTangKinhCac(this);
+                              }));
+                              break;
+                            }
+                            break;
+                          case "Tụ Bảo Bồn (Cá nhân)":
+                          case "秀宝盆（个人）":
+                            if (!this.Myself.IsTBB)
+                            {
+                              frmMain.frmMainInstance.cboxIsTBB.Invoke((Delegate)(() =>
+                              {
+                                this.MyFlag.DatLichFlag = true;
+                                frmMain.frmMainInstance.NVTuBaoBon(this);
+                              }));
+                              break;
+                            }
+                            break;
+                          case "Linh Thú":
+                          case "野猪暴走":
+                            if (!this.Myself.IsLinhThu)
+                            {
+                              frmMain.frmMainInstance.cboxIsLinhThu.Invoke((Delegate)(() =>
+                              {
+                                this.MyFlag.DatLichFlag = true;
+                                frmMain.frmMainInstance.NVLinhThu(this);
+                              }));
+                              break;
+                            }
+                            break;
+                          case "PHLM":
+                          case "凤凰陵墓":
+                            if (!this.Myself.IsPHLM)
+                            {
+                              frmMain.frmMainInstance.cboxIsPHLM.Invoke((Delegate)(() =>
+                              {
+                                this.MyFlag.DatLichFlag = true;
+                                frmMain.frmMainInstance.NVPHLM(this);
+                              }));
+                              break;
+                            }
+                            break;
+                          case "Kỳ Cuộc":
+                          case "Chess":
+                          case "棋局":
+                            if (!this.Myself.IsKyCuoc)
+                            {
+                              frmMain.frmMainInstance.cboxKyCuoc.Invoke((Delegate)(() =>
+                              {
+                                this.MyFlag.DatLichFlag = true;
+                                frmMain.frmMainInstance.NVKyCuoc(this);
+                              }));
+                              break;
+                            }
+                            break;
+                          case "Phiêu Miễu Phong - Sơ chiến":
+                            if (!this.Myself.isPMP)
+                            {
+                              this.MyFlag.menuPMP = 402276;
+                              frmMain.frmMainInstance.cboxPMP.Invoke((Delegate)(() =>
+                              {
+                                this.MyFlag.DatLichFlag = true;
+                                frmMain.frmMainInstance.NVPMP(this);
+                              }));
+                              break;
+                            }
+                            break;
+                          case "Phiêu Miễu Phong - Khiêu chiến":
+                            if (!this.Myself.isPMP)
+                            {
+                              this.MyFlag.menuPMP = 402263;
+                              frmMain.frmMainInstance.cboxPMP.Invoke((Delegate)(() =>
+                              {
+                                this.MyFlag.DatLichFlag = true;
+                                frmMain.frmMainInstance.NVPMP(this);
+                              }));
+                              break;
+                            }
+                            break;
+                          case "Lâu Lan Tầm Bảo":
+                            if (!this.Myself.isLLTB)
+                            {
+                              frmMain.frmMainInstance.cboxLLTB.Invoke((Delegate)(() =>
+                              {
+                                this.MyFlag.DatLichFlag = true;
+                                frmMain.frmMainInstance.NVLLTB(this);
+                              }));
+                              break;
+                            }
+                            break;
+                          case "Ác Bá (Tự đổi key)":
+                          case "Thief Raid (Auto switch team leader)":
+                          case "偷袭门派 （自换钥匙)":
+                            if (!this.Myself.IsAcBa)
+                            {
+                              bool flag6 = true;
+                              if (this.Settings.AcBaPhai == "(Môn phái)" || this.Settings.AcBaPhai == "(Class)" || this.Settings.AcBaPhai == "（等级）")
+                              {
+                                geventClass.eventStamp = 0L;
+                                flag6 = false;
+                              }
+                              if (flag6)
+                              {
+                                bool flag7 = false;
+                                switch (this.Settings.AcBaPhai)
+                                {
+                                  case "Thiếu Lâm":
+                                  case "Shaolin":
+                                    if (this.Myself.Menpai != AllEnums.Menpais.THIEULAM)
+                                    {
+                                      GA.PartyDoSomething(this, true, 23, 0);
+                                      flag7 = true;
+                                      break;
+                                    }
+                                    break;
+                                  case "Minh Giáo":
+                                  case "Pyromancer":
+                                    if (this.Myself.Menpai != AllEnums.Menpais.MINHGIAO)
+                                    {
+                                      GA.PartyDoSomething(this, true, 23, 1);
+                                      flag7 = true;
+                                      break;
+                                    }
+                                    break;
+                                  case "Cái Bang":
+                                  case "Beggars Alliance":
+                                    if (this.Myself.Menpai != AllEnums.Menpais.CAIBANG)
+                                    {
+                                      GA.PartyDoSomething(this, true, 23, 2);
+                                      flag7 = true;
+                                      break;
+                                    }
+                                    break;
+                                  case "Võ Đang":
+                                  case "Taoist":
+                                    if (this.Myself.Menpai != AllEnums.Menpais.VODANG)
+                                    {
+                                      GA.PartyDoSomething(this, true, 23, 3);
+                                      flag7 = true;
+                                      break;
+                                    }
+                                    break;
+                                  case "Nga Mi":
+                                  case "Nga My":
+                                  case "Lotus Order":
+                                    if (this.Myself.Menpai != AllEnums.Menpais.NGAMI)
+                                    {
+                                      GA.PartyDoSomething(this, true, 23, 4);
+                                      flag7 = true;
+                                      break;
+                                    }
+                                    break;
+                                  case "Tinh Túc":
+                                  case "Voodoo":
+                                    if (this.Myself.Menpai != AllEnums.Menpais.TINHTUC)
+                                    {
+                                      GA.PartyDoSomething(this, true, 23, 5);
+                                      flag7 = true;
+                                      break;
+                                    }
+                                    break;
+                                  case "Thiên Long":
+                                  case "Royalty":
+                                    if (this.Myself.Menpai != AllEnums.Menpais.THIENLONG)
+                                    {
+                                      GA.PartyDoSomething(this, true, 23, 6);
+                                      flag7 = true;
+                                      break;
+                                    }
+                                    break;
+                                  case "Thiên Sơn":
+                                  case "Assassin":
+                                    if (this.Myself.Menpai != AllEnums.Menpais.THIENSON)
+                                    {
+                                      GA.PartyDoSomething(this, true, 23, 7);
+                                      flag7 = true;
+                                      break;
+                                    }
+                                    break;
+                                  case "Tiêu Dao":
+                                  case "Minstrel":
+                                    if (this.Myself.Menpai != AllEnums.Menpais.TIEUDAO)
+                                    {
+                                      GA.PartyDoSomething(this, true, 23, 8);
+                                      flag7 = true;
+                                      break;
+                                    }
+                                    break;
+                                  case "Mộ Dung":
+                                  case "Sphinx":
+                                    if (this.Myself.Menpai != AllEnums.Menpais.MODUNG)
+                                    {
+                                      GA.PartyDoSomething(this, true, 23, 10);
+                                      flag7 = true;
+                                      break;
+                                    }
+                                    break;
+                                  case "Đường Môn":
+                                    if (this.Myself.Menpai != AllEnums.Menpais.DUONGMON)
+                                    {
+                                      GA.PartyDoSomething(this, true, 23, 11);
+                                      flag7 = true;
+                                      break;
+                                    }
+                                    break;
+                                  case "Quỷ Cốc":
+                                    if (this.Myself.Menpai != AllEnums.Menpais.QUYCOC)
+                                    {
+                                      GA.PartyDoSomething(this, true, 23, 12);
+                                      flag7 = true;
+                                      break;
+                                    }
+                                    break;
+                                }
+                                if (flag7)
+                                {
+                                  if (this.IsPartyKeyInt() == 1)
+                                  {
+                                    this.Myself.ScheduledStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                                    index += 100;
+                                    break;
+                                  }
+                                  break;
+                                }
+                                if (!flag7)
+                                {
+                                  this.Myself.ScheduledStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                                  if (!this.Myself.IsAcBa)
+                                  {
+                                    frmMain.frmMainInstance.cboxIsAcBa.Invoke((Delegate)(() =>
+                                    {
+                                      this.MyFlag.DatLichFlag = true;
+                                      frmMain.frmMainInstance.NVAcBa(this);
+                                    }));
+                                    break;
+                                  }
+                                  break;
+                                }
+                                break;
+                              }
+                              break;
+                            }
+                            break;
+                          case "Ác Bá (Không đổi key)":
+                            if (!this.Myself.IsAcBa)
+                            {
+                              this.Myself.ScheduledStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                              if (!this.Myself.IsAcBa)
+                              {
+                                frmMain.frmMainInstance.cboxIsAcBa.Invoke((Delegate)(() =>
+                                {
+                                  this.MyFlag.DatLichFlag = true;
+                                  frmMain.frmMainInstance.NVAcBa(this);
+                                }));
+                                break;
+                              }
+                              break;
+                            }
+                            break;
+                          case "Q1 Tô Châu":
+                          case "Q1 Su Zhou":
+                          case "Q1 苏州":
+                            if (!this.Myself.IsQ1)
+                            {
+                              frmMain.frmMainInstance.cboxIsQ1.Invoke((Delegate)(() =>
+                              {
+                                this.MyFlag.DatLichFlag = true;
+                                frmMain.frmMainInstance.NVQ1ToChau(this);
+                              }));
+                              break;
+                            }
+                            break;
+                          case "Q2 Tô Châu":
+                          case "Q2 Su Zhou":
+                          case "Q2 苏州":
+                            if (!this.Myself.IsQ2)
+                            {
+                              frmMain.frmMainInstance.cboxIsQ2.Invoke((Delegate)(() =>
+                              {
+                                this.MyFlag.DatLichFlag = true;
+                                frmMain.frmMainInstance.NVQ2ToChau(this);
+                              }));
+                              break;
+                            }
+                            break;
+                          case "Yến Tử Ổ":
+                          case "Swallow Deck":
+                          case "燕子坞":
+                            if (!this.Myself.isYTO)
+                            {
+                              frmMain.frmMainInstance.cboxIsYTO.Invoke((Delegate)(() =>
+                              {
+                                this.MyFlag.DatLichFlag = true;
+                                frmMain.frmMainInstance.NVYenTuO(this);
+                              }));
+                              break;
+                            }
+                            break;
+                          case "Bách Hoa Duyên (Cá nhân)":
+                          case "白花缘（个人）":
+                            if (!this.Myself.isBachHoaDuyen)
+                            {
+                              frmMain.frmMainInstance.cboxIsBachHoaDuyen.Invoke((Delegate)(() =>
+                              {
+                                this.MyFlag.DatLichFlag = true;
+                                frmMain.frmMainInstance.NVBachHoaDuyen(this);
+                              }));
+                              break;
+                            }
+                            break;
+                          case "Quest Sư Môn (Cá nhân)":
+                          case "使命师门（个人）":
+                            if (!this.Myself.isQSM)
+                            {
+                              frmMain.frmMainInstance.cboxIsQSM.Invoke((Delegate)(() =>
+                              {
+                                this.MyFlag.DatLichFlag = true;
+                                frmMain.frmMainInstance.NVQSuMon(this);
+                              }));
+                              break;
+                            }
+                            break;
+                          case "Khai khoáng, Hái dược (Cá nhân)":
+                          case "Mining + Herbal":
+                          case "开矿，摘药（个人）":
+                            if (!this.Myself.IsKhaiKhoang)
+                            {
+                              frmMain.frmMainInstance.cboxIsKhaiKhoang.Invoke((Delegate)(() =>
+                              {
+                                this.MyFlag.DatLichFlag = true;
+                                frmMain.frmMainInstance.NVKhaiKhoangHaiDuoc(this);
+                              }));
+                              break;
+                            }
+                            break;
+                          case "Reset giờ cả party":
+                          case "复立全部时间":
+                            GA.PartyDoSomething(this, mode: 27);
+                            this.ResetTimeAdvanced();
+                            if (this.MyParty.PartyNumbers >= 1 && this.IsPartyKeyInt() == 1)
+                            {
+                              GA.PartyGiveKeyToMe(this);
+                              Thread.Sleep(1500);
+                              break;
+                            }
+                            break;
+                          case "Phù về thành cả party":
+                          case "Warping to city entire party":
+                          case "全部回城":
+                            this.CallRemovePartyFollow();
+                            GA.PartyDoSomething(this, mode: 30);
+                            Thread.Sleep(500);
+                            GA.PartyDoSomething(this, true, 8, 99);
+                            frmMain.DisableNhiemVu(this);
+                            this.Myself.Status = AllEnums.CharStatuses.IDLE;
+                            this.Myself.MoveAcrossMap = false;
+                            this.Myself.MoveLongTrigger = false;
+                            this.Myself.IsLongMove = false;
+                            break;
+                          case "Thoát game (Cá nhân)":
+                          case "Exit my game":
+                          case "退出游戏（个人）":
+                            this.CallOutGame();
+                            break;
+                          case "Thoát game cả party":
+                          case "Exit game entire party":
+                          case "全部退出游戏":
+                            GA.PartyDoSomething(this, true, 26);
+                            break;
+                          case "Tắt máy":
+                          case "Shutdown Computer":
+                          case "关机":
+                            Process.Start("shutdown", "/s /t 60 /f");
+                            break;
+                        }
+                        if (geventClass.eventStamp > 0L && (!(geventClass.EventName == "Reset giờ cả party") || this.Myself.OnlineTime >= 1800000))
+                        {
+                          GA.WriteUserLog(frmMain.langEventActivated + geventClass.EventName, this);
+                          goto label_1076;
+                        }
+                      }
+                    }
+                  }
+                  catch (Exception ex)
+                  {
+                  }
+                }
+              label_458:
+                if (this.Myself.IsPK && this.Myself.LastPKStamp != 0L && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.LastPKStamp > 5000L)
+                {
+                  this.Myself.LastPKStamp = 0L;
+                  this.Myself.IsPK = false;
+                }
+                if (frmLogin.GAuto.Settings.IsPro1)
+                {
+                  if (this.Myself.TriedHoiSinh && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.HoiSinhStamp >= 7000L)
+                    this.Myself.TriedHoiSinh = false;
+                  if (this.Myself.MaxHP > 0 && this.Myself.HP == 0 && this.Myself.DiedStamp == 0L)
+                    this.Myself.DiedStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                  else if (this.Myself.DiedStamp != 0L && this.Myself.MaxHP > 0 && this.Myself.HP > 0)
+                    this.Myself.DiedStamp = 0L;
+                  if (this.Myself.ID != 0 && this.Myself.ReadyToAttack && this.IsAIEnabled)
+                  {
+                    if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.MyFlag.inYTOStamp <= 600000L && this.Myself.HP == 0 && this.Myself.MaxHP > 0 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.HoiSinhStamp >= 3000L)
+                    {
+                      this.Myself.HoiSinhStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                      this.CallHoiSinh();
+                    }
+                    if (this.Settings.AfterDeathSetting == AllEnums.AfterDeathSettings.BackToTrainSpot)
+                    {
+                      this.Myself.StopTrain = false;
+                      if (this.Myself.HP == 0 && this.Myself.MaxHP > 0)
+                      {
+                        bool flag = false;
+                        if (this.Myself.isBachHoaDuyen || this.Myself.isQSM || this.Myself.IsTrungAc || this.Myself.isDaoBTD || this.Myself.IsKhaiKhoang || this.Myself.isTanThu || this.Myself.IsXayDung)
+                          flag = true;
+                        if (this.Settings.cboxChoHoiSinh || flag)
+                        {
+                          if (!this.Myself.TriedHoiSinh)
+                          {
+                            this.Myself.HoiSinhStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                            this.Myself.TriedHoiSinh = true;
+                            this.CallHoiSinh();
+                          }
+                          if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.DiedStamp >= (long)(this.Settings.numChoHoiSinh * 1000) || flag)
+                          {
+                            if (this.Myself.LogLastAction != AllEnums.LogActions.ChetDiaPhu)
+                            {
+                              GA.WriteUserLog(frmMain.langCharDied, this);
+                              this.Myself.LogLastAction = AllEnums.LogActions.ChetDiaPhu;
+                            }
+                            this.CallThoatXac();
+                            Thread.Sleep(4000);
+                          }
+                        }
+                      }
+                    }
+                    else if (this.Settings.AfterDeathSetting == AllEnums.AfterDeathSettings.ExitGame)
+                    {
+                      if (Math.Abs(frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.CheckExitGameStamp) >= 3000L)
+                      {
+                        this.Myself.CheckExitGameStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                        if (this.Myself.HP == 0 && this.Myself.MaxHP > 0)
+                        {
+                          if (!this.Myself.TriedHoiSinh)
+                          {
+                            this.Myself.HoiSinhStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                            this.Myself.TriedHoiSinh = true;
+                            this.CallHoiSinh();
+                          }
+                          if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.DiedStamp >= (long)(this.Settings.numChoHoiSinh * 1000) && this.Settings.cboxChoHoiSinh)
+                          {
+                            if (this.Myself.LogLastAction != AllEnums.LogActions.ChetDiaPhu)
+                            {
+                              GA.WriteUserLog(frmMain.langCharDied60s, this);
+                              this.Myself.LogLastAction = AllEnums.LogActions.ChetDiaPhu;
+                            }
+                            this.CallThoatXac();
+                            Thread.Sleep(1500);
+                          }
+                        }
+                      }
+                      if (this.isInDiaPhu())
+                      {
+                        if (this.Myself.ThoatGameStamp == 0L)
+                          this.Myself.ThoatGameStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                        if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.ThoatGameStamp >= 60000L)
+                          this.CallOutGame();
+                      }
+                      else if (this.IsInCity())
+                        this.Myself.ThoatGameStamp = 0L;
+                    }
+                    else if (this.Settings.AfterDeathSetting == AllEnums.AfterDeathSettings.HappyTea)
+                    {
+                      if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.DiedStamp >= (long)(this.Settings.numChoHoiSinh * 1000) && !this.isInDiaPhu() && this.Myself.HPPercent <= 0.0 && this.Myself.MaxHP > 0 && this.Settings.cboxChoHoiSinh)
+                      {
+                        if (this.Myself.LogLastAction != AllEnums.LogActions.ChetDiaPhu)
+                        {
+                          GA.WriteUserLog(frmMain.langCharDied2, this);
+                          this.Myself.LogLastAction = AllEnums.LogActions.ChetDiaPhu;
+                        }
+                        this.CallThoatXac();
+                        Thread.Sleep(2000);
+                      }
+                      if (this.isInDiaPhu())
+                      {
+                        if (this.Target.VersionNum == 3)
+                        {
+                          this.Myself.StopTrain = true;
+                          this.Myself.Status = AllEnums.CharStatuses.VETHANH;
+                          this.Myself.SavedStatus = AllEnums.CharStatuses.VETHANH;
+                          this.Myself.LongMoveX = 0;
+                          this.Myself.LongMoveY = 0;
+                          this.Myself.LongMoveMapID = -1;
+                          this.Myself.IsLongMove = false;
+                          this.Myself.MoveLongTrigger = false;
+                        }
+                        else
+                        {
+                          if (this.Settings.AIMode != AllEnums.AIModes.NHIEMVU && this.Settings.AIMode != AllEnums.AIModes.KHAIKHOANG_HAIDUOC)
+                            this.IsAIEnabled = false;
+                          this.Myself.StopTrain = true;
+                          if (GA.CalculateDistance((double)this.Myself.PosX, (double)this.Myself.PosY, 15.0, 25.0) > 3.0)
+                          {
+                            this.CallMoveFlashPos(15, 25);
+                          }
+                          else
+                          {
+                            this.Myself.MoveAcrossMap = false;
+                            this.Myself.Status = AllEnums.CharStatuses.IDLE;
+                            if (this.Myself.isQuestFrameShow == 0)
+                              this.CallTalkNPC(0, 0, 0);
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+                this.AutoAcceptPTInvite();
+                if (this.Myself.IsMoveTest)
+                {
+                  int tempX1 = 44;
+                  int tempY1 = 60;
+                  int tempX2 = 32 /*0x20*/;
+                  int tempY2 = 132;
+                  if (this.Myself.flagMoveForward)
+                    this.CallInMapMove(tempX2, tempY2, true);
+                  else if (!this.Myself.flagMoveForward)
+                    this.CallInMapMove(tempX1, tempY1, true);
+                  if (this.Myself.flagMoveForward)
+                  {
+                    if ((double)Math.Abs(this.Myself.PosX - (float)tempX2) <= 2.0 && (double)Math.Abs(this.Myself.PosY - (float)tempY2) <= 2.0)
+                      this.Myself.flagMoveForward = false;
+                  }
+                  else if (!this.Myself.flagMoveForward && (double)Math.Abs(this.Myself.PosX - (float)tempX1) <= 2.0 && (double)Math.Abs(this.Myself.PosY - (float)tempY1) <= 2.0)
+                    this.Myself.flagMoveForward = true;
+                }
+                if (this.Target.DLLPatchedValue != 6971548U && this.Target.DLLRead && (this.Myself.checkDLLStamp == 0L || frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.checkDLLStamp > 5000L))
+                  this.Myself.checkDLLStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                int num1 = 0;
+                if (GA.isVipMember() && this.Myself.MapID > 2 && !this.IsInCity() && !this.IsInPhaiMap() && !GA.IsBangMapID(this.Myself.MapID) && !GA.IsInPhuBan(this.Myself.MapID, this) && num1 == 999 && this.Settings.numPKThoatGame > 1 && this.Myself.HPPercent > 0.0 && this.Myself.HPPercent < (double)this.Settings.numPKThoatGame)
+                {
+                  if (this.Myself.MapID == 39)
+                    this.CallOutMapMove(277, 295, 0);
+                  else if (this.Target.VersionNum == 1 || this.Target.VersionNum == 2)
+                  {
+                    GA.WriteUserLog($"Úm ba la biến, máu còn {this.Myself.HPPercent.ToString("0.00")}%", this);
+                    MyDLL.PostMessage(this.Target.MainWindowHandle, frmLogin.GAuto.Settings.WM_CALLHVD, (IntPtr)0, (IntPtr)0);
+                    Thread.Sleep(2000);
+                  }
+                }
+                if (this.MyFlag.tuyenChienFlag)
+                {
+                  this.MyFlag.tuyenChienFlag = false;
+                  if (this.MyQuai != null && this.MyQuai.TargetIDforPK > 0)
+                  {
+                    this.CallTuyenChien(this.MyQuai.TargetIDforPK);
+                    this.AttackPlayer(this.MyQuai.TargetIDforPK);
+                  }
+                }
+                if (this.MyFlag.donDameFlag)
+                {
+                  this.MyFlag.donDameFlag = false;
+                  if (this.MyQuai != null && this.MyQuai.TargetIDforPK > 0)
+                  {
+                    this.CallTuyenChien(this.MyQuai.TargetIDforPK);
+                    this.AttackPlayer(this.MyQuai.TargetIDforPK);
+                    GA.PartyDoSomething(this, mode: 28, param1: this.MyQuai.TargetIDforPK);
+                  }
+                }
+                if (this.Myself.ID != 0 && this.IsAIEnabled && this.Settings.AIMode == AllEnums.AIModes.NHIEMVU)
+                {
+                  if (this.Myself.isYTO && frmLogin.GAuto.Settings.IsPro2)
+                    this.NhiemVuYTO();
+                  else if (this.Myself.isPMP && frmLogin.GAuto.Settings.IsPro2)
+                    this.NhiemVuPMP();
+                }
+                if (this.Myself.ID != 0 && this.Myself.ReadyToAttack && this.IsAIEnabled && this.Myself.HPPercent > 0.0)
+                {
+                  if (this.Settings.cboxCanX2 && !this.HasPK() && frmLogin.GAuto.Settings.IsPro2 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.LastReceiveExpStamp <= 30000L && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.X2TimeStamp >= 15000L)
+                  {
+                    this.Myself.X2TimeStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                    bool flag = false;
+                    if (this.Myself.Lastx2UsedStamp == 0L)
+                      flag = true;
+                    else if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.Lastx2UsedStamp >= 3540000L)
+                      flag = true;
+                    if (flag)
+                    {
+                      for (int index = 0; index < 30; ++index)
+                      {
+                        InventoryItem allItem = this.MyInventory.AllItems[index];
+                        if (allItem.ItemName == "thiên linh đan" || allItem.ItemID == 30505214 || allItem.ItemID == 30008002 || allItem.ItemID == 30008027)
+                        {
+                          this.CallUseItem(index, this.Myself.ID);
+                          Thread.Sleep(500);
+                          break;
+                        }
+                      }
+                    }
+                  }
+                  if (this.Settings.cboxCanX4 && !this.HasPK() && frmLogin.GAuto.Settings.IsPro2 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.LastReceiveExpStamp <= 30000L && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.X4TimeStamp >= 15000L)
+                  {
+                    this.Myself.X4TimeStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                    bool flag = false;
+                    if (this.Myself.Lastx4UsedStamp == 0L)
+                      flag = true;
+                    else if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.Lastx4UsedStamp >= 3540000L)
+                      flag = true;
+                    if (flag)
+                    {
+                      for (int index = 0; index < 30; ++index)
+                      {
+                        InventoryItem allItem = this.MyInventory.AllItems[index];
+                        if (allItem.ItemName == "huyền linh đan" || allItem.ItemID == 30008130 || allItem.ItemID == 38000654 || allItem.ItemID == 30008117)
+                        {
+                          this.CallUseItem(index, this.Myself.ID);
+                          Thread.Sleep(500);
+                          this.MyFlag.ClickYesStamp = frmLogin.GlobalTimer.ElapsedMilliseconds + 15000L;
+                          break;
+                        }
+                      }
+                    }
+                  }
+                  if (this.Myself.PreviousIsPK && !this.Myself.IsPK && !this.Myself.IsTrader)
+                  {
+                    bool flag = true;
+                    if (this.Myself.Menpai != AllEnums.Menpais.NGAMI && !this.Settings.cboxDanhQuai || !this.Settings.cboxPKTuVe || this.Settings.cboxPKEnable)
+                      flag = false;
+                    if (this.isInDiaPhu())
+                    {
+                      this.Myself.Status = AllEnums.CharStatuses.VETHANH;
+                      this.Myself.SavedStatus = AllEnums.CharStatuses.VETHANH;
+                      flag = false;
+                    }
+                    if (this.Myself.PKReturnStamp.ElapsedMilliseconds >= 2000L && this.Settings.AIMode == AllEnums.AIModes.DANHQUANHDIEM && flag)
+                    {
+                      this.Myself.PKReturnStamp.Reset();
+                      this.Myself.PKReturnStamp.Start();
+                      if (this.Myself.LogLastAction == AllEnums.LogActions.SavePKName)
+                        this.Myself.LogLastAction = AllEnums.LogActions.None;
+                      float num2 = 0.0f;
+                      float num3 = 0.0f;
+                      int num4 = 0;
+                      if (this.MyParty != null && this.MyParty.PartyNumbers > 0 && this.MyParty.PartyNumbers < 6)
+                      {
+                        PartyMember allMember = this.MyParty.AllMembers[0];
+                        if (allMember.Name != this.Myself.Name && allMember.Name != "")
+                        {
+                          num2 = allMember.PosX;
+                          num3 = allMember.PosY;
+                          num4 = allMember.MapID;
+                        }
+                      }
+                      if ((double)num2 == 0.0)
+                      {
+                        num2 = (float)this.Settings.CenterX;
+                        num3 = (float)this.Settings.CenterY;
+                        num4 = this.Settings.MapID;
+                      }
+                      if (num4 >= 0 && (double)num2 != 0.0 && (double)num3 != 0.0)
+                      {
+                        if (num4 == this.Myself.MapID)
+                        {
+                          this.Myself.TargetX = num2;
+                          this.Myself.TargetY = num3;
+                          this.CallMoveTo((int)this.Myself.TargetX, (int)this.Myself.TargetY);
+                          this.Myself.MoveFlashPos = true;
+                          this.Myself.Status = AllEnums.CharStatuses.GOGOGO;
+                          this.Myself.LastTimeMove.Reset();
+                          this.Myself.LastTimeMove.Start();
+                        }
+                        else if (num4 != this.Myself.MapID)
+                        {
+                          this.Myself.TargetX = num2;
+                          this.Myself.TargetY = num3;
+                          this.Myself.TargetMapID = num4;
+                          this.Settings.SavedPosX = num2;
+                          this.Settings.SavedPosY = num3;
+                          this.Settings.SavedMapID = num4;
+                          this.Myself.MoveFlashPos = true;
+                          this.Myself.LongMoveMapID = num4;
+                          this.Myself.LongMoveX = (int)num2;
+                          this.Myself.LongMoveY = (int)num3;
+                          this.Myself.MoveLongTrigger = true;
+                        }
+                      }
+                    }
+                  }
+                  if (this.Myself.IsHaiDua && this.Myself.MapID == 0 && this.Myself.IsHaiDuaChet)
+                  {
+                    this.ScriptEngine.IsOn = false;
+                    GScriptCommand cmd = new GScriptCommand();
+                    this.GoToBang(cmd);
+                    if (cmd.Status == AllEnums.ScriptStatuses.FINISHED)
+                    {
+                      this.ScriptEngine.IsOn = true;
+                      this.Myself.IsHaiDuaChet = false;
+                      this.ScriptEngine.Index = 17;
+                      this.Myself.MoveLongTrigger = false;
+                      this.Myself.MoveAcrossMap = false;
+                      this.Myself.Status = AllEnums.CharStatuses.IDLE;
+                    }
+                  }
+                  if (frmLogin.GAuto.Settings.IsPro2)
+                  {
+                    if (this.isInDiaPhu())
+                    {
+                      this.Myself.LongMoveX = 0;
+                      this.Myself.LongMoveY = 0;
+                      this.Myself.LongMoveMapID = -1;
+                      this.Myself.IsLongMove = false;
+                      this.Myself.MoveLongTrigger = false;
+                      if (this.Settings.AfterDeathSetting == AllEnums.AfterDeathSettings.BackToTrainSpot || this.Settings.AfterDeathSetting == AllEnums.AfterDeathSettings.HappyTea)
+                      {
+                        this.Myself.Status = AllEnums.CharStatuses.VETHANH;
+                        this.Myself.SavedStatus = AllEnums.CharStatuses.VETHANH;
+                        if (-1 >= 0)
+                        {
+                          this.CallUseItem(0, this.Myself.ID);
+                          this.MyFlag.dungphuStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                          Thread.Sleep(5000);
+                        }
+                        else if (this.Settings.HealMapID == 480)
+                          this.CallMoveTo(12, 24);
+                        else if (GA.CalculateDistance((double)this.Myself.PosX, (double)this.Myself.PosY, 15.0, 25.0) > 3.0)
+                          this.CallMoveTo(15, 25);
+                        else if (this.Myself.isQuestFrameShow == 0)
+                        {
+                          this.CallTalkNPC(0, 0, 0);
+                          Thread.Sleep(500);
+                          bool flag = false;
+                          if (this.isInDiaPhu())
+                            flag = true;
+                          if (flag)
+                          {
+                            if (this.Myself.MapID == 463 || this.Myself.MapID == 586)
+                              this.CallTalkNPC(505072, 1, 0);
+                            else if (this.Target.VersionNum == 3 && (this.Target.SubVersion == 4 || this.Target.SubVersion == 12))
+                            {
+                              if (this.Settings.HealMapID == 0)
+                                this.CallTalkNPC(12009, 1, 0);
+                              else if (this.Settings.HealMapID == 1)
+                                this.CallTalkNPC(12009, 3, 0);
+                              else if (this.Settings.HealMapID == 2)
+                                this.CallTalkNPC(12009, 5, 0);
+                              else if (this.Settings.HealMapID == 186)
+                                this.CallTalkNPC(12009, 6, 0);
+                              else if (this.Settings.HealMapID == 420)
+                                this.CallTalkNPC(12009, 7, 0);
+                            }
+                            else if (this.Settings.HealMapID == 0)
+                              this.CallTalkNPC(77001, 0, 0);
+                            else if (this.Settings.HealMapID == 1)
+                              this.CallTalkNPC(77001, 1, 0);
+                            else if (this.Settings.HealMapID == 2)
+                              this.CallTalkNPC(77001, 2, 0);
+                            else if (this.Settings.HealMapID == 186)
+                              this.CallTalkNPC(77001, 5, 0);
+                            else if (this.Settings.HealMapID == 420)
+                              this.CallTalkNPC(77001, 4, 0);
+                            Thread.Sleep(2000);
+                          }
+                        }
+                      }
+                    }
+                    if (this.Myself.MapID == 151)
+                    {
+                      this.Myself.LongMoveX = 0;
+                      this.Myself.LongMoveY = 0;
+                      this.Myself.LongMoveMapID = -1;
+                      this.Myself.IsLongMove = false;
+                      this.Myself.MoveLongTrigger = false;
+                      if (GA.CalculateDistance((double)this.Myself.PosX, (double)this.Myself.PosY, 44.0, 31.0) > 3.0)
+                      {
+                        this.CallMoveTo(44, 31 /*0x1F*/);
+                      }
+                      else
+                      {
+                        int NPCID = 0;
+                        int menuTypeID = 77011;
+                        int menuIndex1 = 11;
+                        int menuIndex2 = 0;
+                        if (this.Myself.isQuestFrameShow == 0)
+                        {
+                          this.CallTalkNPC(0, 0, NPCID);
+                          Thread.Sleep(500);
+                          this.CallTalkNPC(menuTypeID, menuIndex1, NPCID);
+                          Thread.Sleep(700);
+                          this.CallTalkNPC(menuTypeID, menuIndex2, NPCID);
+                        }
+                      }
+                    }
+                  }
+                  if (frmLogin.GAuto.Settings.IsPro2 && (!this.Settings.cboxNoTheoSau || this.Settings.cboxNoTheoSau && !this.IsInCity()) && this.Settings.cboxTheoSau && !this.Myself.IsPK && !this.IsNhatBoc() && this.Myself.IsPartyFollowed == (byte)0 && !this.Myself.IsKhaiKhoang && !this.Myself.IsTrungAc && !this.Myself.IsLuyenKim && !this.Myself.IsXayDung && !this.Myself.IsTBB && !this.Myself.isBachHoaDuyen && !this.Myself.IsTuDuongCon && !this.Myself.isQSM && !this.Myself.isCauPhuc && !this.Myself.isCauNguyen && !this.Myself.isDoatBaoRuong && !this.Myself.isBuonDuaHau)
+                    this.TheoSauAiDo();
+                  if (this.Myself.IsHaiDua && this.Myself.Status == AllEnums.CharStatuses.VETHANH)
+                    this.Myself.Status = AllEnums.CharStatuses.IDLE;
+                  if (this.Myself.Status != AllEnums.CharStatuses.NMBUFFMAU && this.Myself.Status != AllEnums.CharStatuses.NHATBOC && this.Myself.ActionStatus != (byte)5 && this.Myself.ActionStatus != (byte)6 && (this.Myself.SavedStatus != AllEnums.CharStatuses.VETHANH || this.Myself.MinorStatus2 == AllEnums.CharStatuses.TRIEUTAP) && this.Myself.SavedStatus != AllEnums.CharStatuses.BUYING_NPC && this.Myself.SavedStatus != AllEnums.CharStatuses.SELLING_NPC)
+                    this.LongMoveTrigger();
+                  if (this.IsInCity() && (this.Myself.SavedStatus == AllEnums.CharStatuses.VETHANH || this.Myself.Status == AllEnums.CharStatuses.VETHANH) && this.Myself.IsPartyFollowed == (byte)0)
+                  {
+                    if (this.Target.VersionNum != 3)
+                      this.Myself.Status = AllEnums.CharStatuses.VETHANH;
+                    if (!this.Settings.cboxDuY || this.Myself.isMuaDoTrain || this.ForceHoiMau(true))
+                      this.MuaDoDiTrain();
+                  }
+                  if (this.IsInCity() && this.Myself.Status == AllEnums.CharStatuses.LENLAIBAITRAIN && this.Myself.IsPartyFollowed == (byte)0)
+                    this.BackToTrainSpot();
+                  if (this.Myself.IsLongMove)
+                    this.AutoIsLongMove();
+                  if (!this.IsInCity() && this.Myself.Status != AllEnums.CharStatuses.VETHANH && this.Myself.MinorStatus != AllEnums.CharStatuses.MOVE_LONG_PATH && this.Myself.Status != AllEnums.CharStatuses.NMBUFFMAU && this.Myself.ActionStatus != (byte)5 && this.Myself.ActionStatus != (byte)6 && this.Myself.IsPartyFollowed == (byte)0 && !this.Myself.IsPK && !GA.IsInPhuBan(this.Myself.MapID, this) && (!this.Settings.cboxTheoSau || this.Settings.cboxTheoSau && this.TheoSauAiDo(false) == null) && this.Settings.AIMode == AllEnums.AIModes.DANHQUANHDIEM && this.Settings.cboxBanKinh)
+                  {
+                    bool flag = this.NotTransitioning();
+                    if (this.Myself.Status != AllEnums.CharStatuses.GOGOGO && this.Settings.CenterX != 0.0 && this.Settings.CenterY != 0.0 && this.Settings.MapID == this.Myself.MapID && flag)
+                    {
+                      double distance = GA.CalculateDistance((double)this.Myself.PosX, (double)this.Myself.PosY, this.Settings.CenterX, this.Settings.CenterY);
+                      if (distance > this.Settings.MoveRange && !this.IsNhatBoc() && this.Myself.LastTimeMove.ElapsedMilliseconds >= 2000L)
+                      {
+                        this.Myself.TargetX = (float)this.Settings.CenterX;
+                        this.Myself.TargetY = (float)this.Settings.CenterY;
+                        if (distance - this.Settings.MoveRange > 4.0)
+                        {
+                          if (this.Myself.ActionStatus == (byte)7)
+                          {
+                            this.CallAttackTarget(-1, 34, 0, 0);
+                            this.CallAttackTarget(-1, this.GetKhinhCongID(), 0, 0);
+                            Thread.Sleep(200);
+                          }
+                          this.CallInMapMove((int)this.Myself.TargetX, (int)this.Myself.TargetY, true);
+                          this.Myself.IDLEStamp = frmLogin.GlobalTimer.ElapsedMilliseconds + 2000L;
+                        }
+                        else
+                          this.CallInMapMove((int)this.Myself.TargetX, (int)this.Myself.TargetY);
+                        this.Myself.LastTimeMove.Reset();
+                        this.Myself.LastTimeMove.Start();
+                      }
+                    }
+                  }
+                  if (this.Myself.Status != AllEnums.CharStatuses.NMBUFFMAU && this.Myself.ActionStatus != (byte)5)
+                    this.ProcessRegularMove();
+                  if (this.Settings.cboxTuUpLevel && frmLogin.GAuto.Settings.IsPro1 && this.Myself.ExpPercent >= 100.0 && this.Myself.Level < this.Settings.numUpLevel)
+                  {
+                    if (this.Myself.UpLevelStamp == 0L || this.Target.SubVersion != 4 && this.Target.SubVersion != 12)
+                    {
+                      this.CallUpLevelPacket();
+                      Thread.Sleep(100);
+                      this.Myself.UpLevelStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                    }
+                    else if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.UpLevelStamp >= 12000L)
+                      this.Myself.UpLevelStamp = 0L;
+                  }
+                  bool flag8 = this.NotTransitioning();
+                  if (this.Myself.Status != AllEnums.CharStatuses.NMBUFFMAU && flag8 && frmLogin.GAuto.Settings.IsPro1 && !GA.IsInPhuBan(this.Myself.MapID, this) && !GA.IsBangMapID(this.Myself.MapID) && this.Myself.IsPartyFollowed == (byte)0 && this.Settings.AIMode != AllEnums.AIModes.NHIEMVU)
+                    this.WarpingToCity(needVeThuHoach);
+                  int partyFollowRequest1 = (int)this.Myself.FlagPartyFollowRequest;
+                  bool flag9 = false;
+                  if (this.Settings.cboxPKEnable && !this.WantMoveNow() && !this.IsInCity() && !this.isInDiaPhu())
+                    flag9 = this.AttackPlayer();
+                  if (!flag9 && frmLogin.GAuto.Settings.IsPro2)
+                  {
+                    if (this.Settings.cboxPKThoatGame && this.Settings.numPKThoatGame > 0 && this.Myself.HPPercent > 0.0 && this.Myself.HPPercent < (double)this.Settings.numPKThoatGame && (!GA.isVipMember() || this.Myself.MapID == 480 || this.Myself.MapID == 186 || this.Myself.MapID == 420 || this.Myself.MapID <= 2 || GA.IsInPhuBan(this.Myself.MapID, this)) && this.Myself.IsPK)
+                    {
+                      GA.WriteUserLog(string.Format(frmMain.langEmergencyExitPK, (object)this.Myself.HPPercent.ToString("0.00")), this);
+                      this.CallOutGame();
+                      this.Settings.AIWhileLoop = false;
+                      goto label_1076;
+                    }
+                    if (this.Myself.IsPK && (double)this.MyQuai.TargetHPPercent <= 0.0 && this.Myself.HasTarget && this.Myself.LogLastAction != AllEnums.LogActions.PKKilled)
+                    {
+                      if (this.MyPlayers.AllPlayers.Count > 0)
+                      {
+                        try
+                        {
+                          for (int index = this.MyPlayers.AllPlayers.Count - 1; index >= 0; --index)
+                          {
+                            if (this.MyPlayers.AllPlayers[index].ID == this.MyQuai.TargetID)
+                              break;
+                          }
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                      }
+                      this.Myself.LogLastAction = AllEnums.LogActions.PKKilled;
+                    }
+                    if (this.Settings.cboxPKTuVe && !this.WantMoveNow())
+                    {
+                      int num5 = this.Myself.IsPK ? 1 : 0;
+                      PlayerIndividual playerIndividual3 = (PlayerIndividual)null;
+                      PlayerIndividual playerIndividual4 = (PlayerIndividual)null;
+                      double num6 = 999.0;
+                      for (int index5 = 0; index5 < 30; ++index5)
+                      {
+                        int green = this.Myself.GreenList[index5];
+                        if (green > 0)
+                        {
+                          if (this.MyPlayers.AllPlayers.Count > 0)
+                          {
+                            try
+                            {
+                              for (int index6 = this.MyPlayers.AllPlayers.Count - 1; index6 >= 0; --index6)
+                              {
+                                PlayerIndividual allPlayer = this.MyPlayers.AllPlayers[index6];
+                                int databaseId = allPlayer.DatabaseID;
+                                if (databaseId == green && databaseId > 0 && (double)allPlayer.HPPercent > 0.0)
+                                {
+                                  playerIndividual3 = allPlayer;
+                                  break;
+                                }
+                              }
+                            }
+                            catch (Exception ex)
+                            {
+                            }
+                          }
+                          if (playerIndividual3 != null && playerIndividual3.MapID == this.Myself.MapID && (double)playerIndividual3.PosX != 0.0 && (double)playerIndividual3.PosY != 0.0)
+                          {
+                            double distance = GA.CalculateDistance((double)playerIndividual3.PosX, (double)playerIndividual3.PosY, (double)this.Myself.PosX, (double)this.Myself.PosY);
+                            if (distance < num6)
+                            {
+                              num6 = distance;
+                              playerIndividual4 = playerIndividual3;
+                              playerIndividual3 = (PlayerIndividual)null;
+                            }
+                          }
+                        }
+                      }
+                      if (playerIndividual4 != null)
+                      {
+                        if (!this.IsInCity())
+                        {
+                          this.CallXuongNgua();
+                          if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.LastActionTimeStamp >= (long)frmLogin.GAuto.Settings.ActionDelay)
+                          {
+                            this.CallSelectTarget(playerIndividual4.ID);
+                            this.Myself.LastPKStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                            if (this.Settings.SkillPKList.Count > 0)
+                            {
+                              foreach (SkillPlayItem skillPk in (List<SkillPlayItem>)this.Settings.SkillPKList)
+                              {
+                                if (this.PlayMySkill(skillPk, playerIndividual4.ID))
+                                  break;
+                              }
+                            }
+                            this.CallAttackTarget(playerIndividual4.ID, this.MySkills.AllSkills[0].ID, 0, 0, true);
+                            if (!this.Myself.IsPK)
+                            {
+                              this.Myself.IsPK = true;
+                              this.Myself.LastPKStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                            }
+                          }
+                        }
+                        else if (this.Myself.IsPK)
+                          this.Myself.IsPK = false;
+                      }
+                    }
+                    else
+                      this.Myself.IsPK = false;
+                  }
+                  if (this.MyQuai.TargetID >= 0 && !this.Myself.IsPK && !flag9 && this.Myself.ActionStatus == (byte)0 && this.IsPlayer() && this.Settings.cboxDanhQuai && this.MyQuai.AllQuai.Count > 0 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.TargetLagStamp >= 30000L)
+                  {
+                    bool flag10 = false;
+                    try
+                    {
+                      for (int index = this.MyQuai.AllQuai.Count - 1; index >= 0; --index)
+                      {
+                        if (this.CanAttack(this.MyQuai.AllQuai[index]))
+                        {
+                          flag10 = true;
+                          break;
+                        }
+                      }
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                    if (flag10)
+                      this.CallSelectTarget(-1);
+                  }
+                  int partyFollowRequest2 = (int)this.Myself.FlagPartyFollowRequest;
+                  double targetHpPercent = (double)this.MyQuai.TargetHPPercent;
+                  if (!this.IsInCity() && !flag9)
+                  {
+                    if (this.Settings.AIMode == AllEnums.AIModes.DANHQUANHDIEM || this.Settings.AIMode == AllEnums.AIModes.DANHTUDO)
+                      this.AttackQuai();
+                    if (this.GCTimeStamp.ElapsedMilliseconds >= 30000L)
+                    {
+                      GC.Collect();
+                      this.GCTimeStamp.Reset();
+                      this.GCTimeStamp.Start();
+                    }
+                  }
+                  if (this.Settings.AIMode == AllEnums.AIModes.THUONGNHAN)
+                  {
+                    if (frmLogin.GAuto.Settings.IsPro1)
+                      this.RunningTrade();
+                  }
+                  else if (this.Settings.AIMode == AllEnums.AIModes.KHAIKHOANG_HAIDUOC)
+                  {
+                    if (this.Myself.IsKhaiKhoang && frmLogin.GAuto.Settings.IsPro2)
+                      this.KhaiKhoangHaiDuoc();
+                  }
+                  else if (this.Settings.AIMode != AllEnums.AIModes.SCRIPTING && this.Settings.AIMode == AllEnums.AIModes.NHIEMVU)
+                  {
+                    bool flag11 = false;
+                    if (this.Myself.IsTrungAc && frmLogin.GAuto.Settings.IsPro1)
+                    {
+                      this.NhiemVuTrungAc();
+                      flag11 = true;
+                    }
+                    else if (this.Myself.IsAcTac && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      if (this.Settings.cboATMaps == -1)
+                        this.Settings.cboATMaps = 4;
+                      if (this.Myself.MapID != this.Settings.cboATMaps && !GA.IsInPhuBan(this.Myself.MapID, this))
+                      {
+                        int num7 = 0;
+                        int num8 = 0;
+                        int num9 = 0;
+                        if (this.Settings.cboATMaps == 6)
+                        {
+                          num7 = 45;
+                          num8 = 170;
+                          num9 = 6;
+                        }
+                        else if (this.Settings.cboATMaps == 4)
+                        {
+                          if (this.Myself.MapID == 3)
+                          {
+                            num7 = 115;
+                            num8 = 52;
+                            num9 = 4;
+                          }
+                          else
+                          {
+                            num7 = 98;
+                            num8 = 167;
+                            num9 = 11;
+                          }
+                        }
+                        else if (this.Settings.cboATMaps == 3)
+                        {
+                          num7 = 45;
+                          num8 = 50;
+                          num9 = 3;
+                        }
+                        else if (this.Settings.cboATMaps == 8)
+                        {
+                          num7 = 263;
+                          num8 = 147;
+                          num9 = 8;
+                        }
+                        else if (this.Settings.cboATMaps == 7)
+                        {
+                          num7 = 45;
+                          num8 = 274;
+                          num9 = 7;
+                        }
+                        else if (this.Settings.cboATMaps == 5)
+                        {
+                          num7 = 265;
+                          num8 = 44;
+                          num9 = 5;
+                        }
+                        ++this.Myself.actionCounter;
+                        if (this.Myself.actionCounter == 1)
+                          GA.TrieuTapToMyPos(this, num7, num8, num9);
+                        else if (this.Myself.actionCounter >= 4)
+                          this.Myself.actionCounter = 0;
+                        if (this.Myself.MapID == 11)
+                        {
+                          if (this.Target.VersionNum == 3 || this.Target.VersionNum == 4)
+                          {
+                            this.CallMoveTo(97, 173);
+                            GA.TrieuTapToMyPos(this, 97, 173, this.Myself.MapID);
+                            Thread.Sleep(3000);
+                          }
+                          else
+                            this.GoToMyPos(279, 226, 4);
+                        }
+                        else if (this.Myself.MapID == 1)
+                        {
+                          if (this.Settings.cboATMaps == 4)
+                            this.GoToMyPos(279, 226, 4);
+                          else if (this.Settings.cboATMaps == 5)
+                            this.GoToMyPos(num7, num8, num9);
+                          else
+                            this.GoToMyPos(num7, num8, num9);
+                        }
+                        else
+                          this.GoToMyPos(num7, num8, num9);
+                      }
+                      else
+                      {
+                        if (this.Myself.actionCounter == 0)
+                        {
+                          ++this.Myself.actionCounter;
+                          GA.TrieuTapCaNhom(this, true);
+                        }
+                        this.PhuBanATAB(this.Settings.cboATMaps, 50013, -1, frmLogin.GAuto.Settings.AcTacNames);
+                      }
+                    }
+                    else if (this.Myself.IsTestNPC)
+                      this.PhuBanATAB(16 /*0x10*/, 16035, 0, frmLogin.GAuto.Settings.TestNPCNames);
+                    else if (this.Myself.IsAcBa && frmLogin.GAuto.Settings.IsPro1)
+                    {
+                      flag11 = true;
+                      if (this.Settings.cboABMenuID == 0 && this.Settings.cboABMaps == -1 || this.Myself.NhiemVuPosX == 0 && this.Myself.NhiemVuPosY == 0)
+                      {
+                        if (this.Myself.Menpai == AllEnums.Menpais.MODUNG)
+                        {
+                          this.Settings.cboABMenuID = 808043;
+                          this.Settings.cboABMaps = 195;
+                          this.CallSetUpNhiemVuData(29, 137);
+                        }
+                        else if (this.Myself.Menpai == AllEnums.Menpais.THIEULAM)
+                        {
+                          this.Settings.cboABMenuID = 808027;
+                          this.Settings.cboABMaps = 9;
+                          this.CallSetUpNhiemVuData(95, 137);
+                        }
+                        else if (this.Myself.Menpai == AllEnums.Menpais.TINHTUC)
+                        {
+                          this.Settings.cboABMenuID = 808028;
+                          this.Settings.cboABMaps = 16 /*0x10*/;
+                          this.CallSetUpNhiemVuData(96 /*0x60*/, 152);
+                        }
+                        else if (this.Myself.Menpai == AllEnums.Menpais.VODANG)
+                        {
+                          this.Settings.cboABMenuID = 808033;
+                          this.Settings.cboABMaps = 12;
+                          this.CallSetUpNhiemVuData(103, 140);
+                        }
+                        else if (this.Myself.Menpai == AllEnums.Menpais.THIENSON)
+                        {
+                          this.Settings.cboABMenuID = 808030;
+                          this.Settings.cboABMaps = 17;
+                          this.CallSetUpNhiemVuData(95, 120);
+                        }
+                        else if (this.Myself.Menpai == AllEnums.Menpais.MINHGIAO)
+                        {
+                          this.Settings.cboABMenuID = 808031;
+                          this.Settings.cboABMaps = 11;
+                          this.CallSetUpNhiemVuData(98, 167);
+                        }
+                        else if (this.Myself.Menpai == AllEnums.Menpais.NGAMI)
+                        {
+                          this.Settings.cboABMenuID = 808034;
+                          this.Settings.cboABMaps = 15;
+                          this.CallSetUpNhiemVuData(89, 144 /*0x90*/);
+                        }
+                        else if (this.Myself.Menpai == AllEnums.Menpais.TIEUDAO)
+                        {
+                          this.Settings.cboABMenuID = 808016;
+                          this.Settings.cboABMaps = 14;
+                          this.CallSetUpNhiemVuData(68, 144 /*0x90*/);
+                        }
+                        else if (this.Myself.Menpai == AllEnums.Menpais.THIENLONG)
+                        {
+                          this.Settings.cboABMenuID = 808029;
+                          this.Settings.cboABMaps = 13;
+                          this.CallSetUpNhiemVuData(96 /*0x60*/, 120);
+                        }
+                        else if (this.Myself.Menpai == AllEnums.Menpais.DUONGMON)
+                        {
+                          this.Settings.cboABMenuID = 808044;
+                          this.Settings.cboABMaps = 521;
+                          this.CallSetUpNhiemVuData(126, 69);
+                        }
+                        else if (this.Myself.Menpai == AllEnums.Menpais.CAIBANG)
+                        {
+                          this.Settings.cboABMenuID = 808032;
+                          this.Settings.cboABMaps = 10;
+                          this.CallSetUpNhiemVuData(91, 116);
+                        }
+                      }
+                      if (this.Myself.MapID != this.Settings.cboABMaps && !GA.IsInPhuBan(this.Myself.MapID, this))
+                      {
+                        if (this.Myself.NhiemVuPosX > 0 && this.Myself.NhiemVuPosY > 0)
+                        {
+                          ++this.Myself.actionCounter;
+                          if (this.Myself.actionCounter == 1)
+                            GA.TrieuTapToMyPos(this, this.Myself.NhiemVuPosX, this.Myself.NhiemVuPosY, this.Settings.cboABMaps);
+                          else if (this.Myself.actionCounter >= 5)
+                            this.Myself.actionCounter = 0;
+                          this.GoToMyPos(this.Myself.NhiemVuPosX, this.Myself.NhiemVuPosY, this.Settings.cboABMaps);
+                        }
+                      }
+                      else if (this.Myself.actionCounter == 0)
+                      {
+                        ++this.Myself.actionCounter;
+                        GA.TrieuTapCaNhom(this, true);
+                      }
+                      if (this.Settings.cboABMaps != -1 && this.Settings.cboABMenuID != 0)
+                        this.PhuBanATAB(this.Settings.cboABMaps, this.Settings.cboABMenuID, 0, frmLogin.GAuto.Settings.AcBaNames);
+                    }
+                    else if (this.Myself.IsLinhThu && frmLogin.GAuto.Settings.IsPro1)
+                    {
+                      flag11 = true;
+                      if (this.Myself.MapID != 158 && !GA.IsInPhuBan(this.Myself.MapID, this))
+                      {
+                        int num10 = 275;
+                        int num11 = 292;
+                        int num12 = 0;
+                        int NPCID = 148;
+                        int menuTypeID = 400963;
+                        int menuIndex = 1;
+                        ++this.Myself.actionCounter;
+                        if (this.Myself.actionCounter == 1)
+                          GA.TrieuTapToMyPos(this, num10, num11, num12);
+                        else if (this.Myself.actionCounter >= 4)
+                          this.Myself.actionCounter = 0;
+                        if (this.GoToMyPos(num10, num11, num12))
+                        {
+                          this.Myself.PhoBanTheoSau = this.ForcePartyFollow();
+                          if (!this.Myself.PhoBanTheoSau)
+                          {
+                            GA.TrieuTapCaNhom(this, true);
+                            long elapsedMilliseconds1 = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                            long elapsedMilliseconds2 = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                            while (this.IsAIEnabled)
+                            {
+                              bool flag12 = this.CheckMemberDistance(6.0);
+                              if (!flag12)
+                                elapsedMilliseconds1 = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                              if (flag12)
+                                this.Myself.PhoBanTheoSau = this.ForcePartyFollow();
+                              Thread.Sleep(500);
+                              if (this.Myself.PhoBanTheoSau)
+                              {
+                                Thread.Sleep(1500);
+                                break;
+                              }
+                              if (frmLogin.GlobalTimer.ElapsedMilliseconds - elapsedMilliseconds1 > 15000L)
+                              {
+                                this.ForcePartyFollow();
+                                this.Myself.PhoBanTheoSau = true;
+                                break;
+                              }
+                              if (frmLogin.GlobalTimer.ElapsedMilliseconds - elapsedMilliseconds2 > 10000L)
+                              {
+                                GA.TrieuTapCaNhom(this, true);
+                                elapsedMilliseconds2 = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                                string waitForTeamMembers = frmMain.langWaitForTeamMembers;
+                                if (this.Myself.LogString != waitForTeamMembers)
+                                {
+                                  GA.WriteUserLog(waitForTeamMembers, this);
+                                  this.Myself.LogString = waitForTeamMembers;
+                                }
+                              }
+                            }
+                          }
+                          if (this.Myself.PhoBanTheoSau)
+                          {
+                            this.CallTalkNPC(0, 0, NPCID);
+                            Thread.Sleep(300);
+                            this.CallTalkNPC(menuTypeID, menuIndex, NPCID);
+                            Thread.Sleep(1500);
+                            if (this.Myself.isMessageBox_Self == 1)
+                              this.CallStartAutoMoveClick();
+                          }
+                        }
+                      }
+                      else
+                      {
+                        if (this.Myself.actionCounter == 0)
+                        {
+                          ++this.Myself.actionCounter;
+                          GA.TrieuTapCaNhom(this, true);
+                        }
+                        this.NhiemVuLinhThu();
+                      }
+                    }
+                    else if (this.Myself.IsLuyenKim && frmLogin.GAuto.Settings.IsPro1)
+                    {
+                      this.NhiemVuLuyenKim();
+                      flag11 = true;
+                    }
+                    else if (this.Myself.IsMuaKNB && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      this.NhiemVuMuaKNB();
+                      flag11 = true;
+                    }
+                    else if (this.Myself.IsXayDung && frmLogin.GAuto.Settings.IsPro1)
+                    {
+                      this.NhiemVuXayDung();
+                      flag11 = true;
+                    }
+                    else if (this.Myself.IsTBB && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      this.NhiemVuTBB();
+                      flag11 = true;
+                    }
+                    else if (this.Myself.IsTuDuongCon && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      this.NhiemVuTuDuongCon();
+                      flag11 = true;
+                    }
+                    else if (this.Myself.IsTKC && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      int cboTkcMaps = this.Settings.cboTKCMaps;
+                      if (this.Myself.MapID != cboTkcMaps && !GA.IsInPhuBan(this.Myself.MapID, this))
+                      {
+                        int num13 = 0;
+                        int num14 = 0;
+                        int num15 = 0;
+                        if (cboTkcMaps == 30)
+                        {
+                          num13 = 42;
+                          num14 = 60;
+                          num15 = 30;
+                        }
+                        if (cboTkcMaps == 24)
+                        {
+                          num13 = 264;
+                          num14 = 42;
+                          num15 = 24;
+                        }
+                        if (cboTkcMaps == 18)
+                        {
+                          num13 = 272;
+                          num14 = 273;
+                          num15 = 18;
+                        }
+                        ++this.Myself.actionCounter;
+                        if (this.Myself.actionCounter == 1)
+                          GA.TrieuTapToMyPos(this, num13, num14, num15);
+                        else if (this.Myself.actionCounter >= 4)
+                          this.Myself.actionCounter = 0;
+                        this.GoToMyPos(num13, num14, num15);
+                      }
+                      else
+                      {
+                        if (this.Myself.actionCounter == 0)
+                        {
+                          ++this.Myself.actionCounter;
+                          GA.TrieuTapCaNhom(this, true);
+                        }
+                        this.NhiemVuTangKinhCac();
+                      }
+                    }
+                    else if (this.Myself.isDaoBTD && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuDaoBTD();
+                    }
+                    else if (this.Myself.isBachHoaDuyen && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuBachHoaDuyen();
+                    }
+                    else if (this.Myself.isQSM && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuSuMon();
+                    }
+                    else if (this.Myself.IsPHLM && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.PhungHoangLangMo();
+                    }
+                    else if (this.Myself.IsKyCuoc && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuKyCuoc();
+                    }
+                    else if (this.Myself.isCauPhuc && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuCauPhuc();
+                    }
+                    else if (this.Myself.isCauNguyen && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuCauNguyen();
+                    }
+                    else if (this.Myself.isDoatBaoRuong && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuDoatBaoRuong();
+                    }
+                    else if (this.Myself.IsCheDo)
+                    {
+                      flag11 = true;
+                      this.NhiemVuCheDo_New();
+                    }
+                    else if (this.Myself.IsQ1 && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuDietGon();
+                    }
+                    else if (this.Myself.IsQ2 && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuTruHai();
+                    }
+                    else if (this.Myself.isTrongHoa && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuTrongHoa();
+                    }
+                    else if (this.Myself.isBonHoa && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuBonHoa();
+                    }
+                    else if (this.Myself.isThuHoach && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuThuHoachHoa();
+                    }
+                    else if (this.Myself.isNhatTuyet && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuNhatTuyet();
+                    }
+                    else if (this.Myself.isYTO && frmLogin.GAuto.Settings.IsPro2)
+                      flag11 = true;
+                    else if (this.Myself.isPMP && frmLogin.GAuto.Settings.IsPro2)
+                      flag11 = true;
+                    else if (this.Myself.isTanThu && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuTanThu();
+                    }
+                    else if (this.Myself.isDoiKimTamTi && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuDoiKimTamTi();
+                    }
+                    else if (this.Myself.isDoiChiTonCH && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuDoiChiTonCH();
+                    }
+                    else if (this.Myself.isThuTaiVanMay && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuThuTaiVanMay();
+                    }
+                    else if (this.Myself.isThienLongTueHong && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuThienLongTueHong();
+                    }
+                    else if (this.Myself.isNguHanhPhapThiep && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuNguHanhPhapThiep();
+                    }
+                    else if (this.Myself.isLoLyHoa && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuLoLyHoa();
+                    }
+                    else if (this.Myself.isDoiKimTinhThach && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuDoiKimTinhThach();
+                    }
+                    else if (this.Myself.isBuonDuaHau && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuBuonDuaHau();
+                    }
+                    else if (this.Myself.isHuyItemNhiemVu && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuHuyItemNhiemVu();
+                    }
+                    else if (this.Myself.isDoiThoiVang && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuDoiThoiVang();
+                    }
+                    else if (this.Myself.isDoiLinhHonToaiPhien && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuDoiLinhHonToaiPhien(this.Myself.DoiLinhHonToaiPhienMode);
+                    }
+                    else if (this.Myself.isDoiPhieuTienVang && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuDoiPhieuTienVang(this.Myself.DoiPhieuTienVangMode);
+                    }
+                    else if (this.Myself.isDoiThanBinhPhu && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuDoiThanBinhPhu();
+                    }
+                    else if (this.Myself.isNhanX2EXP && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuNhanX2EXP();
+                    }
+                    else if (this.Myself.isLLTB && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuLLTamBao();
+                    }
+                    else if (this.Myself.isThuyLao && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuThuyLao();
+                    }
+                    else if (this.Myself.isThuBiChienMinh && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuThuBiChienMinh();
+                    }
+                    else if (this.Myself.isNhanLeBao && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuNhanLeBao();
+                    }
+                    else if (this.Myself.isNhanBongCauPhuc && frmLogin.GAuto.Settings.IsPro2)
+                    {
+                      flag11 = true;
+                      this.NhiemVuNhanBongCauPhuc();
+                    }
+                    if (GA.isShitMember())
+                    {
+                      Random random = new Random();
+                      if (random.Next(0, 10000) <= 7000)
+                      {
+                        random.Next(30, 220);
+                        this.Myself.EventString = "";
+                      }
+                    }
+                    int num16 = this.Myself.IsHaiDua ? 1 : 0;
+                    if (!flag11)
+                      this.Settings.AIMode = AllEnums.AIModes.DANHTUDO;
+                  }
+                  if (this.IsAIEnabled)
+                  {
+                    if (this.Settings.cboxKhoangDuoc)
+                    {
+                      try
+                      {
+                        for (int index = this.MyBoc.AllBocs.Count - 1; index >= 0; --index)
+                        {
+                          NewBoc allBoc = this.MyBoc.AllBocs[index];
+                          if (allBoc.BocID != 0 && (double)allBoc.PosX != 0.0 && (double)allBoc.PosY != 0.0)
+                          {
+                            bool flag13 = false;
+                            if (allBoc.BocType >= 1 && allBoc.BocType <= 10 || allBoc.BocType == 809)
+                            {
+                              if (this.Settings.cboxKhaiKhoang)
+                                flag13 = true;
+                            }
+                            else if (allBoc.BocType >= 101 && allBoc.BocType <= 126 && this.Settings.cboxHaiDuoc)
+                              flag13 = true;
+                            if (flag13)
+                            {
+                              KhoangDuocEntry khoangDuocEntry = new KhoangDuocEntry();
+                              khoangDuocEntry.MapID = this.Myself.MapID;
+                              khoangDuocEntry.PosX = (int)allBoc.PosX;
+                              khoangDuocEntry.PosY = (int)allBoc.PosY;
+                              bool flag14 = false;
+                              foreach (KhoangDuocEntry khoangDuoc in this.Myself.KhoangDuocList)
+                              {
+                                if (khoangDuoc.MapID == khoangDuocEntry.MapID && khoangDuoc.PosX == khoangDuocEntry.PosX && khoangDuoc.PosY == khoangDuocEntry.PosY)
+                                {
+                                  flag14 = true;
+                                  break;
+                                }
+                              }
+                              if (!flag14)
+                              {
+                                AutoAccount.DisPlayClass disPlayClass = new AutoAccount.DisPlayClass();
+                                this.Myself.KhoangDuocList.Add(khoangDuocEntry);
+                                string path = $"{AppDomain.CurrentDomain.BaseDirectory}log\\{frmLogin.GAuto.Settings.AdminKhoangFile}";
+                                AutoAccount.DisPlayClass arg_73AD_0 = disPlayClass;
+                                string format = "{0},{1},{2},{3}";
+                                object[] objArray = new object[4]
+                                {
+                                        (object) this.Myself.MapID.ToString(),
+                                        (object) allBoc.PosX.ToString("0"),
+                                        (object) allBoc.PosY.ToString("0"),
+                                        (object) allBoc.BocType.ToString("0")
+                                };
+                                arg_73AD_0.log = string.Format(format, objArray);
+                                StreamWriter streamWriter = File.AppendText(path);
+                                if (streamWriter != null)
+                                {
+                                  try
+                                  {
+                                    frmMain.frmMainInstance.richLog.Invoke((Delegate)(() =>
+                                    {
+                                      frmMain.frmMainInstance.richLog.AppendText(arg_73AD_0.log + "\r\n");
+                                      frmMain.frmMainInstance.richLog.SelectionStart = frmMain.frmMainInstance.richLog.Text.Length;
+                                      frmMain.frmMainInstance.richLog.ScrollToCaret();
+                                    }));
+                                  }
+                                  catch (Exception ex)
+                                  {
+                                  }
+                                  streamWriter.WriteLine(arg_73AD_0.log);
+                                  streamWriter.Close();
+                                }
+                              }
+                            }
+                          }
+                        }
                       }
                       catch (Exception ex)
                       {
                       }
                     }
                   }
-                  if (this.Myself.Level >= 10 && this.Myself.Menpai == AllEnums.Menpais.NOMENPAI)
-                    this.Myself.Initialized = true;
-                  if (!this.Myself.ReadyToAttack && this.Myself.ResetTimeStamp.ElapsedMilliseconds >= 5000L)
+                  if (this.IsAIEnabled && this.Settings.cboxATAB && this.MyQuai.AllQuai.Count > 0)
                   {
-                    this.Myself.ResetTimeStamp.Reset();
-                    this.Myself.ResetTimeStamp.Start();
-                    this.Myself.ReadyToAttack = true;
-                  }
-                  if (this.Myself.Level == 0 && this.Myself.TransitioningStamp.ElapsedMilliseconds == 0L)
-                    this.Myself.TransitioningStamp.Start();
-                  if (this.Myself.prevNotTransitioning == 1 && this.Myself.isSceneTrans <= 0)
-                  {
-                    Thread.Sleep(2000);
-                    this.Myself.prevNotTransitioning = 0;
-                  }
-                  if (this.Myself.ActionStatus >= (byte) 5 && this.Myself.ActionStatus <= (byte) 8)
-                  {
-                    this.Myself.LastPostStamp.Reset();
-                    this.Myself.LastPostStamp.Start();
-                  }
-                  if (this.Myself.isSceneTrans == 1)
-                  {
-                    this.Myself.LastPostStamp.Reset();
-                    this.Myself.LastPostStamp.Start();
-                    lock (this.Myself.JustWarpedLock)
+                    for (int index = this.MyQuai.AllQuai.Count - 1; index >= 0; --index)
                     {
-                      this.Myself.WarpStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                      this.Myself.JustWarped = true;
-                      this.Myself.JustWarpedStamp.Reset();
-                      this.Myself.JustWarpedStamp.Start();
-                      this.SetJustWarpedFlag(1);
-                    }
-                  }
-                  this.ResetJustWarped();
-                  if (this.MyFlag.actionAI == 1)
-                  {
-                    this.MyFlag.ToaDoTrongHoaList.Clear();
-                    this.MyFlag.TrongHoaListMax = (frmLogin.GAuto.Settings.soHangTrongHoa - 1) * 6;
-                    this.MyFlag.TrongHoaFirstMove = false;
-                    this.MyFlag.actionAI = 0;
-                  }
-                  if (!this.Myself.JustWarped && this.Myself.MapID != -1 && this.Myself.ID > 0)
-                  {
-                    if (this.Target.VersionNum == 3 && this.Myself.isMuaDoTrain)
-                    {
-                      this.BuyListItemKNB();
-                      this.Myself.isMuaDoTrain = false;
-                    }
-                    if (this.Myself.isBanDoChoNPC)
-                    {
-                      if (!this.IsAIEnabled)
-                        this.Myself.isBanDoChoNPC = false;
-                      this.BanDoChoNPC();
-                    }
-                    if (this.Myself.IsPartyFollowed == (byte) 1 && !this.IsPartyKey())
-                    {
-                      this.Myself.Status = AllEnums.CharStatuses.IDLE;
-                      this.Myself.SavedStatus = AllEnums.CharStatuses.IDLE;
-                      this.Myself.MinorStatus2 = AllEnums.CharStatuses.IDLE;
-                      this.Myself.MinorStatus = AllEnums.CharStatuses.IDLE;
-                      this.Myself.TargetX = 0.0f;
-                      this.Myself.TargetY = 0.0f;
-                      this.Myself.TargetMapID = -1;
-                      this.Myself.MoveLongTrigger = false;
-                      this.Myself.SavedPosX = 0.0f;
-                      this.Myself.SavedPosY = 0.0f;
-                      this.Myself.SavedMapID = -1;
-                      this.Myself.LongMoveX = 0;
-                      this.Myself.LongMoveY = 0;
-                      this.Myself.LongMoveMapID = -1;
-                      this.Myself.MoveAcrossMap = false;
-                      this.Myself.UseAutoMove = false;
-                      this.Myself.MoveFlashPos = false;
-                      this.Myself.IsPK = false;
-                      this.Myself.IsLongMove = false;
-                      this.Myself.CurrentTarget = (QuaiIndividual) null;
-                      this.Myself.CurrentTargetID = -1;
-                      this.ResetXYnow();
-                    }
-                    if (this.Myself.PartyKeyLock && this.MyFlag.StartReconnectStamp < this.nowStamp())
-                    {
-                      if (this.IsPartyKeyInt() == 1)
-                        GA.PartyGiveKeyToMe(this);
-                      if (this.IsPartyKeyInt() == 2)
-                        this.Myself.PartyKeyLock = false;
-                    }
-                    if (this.Myself.IDLEStamp - frmLogin.GlobalTimer.ElapsedMilliseconds <= 0L)
-                    {
-                      if (frmLogin.GAuto.Settings.IsPro1)
+                      QuaiIndividual quaiIndividual = this.MyQuai.AllQuai[index];
+                      if ((double)quaiIndividual.PosX != 0.0 && (double)quaiIndividual.PosY != 0.0 && !string.IsNullOrEmpty(quaiIndividual.Name) && (quaiIndividual.Name.ToLower() == "ác tặc tạo phản" || quaiIndividual.Name.ToLower() == "giang hồ tà đạo" || quaiIndividual.Name.ToLower() == "tà đạo lâu la" || quaiIndividual.Name.ToLower() == "ác bá" || quaiIndividual.Name.ToLower() == "lâu la" || quaiIndividual.Name.ToLower() == "niên thú" || quaiIndividual.Name.ToLower() == "kỳ lân" || quaiIndividual.Name.ToLower() == "anh chiêu" || quaiIndividual.Name.ToLower() == "long quy" || quaiIndividual.Name.ToLower() == "hoàng điểu" || quaiIndividual.Name.ToLower() == "mô kim hiệu úy" || quaiIndividual.Name.ToLower() == "shishimai" || quaiIndividual.Name.ToLower() == "kylin" || quaiIndividual.Name.ToLower() == "pegasus" || quaiIndividual.Name.ToLower() == "tarasque" || quaiIndividual.Name.ToLower() == "phoenix"))
                       {
-                        if (this.MyParty.PartyNumbers == 0 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.PTInviteStamp >= 300L)
+                        KhoangDuocEntry khoangDuocEntry = new KhoangDuocEntry();
+                        khoangDuocEntry.MapID = this.Myself.MapID;
+                        khoangDuocEntry.PosX = (int)quaiIndividual.PosX;
+                        khoangDuocEntry.PosY = (int)quaiIndividual.PosY;
+                        khoangDuocEntry.NPCName = quaiIndividual.Name;
+                        khoangDuocEntry.NPCID = quaiIndividual.ID;
+                        bool flag15 = false;
+                        foreach (KhoangDuocEntry khoangDuoc in this.Myself.KhoangDuocList)
                         {
-                          this.Myself.PTInviteStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                          if (this.MyParty.InviterDB != 0 && this.MyParty.Name != "")
+                          if (khoangDuoc.MapID == khoangDuocEntry.MapID && khoangDuoc.PosX == khoangDuocEntry.PosX && khoangDuoc.PosY == khoangDuocEntry.PosY && khoangDuoc.NPCName == khoangDuocEntry.NPCName)
                           {
-                            bool flag = false;
-                            if (frmLogin.GAuto.AllAutoAccounts.Count > 1)
-                            {
-                              try
-                              {
-                                for (int index = frmLogin.GAuto.AllAutoAccounts.Count - 1; index >= 0; --index)
-                                {
-                                  if (frmLogin.GAuto.AllAutoAccounts[index].Myself.Name == this.MyParty.Name)
-                                  {
-                                    flag = true;
-                                    break;
-                                  }
-                                }
-                              }
-                              catch (Exception ex)
-                              {
-                              }
-                            }
-                            bool blacklist = false;
-                            if (this.Settings.PTBlacklist.Contains(this.MyParty.Name))
-                            {
-                              blacklist = true;
-                              this.CallDenyPartyInvite(blacklist);
-                            }
-                            if (!blacklist)
-                            {
-                              if (this.Settings.cboxPTLevel && this.MyParty.InviterLevel >= this.Settings.numPTLevel)
-                                flag = true;
-                              if (!flag && this.Settings.cboxTuVaoPT && this.Settings.AutoPartyList.Count > 0 && this.Settings.AutoPartyList.Contains(this.MyParty.Name))
-                                flag = true;
-                              if (flag)
-                              {
-                                GA.WriteUserLog(frmMain.langAcceptPTMsg, this, (object) this.MyParty.Name, (object) this.MyParty.InviterLevel);
-                                this.CallAcceptPartyInvite(this.MyParty.InviterDB);
-                              }
-                              else if (this.Target.VersionNum != 3 && this.Target.VersionNum != 4 && (this.Settings.cboxPTLevel || this.Settings.cboxTuVaoPT || this.Settings.cboxPTChoVao))
-                              {
-                                GA.WriteUserLog(frmMain.langDenyPTMsg, this, (object) this.MyParty.Name, (object) this.MyParty.InviterLevel);
-                                this.CallDenyPartyInvite();
-                              }
-                            }
+                            flag15 = true;
+                            break;
+                          }
+                          if (khoangDuoc.MapID == khoangDuocEntry.MapID && khoangDuoc.NPCID == khoangDuocEntry.NPCID)
+                          {
+                            flag15 = true;
+                            break;
                           }
                         }
-                        if (this.Myself.CaptchaAlerted)
+                        if (!flag15)
                         {
-                          if (this.Myself.CaptchaAlertStamp.ElapsedMilliseconds >= 10000L)
-                            this.Myself.CaptchaGUI = false;
-                          if (this.Myself.CaptchaAlertStamp.ElapsedMilliseconds >= 70000L)
-                            this.Myself.CaptchaAlerted = false;
+                          this.Myself.KhoangDuocList.Add(khoangDuocEntry);
+                          string str = $"{AppDomain.CurrentDomain.BaseDirectory}log\\{frmLogin.GAuto.Settings.AdminNPCFile}";
                         }
-                        if (!this.ProcessCaptcha())
+                      }
+                    }
+                  }
+                  bool flag16 = true;
+                  if (this.ScriptEngine.IsOn && this.ScriptEngine.Script != null)
+                  {
+                    List<int> intList1 = new List<int>();
+                    List<int> intList2 = new List<int>();
+                    if (this.ScriptEngine2 != null)
+                    {
+                      GScriptEngine gscriptEngine1 = this.ScriptEngine;
+                      GScriptEngine gscriptEngine2 = this.ScriptEngine2;
+                      if (!this.IsMainScript)
+                      {
+                        GScriptEngine gscriptEngine3 = gscriptEngine2;
+                        gscriptEngine2 = gscriptEngine1;
+                        gscriptEngine1 = gscriptEngine3;
+                      }
+                      for (int index = 1; index < 10; ++index)
+                      {
+                        object option = gscriptEngine2.Script.GetOption("mapid" + index.ToString());
+                        if (option != null)
                         {
-                          if (this.Myself.PKAlerted && this.Myself.PKAlertStamp.ElapsedMilliseconds >= 10000L)
-                            this.Myself.PKAlerted = false;
-                          if (this.Myself.IsAttacked == 1 && !this.Myself.PKAlerted)
-                          {
-                            this.Myself.PKAlertStamp.Reset();
-                            this.Myself.PKAlertStamp.Start();
-                            this.Myself.PKAlerted = true;
-                            this.Myself.IsPK = true;
-                            this.Myself.LastPKStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                            if (this.Settings.cboxTNAlertPK)
-                            {
-                              try
-                              {
-                                new SoundPlayer("pk.wav").Play();
-                              }
-                              catch (Exception ex)
-                              {
-                              }
-                            }
-                            PlayerIndividual playerIndividual = (PlayerIndividual) null;
-                            double num = 999.0;
-                            for (int index1 = 0; index1 < 30; ++index1)
-                            {
-                              int green = this.Myself.GreenList[index1];
-                              if (green != -1)
-                              {
-                                if (this.MyPlayers.AllPlayers.Count > 0)
-                                {
-                                  try
-                                  {
-                                    for (int index2 = this.MyPlayers.AllPlayers.Count - 1; index2 >= 0; --index2)
-                                    {
-                                      PlayerIndividual allPlayer = this.MyPlayers.AllPlayers[index2];
-                                      int databaseId = allPlayer.DatabaseID;
-                                      if (databaseId == green && databaseId > 0 && (double) allPlayer.HPPercent > 0.0)
-                                      {
-                                        playerIndividual = allPlayer;
-                                        break;
-                                      }
-                                    }
-                                  }
-                                  catch (Exception ex)
-                                  {
-                                  }
-                                }
-                                if (playerIndividual != null && playerIndividual.MapID == this.Myself.MapID && (double) playerIndividual.PosX != 0.0 && (double) playerIndividual.PosY != 0.0)
-                                {
-                                  GA.ShowBalloon(playerIndividual.Name + frmMain.langIsAttackingYou, frmMain.langUnderPK, this, 600000);
-                                  if (playerIndividual.Name != this.MyFlag.PlayerPKMe)
-                                  {
-                                    this.MyFlag.PlayerPKMe = playerIndividual.Name;
-                                    GA.WriteUserLog(playerIndividual.Name + frmMain.langIsAttackingYou, this);
-                                  }
-                                  double distance = GA.CalculateDistance((double) playerIndividual.PosX, (double) playerIndividual.PosY, (double) this.Myself.PosX, (double) this.Myself.PosY);
-                                  if (distance < num)
-                                  {
-                                    num = distance;
-                                    playerIndividual = (PlayerIndividual) null;
-                                  }
-                                }
-                              }
-                            }
-                          }
+                          int num17 = (int)option;
+                          intList1.Add(num17);
                         }
                         else
-                          goto label_1076;
+                          break;
                       }
-                      if (this.Myself.CanNhatBocStamp > 0L && !this.Myself.CanNhatBoc && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.CanNhatBocStamp >= (long) (this.Settings.numFullThung * 60000))
+                      for (int index = 1; index < 10; ++index)
                       {
-                        this.Myself.CanNhatBoc = true;
-                        this.Myself.CanNhatBocStamp = 0L;
-                      }
-                      if (this.Myself.FlagFullBoc && this.Settings.cboxFullStopNhat)
-                      {
-                        this.Myself.CanNhatBoc = false;
-                        this.Myself.CanNhatBocStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                      }
-                      if ((this.Settings.cboxHelpChat || frmLogin.GAuto.Settings.AppMode == AllEnums.AutoModes.Lite) && this.Myself.HPPercent > 0.0 && !this.Myself.JustWarped && this.Myself.Name != "" && !frmLogin.GAuto.Settings.IsPro1 && frmLogin.GAuto.Settings.QuangCaoContent.Count > 0 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.ChatQuangCaoStamp >= (long) (frmLogin.GAuto.Settings.ChatQuangCaoDelay + this.Myself.ChatQuangCaoDelayDelta))
-                      {
-                        this.Myself.ChatQuangCaoStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                        this.Myself.AutoChatStamp.Reset();
-                        this.Myself.AutoChatStamp.Start();
-                        List<int> intList = new List<int>();
-                        if (frmLogin.GAuto.Settings.QuangCaoContent.Count > 0)
+                        object option = gscriptEngine1.Script.GetOption("mapid" + index.ToString());
+                        if (option != null)
                         {
-                          for (int index = 0; index < frmLogin.GAuto.Settings.QuangCaoContent.Count; ++index)
-                          {
-                            if (this.Target.VersionNum == frmLogin.GAuto.Settings.QuangCaoContent[index].VersionNum && this.Target.SubVersion == frmLogin.GAuto.Settings.QuangCaoContent[index].SubVersion)
-                              intList.Add(index);
-                          }
-                          if (intList.Count == 0)
-                          {
-                            for (int index = 0; index < frmLogin.GAuto.Settings.QuangCaoContent.Count; ++index)
-                            {
-                              if (this.Target.VersionNum == frmLogin.GAuto.Settings.QuangCaoContent[index].VersionNum && frmLogin.GAuto.Settings.QuangCaoContent[index].SubVersion == 0)
-                                intList.Add(index);
-                            }
-                          }
+                          int num18 = (int)option;
+                          intList2.Add(num18);
                         }
-                        if (intList.Count > 0)
-                        {
-                          int index = frmLogin.random.Next(0, intList.Count);
-                          try
-                          {
-                            if (intList[index] < frmLogin.GAuto.Settings.QuangCaoContent.Count)
-                              this.CallSendMessage(2, GA.ConvertToVISCII(frmLogin.GAuto.Settings.QuangCaoContent[intList[index]].Message, this.Target.VersionNum));
-                          }
-                          catch (Exception ex)
-                          {
-                          }
-                        }
-                      }
-                      if (this.Settings.cboxAutoChat && this.Myself.HPPercent > 0.0 && !this.Myself.JustWarped)
-                      {
-                        bool flag1 = false;
-                        if (string.IsNullOrEmpty(this.Settings.AutoChatContent) && !frmLogin.GAuto.Settings.IsPro1 && !this.Settings.cboxChatSavedMsg)
-                        {
-                          List<int> intList = new List<int>();
-                          if (frmLogin.GAuto.Settings.QuangCaoContent.Count > 0)
-                          {
-                            for (int index = 0; index < frmLogin.GAuto.Settings.QuangCaoContent.Count; ++index)
-                            {
-                              if (frmLogin.GAuto.Settings.QuangCaoContent[index].VersionNum == 3 && this.Target.VersionNum == 3 && this.Target.SubVersion != 4 && this.Target.SubVersion != 5 || frmLogin.GAuto.Settings.QuangCaoContent[index].VersionNum != 3 && this.Target.VersionNum != 3)
-                                intList.Add(index);
-                            }
-                          }
-                          if (intList.Count > 0)
-                          {
-                            try
-                            {
-                              int index = frmLogin.random.Next(0, intList.Count);
-                              if (intList[index] < frmLogin.GAuto.Settings.QuangCaoContent.Count)
-                                this.Settings.AutoChatContent = frmLogin.GAuto.Settings.QuangCaoContent[intList[index]].Message;
-                            }
-                            catch (Exception ex)
-                            {
-                            }
-                          }
-                          this.Settings.cboKenhChat = 2;
-                          flag1 = true;
-                        }
-                        bool flag2 = false;
-                        if (this.MyFlag.ChatRecorded && this.Myself.ChatRecordedMessage != "")
-                          flag2 = true;
-                        if (!string.IsNullOrEmpty(this.Settings.AutoChatContent) || flag2 && this.Settings.cboxChatSavedMsg)
-                        {
-                          this.Myself.RemainingChatTime = (long) (this.Settings.numAutoChat * 1000) - this.Myself.AutoChatStamp.ElapsedMilliseconds;
-                          if (this.Myself.RemainingChatTime <= 0L || this.Myself.ChatTimes == 0)
-                          {
-                            ++this.Myself.ChatTimes;
-                            this.Myself.AutoChatStamp.Reset();
-                            this.Myself.AutoChatStamp.Start();
-                            bool userSend = frmLogin.GAuto.Settings.AppMode == AllEnums.AutoModes.Lite;
-                            if (this.Settings.cboxChatSavedMsg && flag2)
-                            {
-                              this.CallSendSavedChat();
-                            }
-                            else
-                            {
-                              this.CallSendMessage(this.Settings.cboKenhChat, GA.ConvertToVISCII(this.Settings.AutoChatContent, this.Target.VersionNum), userSend);
-                              if (flag1)
-                                this.Settings.AutoChatContent = "";
-                            }
-                          }
-                        }
-                      }
-                      for (int index = 1; index < this.MySkills.AllSkills.Count; ++index)
-                      {
-                        SingleSkill allSkill = this.MySkills.AllSkills[index];
-                        if (allSkill.RemainWaitingTime > 0)
-                        {
-                          allSkill.RemainWaitingTime -= this.Target.ThreadDelay;
-                          if (allSkill.RemainWaitingTime < 0)
-                            allSkill.RemainWaitingTime = 0;
-                        }
-                      }
-                      if (this.Myself.CheckSkillDelayStamp.ElapsedMilliseconds >= 1500L)
-                      {
-                        foreach (SkillPlayItem skillPlay in (List<SkillPlayItem>) this.Settings.SkillPlayList)
-                        {
-                          if (frmLogin.GlobalTimer.ElapsedMilliseconds - skillPlay.LastPlayTimeStamp >= (long) (skillPlay.SkillDelayInSecond * 1000) && skillPlay.Played)
-                            skillPlay.Played = false;
-                        }
-                        foreach (SkillPlayItem skillPk in (List<SkillPlayItem>) this.Settings.SkillPKList)
-                        {
-                          if (frmLogin.GlobalTimer.ElapsedMilliseconds - skillPk.LastPlayTimeStamp >= (long) (skillPk.SkillDelayInSecond * 1000) && skillPk.Played)
-                            skillPk.Played = false;
-                        }
-                        try
-                        {
-                          foreach (SkillPlayItem skillBuff in (List<SkillPlayItem>) this.Settings.SkillBuffList)
-                          {
-                            if (frmLogin.GlobalTimer.ElapsedMilliseconds - skillBuff.LastPlayTimeStamp >= (long) (skillBuff.SkillDelayInSecond * 1000))
-                            {
-                              skillBuff.Played = false;
-                              if (skillBuff.BuffPlayerList.Count > 0)
-                              {
-                                for (int index = skillBuff.BuffPlayerList.Count - 1; index >= 0; --index)
-                                {
-                                  BuffedPlayer buffPlayer = skillBuff.BuffPlayerList[index];
-                                  if (frmLogin.GlobalTimer.ElapsedMilliseconds - buffPlayer.LastBuffTime >= (long) (skillBuff.WaitingTime * 60000))
-                                    skillBuff.BuffPlayerList.RemoveAt(index);
-                                }
-                              }
-                            }
-                          }
-                        }
-                        catch (Exception ex)
-                        {
-                          GA.WriteUserLog(frmMain.langErrorPlayingSkills, this);
-                        }
-                        this.Myself.CheckSkillDelayStamp.Reset();
-                        this.Myself.CheckSkillDelayStamp.Start();
-                      }
-                      if (this.Myself.Pass2BoxShow == 1 && frmLogin.GAuto.Settings.IsPro2)
-                        this.CallMoPass2();
-                      // hoint: update Name = SaveDisplayName
-                      this.Myself.Name = this.Myself.SavedDisplayName;
-                      if (this.IsAIEnabled && this.Myself.ID > 0)
-                      {
-                        this.NhanQuaGame();
-                        if (this.Myself.isAcceptBox == 1)
-                          this.CallSendPortalConfirmationClick();
-                        if (this.Myself.isMessageBox_Self == 1 && !this.Myself.IsMuaKNB)
-                        {
-                          bool flag = false;
-                          int ToX = 65;
-                          int ToY = 270;
-                          if (GA.ClientVersion(this) == 10)
-                          {
-                            ToX = 32 /*0x20*/;
-                            ToY = 162;
-                          }
-                          if (GA.CalculateDistance((double) this.Myself.PosX, (double) this.Myself.PosY, (double) ToX, (double) ToY) < 8.0)
-                            flag = true;
-                          if (GA.CalculateDistance((double) this.Myself.PosX, (double) this.Myself.PosY, 283.0, 77.0) < 8.0)
-                            flag = true;
-                          if (GA.IsBangMapID(this.Myself.MapID) && GA.CalculateDistance((double) this.Myself.PosX, (double) this.Myself.PosY, 99.0, 157.0) < 8.0)
-                            flag = true;
-                          if (flag || this.Settings.cboxTuClickYes2 || this.MyFlag.ClickYesStamp > frmLogin.GlobalTimer.ElapsedMilliseconds)
-                          {
-                            this.CallStartAutoMoveClick();
-                            Thread.Sleep(500);
-                          }
-                        }
-                        if (this.MyFlag.AIAction == 1)
-                        {
-                          long elapsedMilliseconds = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                          int posX = (int) this.Myself.PosX;
-                          int posY = (int) this.Myself.PosY;
-                          while (this.IsAIEnabled)
-                          {
-                            Random random = new Random();
-                            this.CallMoveTo((int) this.Myself.PosX + random.Next(-2, 2), (int) this.Myself.PosY + random.Next(-2, 2));
-                            Thread.Sleep(280);
-                            if (posX != (int) this.Myself.PosX || posY != (int) this.Myself.PosY || this.nowStamp() - elapsedMilliseconds > 1200L)
-                              break;
-                          }
-                          this.AIActionSet(0);
-                        }
-                      }
-                      this.PhucHoiSkillNM();
-                      if (!this.Myself.IsLuyenKim)
-                        this.FuncPetSupport();
-                      if (!this.Myself.IsLuyenKim)
-                        this.FuncAnHPMP();
-                      if (this.Myself.Status != AllEnums.CharStatuses.NMBUFFMAU && this.Myself.ActionStatus != (byte) 5 && this.Myself.ActionStatus != (byte) 6 && this.Myself.IsPartyFollowed == (byte) 0)
-                      {
-                        this.NhatBoc();
-                        if (this.Settings.cboxNhatHop && frmLogin.GAuto.Settings.IsPro1)
-                          this.DiTimBauVat(799);
-                      }
-                      if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.NhatHopBaoRuongStamp > 150000L && this.Settings.cboxNhatHop && !GA.isVipMember())
-                      {
-                        this.Settings.cboxNhatHop = false;
-                        GA.WriteUserLog(frmMain.langTurnOffPickingBoxes, this);
-                      }
-                      this.FuncHuyItem();
-                      if (frmLogin.GAuto.Settings.IsPro2 && !this.Myself.JustWarped)
-                      {
-                        if (!this.IsInCity() && (this.Myself.Status == AllEnums.CharStatuses.LENLAIBAITRAIN || this.Myself.Status == AllEnums.CharStatuses.SELLING_NPC || this.Myself.Status == AllEnums.CharStatuses.BUYING_NPC) && this.Myself.IsPartyFollowed == (byte) 0)
-                        {
-                          this.Myself.Status = AllEnums.CharStatuses.IDLE;
-                          this.Myself.SavedStatus = AllEnums.CharStatuses.IDLE;
-                        }
-                        if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.CleanUpInventoryStamp >= 3000L && this.Settings.cboxVutDoKhiFull && !this.Myself.JustWarped && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.StartingStamp >= 5000L && this.Myself.StartingStamp != 0L)
-                        {
-                          this.Myself.CleanUpInventoryStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                          this.CleanUpInventory();
-                        }
-                      }
-                      if (this.MyParty.PartyNumbers > 0 && frmLogin.GAuto.Settings.IsPro2)
-                      {
-                        if (this.Myself.FlagPartyFollowRequest == (byte) 1 && this.Myself.IsPartyFollowed == (byte) 0 && this.Settings.cboxTuTheoDoi && this.IsAIEnabled)
-                        {
-                          if (this.Settings.PartySavedPosX == 0 && this.Settings.PartySavedPosY == 0 && this.Settings.PartySavedMapID == -1)
-                          {
-                            this.Settings.PartySavedPosX = (int) this.Settings.CenterX;
-                            this.Settings.PartySavedPosY = (int) this.Settings.CenterY;
-                            this.Settings.PartySavedMapID = this.Settings.MapID;
-                          }
-                          this.CallAcceptPartyFollowClick();
-                          Thread.Sleep(1000);
-                        }
-                        if (this.Myself.IsPartyFollowed == (byte) 0 && this.Myself.PreviousIsPartyFollowed != (int) this.Myself.IsPartyFollowed && this.MyParty.PartyNumbers > 0)
-                        {
-                          PartyMember allMember = this.MyParty.AllMembers[0];
-                        }
-                      }
-                      if (this.MyParty.PartyNumbers <= 0 && this.Settings.PartySavedPosX != 0 && this.Settings.PartySavedPosY != 0 && this.Settings.PartySavedMapID > 0)
-                      {
-                        this.Settings.CenterX = (double) this.Settings.PartySavedPosX;
-                        this.Settings.CenterY = (double) this.Settings.PartySavedPosY;
-                        this.Settings.MapID = this.Settings.PartySavedMapID;
-                        this.Settings.PartySavedPosX = 0;
-                        this.Settings.PartySavedPosY = 0;
-                        this.Settings.PartySavedMapID = -1;
-                      }
-                      if (frmLogin.GAuto.Settings.IsPro2 && !this.Settings.cboxKhongResetGio && this.Myself.Status != AllEnums.CharStatuses.VETHANH)
-                      {
-                        int num = 10740000;
-                        if (this.MyFlag.Random_ResetTime == 0)
-                          this.MyFlag.Random_ResetTime = GA.random.Next(20, 60) * 10000;
-                        if (this.Myself.OnlineTime >= num - this.MyFlag.Random_ResetTime && !this.Myself.JustWarped && this.Myself.IsPartyFollowed == (byte) 0 && this.Target.VersionNum != 3 && (this.MyFlag.ResetStamp == 0L || this.MyFlag.ResetStamp != 0L && frmLogin.GlobalTimer.ElapsedMilliseconds - this.MyFlag.ResetStamp >= 7200000L))
-                        {
-                          bool flag = true;
-                          if (GA.IsInPhuBan(this.Myself.MapID, this) && (this.Myself.IsAcTac || this.Myself.IsAcBa || this.Myself.IsTKC || this.Myself.IsLinhThu || this.Myself.IsQ1 || this.Myself.IsQ2 || this.Myself.IsPHLM || this.Myself.isYTO || this.Myself.IsKyCuoc))
-                            flag = false;
-                          if (flag)
-                          {
-                            this.MyFlag.ResetStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                            this.ResetTimeAdvanced();
-                            goto label_1076;
-                          }
-                        }
-                      }
-                      this.ProcessPartyGrouping();
-                      if (this.Myself.IsBuffMode && this.Myself.IsPartyFollowed == (byte) 0 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.LastSkillTimeStamp >= 5000L)
-                        this.Myself.IsBuffMode = false;
-                      if (frmLogin.GAuto.Settings.IsPro1 && this.Myself.IsPartyFollowed == (byte) 0 && this.IsAIEnabled && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.LastSkillTimeStamp >= 2000L && this.Settings.SkillBuffList.Count > 0 && this.Myself.HorseType == -1 && this.Myself.MPPercent > 1.0 && this.Myself.IsPartyFollowed == (byte) 0)
-                      {
-                        if (this.Settings.cboxBuffHoTroOnOff)
-                        {
-                          try
-                          {
-                            foreach (SkillPlayItem skillBuff in (List<SkillPlayItem>) this.Settings.SkillBuffList)
-                            {
-                              if (skillBuff.IsEnabled)
-                              {
-                                BuffedPlayer buffTarget = (BuffedPlayer) null;
-                                double num = 99.0;
-                                if (skillBuff.BuffSelf)
-                                {
-                                  bool flag = false;
-                                  foreach (BuffedPlayer buffPlayer in (List<BuffedPlayer>) skillBuff.BuffPlayerList)
-                                  {
-                                    if (buffPlayer.Name == this.Myself.Name)
-                                    {
-                                      flag = true;
-                                      break;
-                                    }
-                                  }
-                                  if (!flag)
-                                  {
-                                    buffTarget = new BuffedPlayer();
-                                    buffTarget.Name = this.Myself.Name;
-                                    buffTarget.DatabaseID = this.Myself.DatabaseID;
-                                    buffTarget.GameID = this.Myself.ID;
-                                    num = 1.0;
-                                  }
-                                }
-                                if (buffTarget == null && skillBuff.BuffParty && this.MyParty.PartyNumbers > 0 && this.MyParty.PartyNumbers < 6)
-                                {
-                                  for (int index = 0; index <= this.MyParty.PartyNumbers; ++index)
-                                  {
-                                    PartyMember allMember = this.MyParty.AllMembers[index];
-                                    if (this.BuffHoTro(skillBuff, buffTarget, allMember))
-                                    {
-                                      buffTarget = new BuffedPlayer();
-                                      buffTarget.Name = allMember.Name;
-                                      buffTarget.DatabaseID = allMember.DatabaseID;
-                                      buffTarget.GameID = allMember.ID;
-                                      break;
-                                    }
-                                  }
-                                }
-                                if (buffTarget == null && skillBuff.BuffArmy && this.MyArmy.HasQuanDoan && this.Target.VersionNum != 3 && this.Target.VersionNum != 4)
-                                {
-                                  for (int index = 0; index < 30; ++index)
-                                  {
-                                    PartyMember allMember = this.MyArmy.AllMembers[index];
-                                    if (this.BuffHoTro(skillBuff, buffTarget, allMember))
-                                    {
-                                      buffTarget = new BuffedPlayer();
-                                      buffTarget.Name = allMember.Name;
-                                      buffTarget.DatabaseID = allMember.DatabaseID;
-                                      buffTarget.GameID = allMember.ID;
-                                      break;
-                                    }
-                                  }
-                                }
-                                if (buffTarget != null)
-                                {
-                                  if (skillBuff.SkillItem.DelayIndex != -1)
-                                    skillBuff.SkillItem.SkillDelay = this.MySkills.SkillDelays[skillBuff.SkillItem.DelayIndex].SkillDelay;
-                                  bool flag = true;
-                                  if (this.Myself.Rage < skillBuff.SkillItem.RageRequired && skillBuff.SkillItem.RageRequired > 0)
-                                    flag = false;
-                                  if (flag)
-                                  {
-                                    if (num <= 11.0)
-                                      this.AdjustShootList(skillBuff.SkillItem.ID, buffTarget.GameID);
-                                    else
-                                      this.AdjustShootList(skillBuff.SkillItem.ID, buffTarget.GameID, packet: false);
-                                    skillBuff.LastPlayTimeStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                    buffTarget.LastBuffTime = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                    skillBuff.BuffPlayerList.Add(buffTarget);
-                                    this.Myself.LastSkillTimeStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                    this.Myself.IsBuffMode = true;
-                                    break;
-                                  }
-                                }
-                                else if (buffTarget == null)
-                                  this.Myself.IsBuffMode = false;
-                              }
-                            }
-                          }
-                          catch (Exception ex)
-                          {
-                            GA.WriteUserLog(frmMain.langErrorWhileCheckingSkills, this);
-                          }
-                        }
-                      }
-                      if (this.MyInventory.CheckItemBuffer.Count > 0 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.WarpStamp >= 15000L)
-                      {
-                        if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.CheckItemStamp >= 400L)
-                        {
-                          try
-                          {
-                            this.Myself.CheckItemStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                            if (this.MyInventory.AllItems[this.MyInventory.CheckItemBuffer[0]].ItemID >= 0)
-                              this.CallInventoryItemDetail(this.MyInventory.CheckItemBuffer[0]);
-                          }
-                          catch (Exception ex)
-                          {
-                            GA.WriteUserLog(frmMain.langErrorCheckInventory + ex.Message, this);
-                          }
-                          this.MyInventory.CheckItemBuffer.RemoveAt(0);
-                        }
-                      }
-                      if (this.MySkills.SkillBuffer.Count > 0 && this.Myself.ActionStatus != (byte) 5 && this.Myself.ActionStatus != (byte) 6)
-                      {
-                        bool flag3 = true;
-                        if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.MyFlag.MDPPlayDCTD <= 8000L)
-                        {
-                          if (this.Myself.ActionStatus == (byte) 7)
-                            this.CallAttackTarget(-1, 34, 0, 0);
-                          flag3 = false;
-                        }
-                        if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.MyFlag.noAttackStamp <= 5000L)
-                          flag3 = false;
-                        if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.MyFlag.noPlaySkillStamp <= 7000L)
-                          flag3 = false;
-                        if (flag3 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.LastSkillSent >= 450L)
-                        {
-                          this.Myself.LastSkillSent = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                          QuaiIndividual quaiById = this.MyQuai.GetQuaiByID(this.MySkills.SkillBuffer[0].TargetID, true);
-                          QuaiIndividual quaiIndividual = (QuaiIndividual) null;
-                          int targetId = this.MySkills.SkillBuffer[0].TargetID;
-                          bool flag4 = false;
-                          bool flag5 = false;
-                          if (quaiById == null)
-                          {
-                            quaiIndividual = this.MyPlayers.GetPlayerByIDAsQuai(this.MySkills.SkillBuffer[0].TargetID, true);
-                            if (quaiIndividual == null)
-                            {
-                              if (this.MySkills.SkillBuffer[0].TargetID == this.Myself.ID)
-                                flag5 = true;
-                              else if (this.MySkills.SkillBuffer[0].TargetID == -1)
-                                flag5 = true;
-                              else if (this.MyQuai.TargetID >= 0 && (double) this.MyQuai.TargetHPPercent > 0.0)
-                              {
-                                targetId = this.MyQuai.TargetID;
-                                flag4 = true;
-                                flag5 = true;
-                              }
-                            }
-                          }
-                          if (quaiById != null || quaiIndividual != null)
-                            flag5 = true;
-                          if (flag5)
-                          {
-                            if (this.MySkills.SkillBuffer[0].Packet)
-                            {
-                              if (!flag4)
-                                this.CallAttackTargetPacket(this.Myself.ID, this.MySkills.SkillBuffer[0].SkillID, targetId, this.MySkills.SkillBuffer[0].PosX, this.MySkills.SkillBuffer[0].PosY);
-                              else if (this.MyQuai.TargetID >= 0)
-                                this.CallAttackTargetPacket(this.Myself.ID, this.MySkills.SkillBuffer[0].SkillID, this.MyQuai.TargetID, this.MySkills.SkillBuffer[0].PosX, this.MySkills.SkillBuffer[0].PosY);
-                            }
-                            else if (!flag4)
-                              this.CallAttackTarget(targetId, this.MySkills.SkillBuffer[0].SkillID, this.MySkills.SkillBuffer[0].PosX, this.MySkills.SkillBuffer[0].PosY);
-                            else if (this.MyQuai.TargetID >= 0)
-                              this.CallAttackTarget(this.MyQuai.TargetID, this.MySkills.SkillBuffer[0].SkillID, this.MySkills.SkillBuffer[0].PosX, this.MySkills.SkillBuffer[0].PosY);
-                            this.MySkills.SkillBuffer.RemoveAt(0);
-                          }
-                        }
-                      }
-                      if (frmLogin.GAuto.Settings.IsPro2 && !this.Myself.IsLuyenKim && this.Myself.IsPartyFollowed == (byte) 0 && this.IsAIEnabled)
-                      {
-                        if (this.MyPet != null && this.MyPet.ActivePetID != 0 && this.CanAction() && this.MyPet.ActivePetIndex >= 0 && this.MyPet.ActivePetIndex < this.MyPet.AllPets.Count)
-                        {
-                          if (!this.MyPet.NoToy)
-                          {
-                            try
-                            {
-                              long elapsedMilliseconds = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                              while (this.MyPet.AllPets[this.MyPet.ActivePetIndex].Happiness < this.Settings.numPetChoi)
-                              {
-                                if (this.CallPlayMyPet(this.MyPet.AllPets[this.MyPet.ActivePetIndex].DatabaseID, this.MyPet.AllPets[this.MyPet.ActivePetIndex].PetOwnerDBID))
-                                {
-                                  Thread.Sleep(300);
-                                  if (frmLogin.GlobalTimer.ElapsedMilliseconds - elapsedMilliseconds >= 5000L)
-                                    break;
-                                }
-                                else
-                                  break;
-                              }
-                            }
-                            catch (Exception ex)
-                            {
-                              GA.WriteUserLog($"{frmMain.langErrorPlayingPet}. Message: {ex.Message}", this);
-                            }
-                          }
-                        }
-                        if (this.MyPet != null && this.MyPet.ActivePetIndex >= 0 && this.MyPet.ActivePetIndex < this.MyPet.AllPets.Count)
-                        {
-                          if (this.MyPet.AlwaysActivePetName == string.Empty)
-                          {
-                            try
-                            {
-                              this.MyPet.AlwaysActivePetName = this.MyPet.AllPets[this.MyPet.ActivePetIndex].PetName;
-                            }
-                            catch (Exception ex)
-                            {
-                              GA.WriteUserLog(frmMain.langErrorGettingPetName, this);
-                            }
-                          }
-                        }
-                        if (this.MyPet.AlwaysActivePetName != "" && this.MyPet.AlwaysActivePetName != frmLogin.GAuto.Settings.NoPetName && this.MyPet.PetAction == AllEnums.PetActions.XuatChien && this.Myself.HPPercent > 0.0 && !this.Myself.IsPK && this.CanAction() && this.MyPet.flagAllowPet && (this.Myself.ActionStatus == (byte) 0 || (double) this.MyQuai.TargetHPPercent == 0.0) && (this.MyPet.ActivePetID == 0 || this.MyPet.ActivePetDBID != this.MyPet.AlwaysActivePetDBID || this.MyPet.ActivePetGuidID != this.MyPet.AlwaysActivePetGuidID))
-                        {
-                          SinglePetClass petByName = this.MyPet.GetPetByName(this.MyPet.AlwaysActivePetName);
-                          if (petByName != null)
-                          {
-                            bool flag = true;
-                            if (petByName.Happiness < 60)
-                            {
-                              int num = (70 - petByName.Happiness) / 10;
-                              for (int index = 0; index < num; ++index)
-                                flag = this.CallPlayMyPet(this.MyPet.AlwaysActivePetDBID, this.MyPet.AlwaysActivePetGuidID);
-                              if (flag)
-                                Thread.Sleep(500);
-                              flag = petByName.Happiness >= 60;
-                            }
-                            // hoint: check trạng thái đủ level mới call pet để chống lag
-                            if (this.Myself.ActionStatus != (byte)5 && flag && this.Myself.HorseType == -1)
-                              if (this.Myself.Level >= petByName.Level - 10)
-                              {
-                                this.CallPetSure(this.MyPet.AlwaysActivePetName);
-                              }
-                          }
-                        }
-                      }
-                      if (frmLogin.GAuto.Settings.AppMode != AllEnums.AutoModes.Lite && this.Settings.TraderMode != AllEnums.TraderModes.SellBuy && !this.Myself.IsPK && frmLogin.GAuto.Settings.IsPro2 && this.Myself.IsPartyFollowed == (byte) 0 && (this.IsAIEnabled || this.Myself.Menpai == AllEnums.Menpais.NGAMI))
-                        this.PetCongSinh_HuyetTe();
-                      if (this.Myself.Menpai == AllEnums.Menpais.NGAMI && this.Target.VersionNum == 3 && this.Target.SubVersion == 4)
-                      {
-                        PlayerIndividual playerIndividual1 = (PlayerIndividual) null;
-                        PlayerIndividual playerIndividual2 = (PlayerIndividual) null;
-                        double num = 999.0;
-                        for (int index3 = 0; index3 < 30; ++index3)
-                        {
-                          int green = this.Myself.GreenList[index3];
-                          if (green > 0)
-                          {
-                            if (this.MyPlayers.AllPlayers.Count > 0)
-                            {
-                              try
-                              {
-                                for (int index4 = this.MyPlayers.AllPlayers.Count - 1; index4 >= 0; --index4)
-                                {
-                                  PlayerIndividual allPlayer = this.MyPlayers.AllPlayers[index4];
-                                  int databaseId = allPlayer.DatabaseID;
-                                  if (databaseId == green && databaseId > 0 && (double) allPlayer.HPPercent > 0.0)
-                                  {
-                                    playerIndividual1 = allPlayer;
-                                    break;
-                                  }
-                                }
-                              }
-                              catch (Exception ex)
-                              {
-                              }
-                            }
-                            if (playerIndividual1 != null && playerIndividual1.MapID == this.Myself.MapID && (double) playerIndividual1.PosX != 0.0 && (double) playerIndividual1.PosY != 0.0)
-                            {
-                              double distance = GA.CalculateDistance((double) playerIndividual1.PosX, (double) playerIndividual1.PosY, (double) this.Myself.PosX, (double) this.Myself.PosY);
-                              if (distance < num)
-                              {
-                                num = distance;
-                                playerIndividual2 = playerIndividual1;
-                                playerIndividual1 = (PlayerIndividual) null;
-                              }
-                            }
-                          }
-                        }
-                        if (playerIndividual2 != null && !this.IsInCity() && !GA.IsInPhuBan(this.Myself.MapID, this))
-                          this.MyFlag.inPKTinhKiemStamp = this.nowStamp() + 900000L;
-                      }
-                      if (this.MyFlag.inPKTinhKiemStamp < this.nowStamp() || GA.IsInPhuBan(this.Myself.MapID, this) || this.IsInCity())
-                        this.FuncNgaMySupport();
-                      else if (this.Myself.Menpai == AllEnums.Menpais.NGAMI)
-                      {
-                        if (this.CustomSleep(11, 10000))
-                          GA.ShowBalloon("Đang ở trạng thái PK, Nga My sẽ không tự bơm máu đồng đội trong vòng 15 phút", "Chú ý", this, 7000);
-                        this.NgaMiBuffSelf();
-                        this.NgaMiBuffPet();
-                      }
-                      bool needVeThuHoach = false;
-                      if (frmLogin.GAuto.Settings.IsPro2)
-                        this.TrongTrot(ref needVeThuHoach);
-                      if (this.Myself.IsScheduled && this.Settings.ListScheduler.Count > 0 && this.Settings.ListScheduler.Count > 0)
-                      {
-                        if (this.Myself.ScheduledStamp != 0L)
-                        {
-                          if (this.nowStamp() - this.Myself.ScheduledStamp < 600000L)
-                            goto label_458;
-                        }
-                        try
-                        {
-                          for (int index = 0; index < this.Settings.ListScheduler.Count; ++index)
-                          {
-                            GEventClass geventClass = this.Settings.ListScheduler[index];
-                            TimeSpan timeOfDay = DateTime.Now.TimeOfDay;
-                            int hours = timeOfDay.Hours;
-                            int minutes = timeOfDay.Minutes;
-                            if (geventClass.Hour == hours && (minutes == geventClass.Minute || minutes > geventClass.Minute && minutes <= geventClass.Minute + 6) && !GA.IsInPhuBan(this.Myself.MapID, this) && (geventClass.eventStamp == 0L || frmLogin.GlobalTimer.ElapsedMilliseconds - geventClass.eventStamp >= 600000L))
-                            {
-                              geventClass.eventStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                              if (this.MyParty.PartyNumbers > 1)
-                              {
-                                if (this.IsPartyKeyInt() == 1)
-                                {
-                                  GA.PartyGiveKeyToMe(this);
-                                  Thread.Sleep(5000);
-                                }
-                                GA.PartyDoSomething(this, mode: 25);
-                              }
-                              switch (geventClass.EventName)
-                              {
-                                case "Đi train cả party":
-                                case "Train level entire party":
-                                case "全部培训":
-                                  frmMain.DisableNhiemVu(this);
-                                  GA.PartyDoSomething(this, true, 24);
-                                  break;
-                                case "Ác Tặc":
-                                case "Rebels":
-                                case "贼兵入侵":
-                                  if (!this.Myself.IsAcTac)
-                                  {
-                                    frmMain.frmMainInstance.cboxIsAcTac.Invoke((Delegate) (() =>
-                                    {
-                                      this.MyFlag.DatLichFlag = true;
-                                      frmMain.frmMainInstance.NVAcTac(this);
-                                    }));
-                                    break;
-                                  }
-                                  break;
-                                case "Tàng Kinh Các":
-                                case "藏经阁":
-                                  if (!this.Myself.IsTKC)
-                                  {
-                                    frmMain.frmMainInstance.cboxIsTKC.Invoke((Delegate) (() =>
-                                    {
-                                      this.MyFlag.DatLichFlag = true;
-                                      frmMain.frmMainInstance.NVTangKinhCac(this);
-                                    }));
-                                    break;
-                                  }
-                                  break;
-                                case "Tụ Bảo Bồn (Cá nhân)":
-                                case "秀宝盆（个人）":
-                                  if (!this.Myself.IsTBB)
-                                  {
-                                    frmMain.frmMainInstance.cboxIsTBB.Invoke((Delegate) (() =>
-                                    {
-                                      this.MyFlag.DatLichFlag = true;
-                                      frmMain.frmMainInstance.NVTuBaoBon(this);
-                                    }));
-                                    break;
-                                  }
-                                  break;
-                                case "Linh Thú":
-                                case "野猪暴走":
-                                  if (!this.Myself.IsLinhThu)
-                                  {
-                                    frmMain.frmMainInstance.cboxIsLinhThu.Invoke((Delegate) (() =>
-                                    {
-                                      this.MyFlag.DatLichFlag = true;
-                                      frmMain.frmMainInstance.NVLinhThu(this);
-                                    }));
-                                    break;
-                                  }
-                                  break;
-                                case "PHLM":
-                                case "凤凰陵墓":
-                                  if (!this.Myself.IsPHLM)
-                                  {
-                                    frmMain.frmMainInstance.cboxIsPHLM.Invoke((Delegate) (() =>
-                                    {
-                                      this.MyFlag.DatLichFlag = true;
-                                      frmMain.frmMainInstance.NVPHLM(this);
-                                    }));
-                                    break;
-                                  }
-                                  break;
-                                case "Kỳ Cuộc":
-                                case "Chess":
-                                case "棋局":
-                                  if (!this.Myself.IsKyCuoc)
-                                  {
-                                    frmMain.frmMainInstance.cboxKyCuoc.Invoke((Delegate) (() =>
-                                    {
-                                      this.MyFlag.DatLichFlag = true;
-                                      frmMain.frmMainInstance.NVKyCuoc(this);
-                                    }));
-                                    break;
-                                  }
-                                  break;
-                                case "Phiêu Miễu Phong - Sơ chiến":
-                                  if (!this.Myself.isPMP)
-                                  {
-                                    this.MyFlag.menuPMP = 402276;
-                                    frmMain.frmMainInstance.cboxPMP.Invoke((Delegate) (() =>
-                                    {
-                                      this.MyFlag.DatLichFlag = true;
-                                      frmMain.frmMainInstance.NVPMP(this);
-                                    }));
-                                    break;
-                                  }
-                                  break;
-                                case "Phiêu Miễu Phong - Khiêu chiến":
-                                  if (!this.Myself.isPMP)
-                                  {
-                                    this.MyFlag.menuPMP = 402263;
-                                    frmMain.frmMainInstance.cboxPMP.Invoke((Delegate) (() =>
-                                    {
-                                      this.MyFlag.DatLichFlag = true;
-                                      frmMain.frmMainInstance.NVPMP(this);
-                                    }));
-                                    break;
-                                  }
-                                  break;
-                                case "Lâu Lan Tầm Bảo":
-                                  if (!this.Myself.isLLTB)
-                                  {
-                                    frmMain.frmMainInstance.cboxLLTB.Invoke((Delegate) (() =>
-                                    {
-                                      this.MyFlag.DatLichFlag = true;
-                                      frmMain.frmMainInstance.NVLLTB(this);
-                                    }));
-                                    break;
-                                  }
-                                  break;
-                                case "Ác Bá (Tự đổi key)":
-                                case "Thief Raid (Auto switch team leader)":
-                                case "偷袭门派 （自换钥匙)":
-                                  if (!this.Myself.IsAcBa)
-                                  {
-                                    bool flag6 = true;
-                                    if (this.Settings.AcBaPhai == "(Môn phái)" || this.Settings.AcBaPhai == "(Class)" || this.Settings.AcBaPhai == "（等级）")
-                                    {
-                                      geventClass.eventStamp = 0L;
-                                      flag6 = false;
-                                    }
-                                    if (flag6)
-                                    {
-                                      bool flag7 = false;
-                                      switch (this.Settings.AcBaPhai)
-                                      {
-                                        case "Thiếu Lâm":
-                                        case "Shaolin":
-                                          if (this.Myself.Menpai != AllEnums.Menpais.THIEULAM)
-                                          {
-                                            GA.PartyDoSomething(this, true, 23, 0);
-                                            flag7 = true;
-                                            break;
-                                          }
-                                          break;
-                                        case "Minh Giáo":
-                                        case "Pyromancer":
-                                          if (this.Myself.Menpai != AllEnums.Menpais.MINHGIAO)
-                                          {
-                                            GA.PartyDoSomething(this, true, 23, 1);
-                                            flag7 = true;
-                                            break;
-                                          }
-                                          break;
-                                        case "Cái Bang":
-                                        case "Beggars Alliance":
-                                          if (this.Myself.Menpai != AllEnums.Menpais.CAIBANG)
-                                          {
-                                            GA.PartyDoSomething(this, true, 23, 2);
-                                            flag7 = true;
-                                            break;
-                                          }
-                                          break;
-                                        case "Võ Đang":
-                                        case "Taoist":
-                                          if (this.Myself.Menpai != AllEnums.Menpais.VODANG)
-                                          {
-                                            GA.PartyDoSomething(this, true, 23, 3);
-                                            flag7 = true;
-                                            break;
-                                          }
-                                          break;
-                                        case "Nga Mi":
-                                        case "Nga My":
-                                        case "Lotus Order":
-                                          if (this.Myself.Menpai != AllEnums.Menpais.NGAMI)
-                                          {
-                                            GA.PartyDoSomething(this, true, 23, 4);
-                                            flag7 = true;
-                                            break;
-                                          }
-                                          break;
-                                        case "Tinh Túc":
-                                        case "Voodoo":
-                                          if (this.Myself.Menpai != AllEnums.Menpais.TINHTUC)
-                                          {
-                                            GA.PartyDoSomething(this, true, 23, 5);
-                                            flag7 = true;
-                                            break;
-                                          }
-                                          break;
-                                        case "Thiên Long":
-                                        case "Royalty":
-                                          if (this.Myself.Menpai != AllEnums.Menpais.THIENLONG)
-                                          {
-                                            GA.PartyDoSomething(this, true, 23, 6);
-                                            flag7 = true;
-                                            break;
-                                          }
-                                          break;
-                                        case "Thiên Sơn":
-                                        case "Assassin":
-                                          if (this.Myself.Menpai != AllEnums.Menpais.THIENSON)
-                                          {
-                                            GA.PartyDoSomething(this, true, 23, 7);
-                                            flag7 = true;
-                                            break;
-                                          }
-                                          break;
-                                        case "Tiêu Dao":
-                                        case "Minstrel":
-                                          if (this.Myself.Menpai != AllEnums.Menpais.TIEUDAO)
-                                          {
-                                            GA.PartyDoSomething(this, true, 23, 8);
-                                            flag7 = true;
-                                            break;
-                                          }
-                                          break;
-                                        case "Mộ Dung":
-                                        case "Sphinx":
-                                          if (this.Myself.Menpai != AllEnums.Menpais.MODUNG)
-                                          {
-                                            GA.PartyDoSomething(this, true, 23, 10);
-                                            flag7 = true;
-                                            break;
-                                          }
-                                          break;
-                                        case "Đường Môn":
-                                          if (this.Myself.Menpai != AllEnums.Menpais.DUONGMON)
-                                          {
-                                            GA.PartyDoSomething(this, true, 23, 11);
-                                            flag7 = true;
-                                            break;
-                                          }
-                                          break;
-                                        case "Quỷ Cốc":
-                                          if (this.Myself.Menpai != AllEnums.Menpais.QUYCOC)
-                                          {
-                                            GA.PartyDoSomething(this, true, 23, 12);
-                                            flag7 = true;
-                                            break;
-                                          }
-                                          break;
-                                      }
-                                      if (flag7)
-                                      {
-                                        if (this.IsPartyKeyInt() == 1)
-                                        {
-                                          this.Myself.ScheduledStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                          index += 100;
-                                          break;
-                                        }
-                                        break;
-                                      }
-                                      if (!flag7)
-                                      {
-                                        this.Myself.ScheduledStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                        if (!this.Myself.IsAcBa)
-                                        {
-                                          frmMain.frmMainInstance.cboxIsAcBa.Invoke((Delegate) (() =>
-                                          {
-                                            this.MyFlag.DatLichFlag = true;
-                                            frmMain.frmMainInstance.NVAcBa(this);
-                                          }));
-                                          break;
-                                        }
-                                        break;
-                                      }
-                                      break;
-                                    }
-                                    break;
-                                  }
-                                  break;
-                                case "Ác Bá (Không đổi key)":
-                                  if (!this.Myself.IsAcBa)
-                                  {
-                                    this.Myself.ScheduledStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                    if (!this.Myself.IsAcBa)
-                                    {
-                                      frmMain.frmMainInstance.cboxIsAcBa.Invoke((Delegate) (() =>
-                                      {
-                                        this.MyFlag.DatLichFlag = true;
-                                        frmMain.frmMainInstance.NVAcBa(this);
-                                      }));
-                                      break;
-                                    }
-                                    break;
-                                  }
-                                  break;
-                                case "Q1 Tô Châu":
-                                case "Q1 Su Zhou":
-                                case "Q1 苏州":
-                                  if (!this.Myself.IsQ1)
-                                  {
-                                    frmMain.frmMainInstance.cboxIsQ1.Invoke((Delegate) (() =>
-                                    {
-                                      this.MyFlag.DatLichFlag = true;
-                                      frmMain.frmMainInstance.NVQ1ToChau(this);
-                                    }));
-                                    break;
-                                  }
-                                  break;
-                                case "Q2 Tô Châu":
-                                case "Q2 Su Zhou":
-                                case "Q2 苏州":
-                                  if (!this.Myself.IsQ2)
-                                  {
-                                    frmMain.frmMainInstance.cboxIsQ2.Invoke((Delegate) (() =>
-                                    {
-                                      this.MyFlag.DatLichFlag = true;
-                                      frmMain.frmMainInstance.NVQ2ToChau(this);
-                                    }));
-                                    break;
-                                  }
-                                  break;
-                                case "Yến Tử Ổ":
-                                case "Swallow Deck":
-                                case "燕子坞":
-                                  if (!this.Myself.isYTO)
-                                  {
-                                    frmMain.frmMainInstance.cboxIsYTO.Invoke((Delegate) (() =>
-                                    {
-                                      this.MyFlag.DatLichFlag = true;
-                                      frmMain.frmMainInstance.NVYenTuO(this);
-                                    }));
-                                    break;
-                                  }
-                                  break;
-                                case "Bách Hoa Duyên (Cá nhân)":
-                                case "白花缘（个人）":
-                                  if (!this.Myself.isBachHoaDuyen)
-                                  {
-                                    frmMain.frmMainInstance.cboxIsBachHoaDuyen.Invoke((Delegate) (() =>
-                                    {
-                                      this.MyFlag.DatLichFlag = true;
-                                      frmMain.frmMainInstance.NVBachHoaDuyen(this);
-                                    }));
-                                    break;
-                                  }
-                                  break;
-                                case "Quest Sư Môn (Cá nhân)":
-                                case "使命师门（个人）":
-                                  if (!this.Myself.isQSM)
-                                  {
-                                    frmMain.frmMainInstance.cboxIsQSM.Invoke((Delegate) (() =>
-                                    {
-                                      this.MyFlag.DatLichFlag = true;
-                                      frmMain.frmMainInstance.NVQSuMon(this);
-                                    }));
-                                    break;
-                                  }
-                                  break;
-                                case "Khai khoáng, Hái dược (Cá nhân)":
-                                case "Mining + Herbal":
-                                case "开矿，摘药（个人）":
-                                  if (!this.Myself.IsKhaiKhoang)
-                                  {
-                                    frmMain.frmMainInstance.cboxIsKhaiKhoang.Invoke((Delegate) (() =>
-                                    {
-                                      this.MyFlag.DatLichFlag = true;
-                                      frmMain.frmMainInstance.NVKhaiKhoangHaiDuoc(this);
-                                    }));
-                                    break;
-                                  }
-                                  break;
-                                case "Reset giờ cả party":
-                                case "复立全部时间":
-                                  GA.PartyDoSomething(this, mode: 27);
-                                  this.ResetTimeAdvanced();
-                                  if (this.MyParty.PartyNumbers >= 1 && this.IsPartyKeyInt() == 1)
-                                  {
-                                    GA.PartyGiveKeyToMe(this);
-                                    Thread.Sleep(1500);
-                                    break;
-                                  }
-                                  break;
-                                case "Phù về thành cả party":
-                                case "Warping to city entire party":
-                                case "全部回城":
-                                  this.CallRemovePartyFollow();
-                                  GA.PartyDoSomething(this, mode: 30);
-                                  Thread.Sleep(500);
-                                  GA.PartyDoSomething(this, true, 8, 99);
-                                  frmMain.DisableNhiemVu(this);
-                                  this.Myself.Status = AllEnums.CharStatuses.IDLE;
-                                  this.Myself.MoveAcrossMap = false;
-                                  this.Myself.MoveLongTrigger = false;
-                                  this.Myself.IsLongMove = false;
-                                  break;
-                                case "Thoát game (Cá nhân)":
-                                case "Exit my game":
-                                case "退出游戏（个人）":
-                                  this.CallOutGame();
-                                  break;
-                                case "Thoát game cả party":
-                                case "Exit game entire party":
-                                case "全部退出游戏":
-                                  GA.PartyDoSomething(this, true, 26);
-                                  break;
-                                case "Tắt máy":
-                                case "Shutdown Computer":
-                                case "关机":
-                                  Process.Start("shutdown", "/s /t 60 /f");
-                                  break;
-                              }
-                              if (geventClass.eventStamp > 0L && (!(geventClass.EventName == "Reset giờ cả party") || this.Myself.OnlineTime >= 1800000))
-                              {
-                                GA.WriteUserLog(frmMain.langEventActivated + geventClass.EventName, this);
-                                goto label_1076;
-                              }
-                            }
-                          }
-                        }
-                        catch (Exception ex)
-                        {
-                        }
-                      }
-label_458:
-                      if (this.Myself.IsPK && this.Myself.LastPKStamp != 0L && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.LastPKStamp > 5000L)
-                      {
-                        this.Myself.LastPKStamp = 0L;
-                        this.Myself.IsPK = false;
-                      }
-                      if (frmLogin.GAuto.Settings.IsPro1)
-                      {
-                        if (this.Myself.TriedHoiSinh && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.HoiSinhStamp >= 7000L)
-                          this.Myself.TriedHoiSinh = false;
-                        if (this.Myself.MaxHP > 0 && this.Myself.HP == 0 && this.Myself.DiedStamp == 0L)
-                          this.Myself.DiedStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                        else if (this.Myself.DiedStamp != 0L && this.Myself.MaxHP > 0 && this.Myself.HP > 0)
-                          this.Myself.DiedStamp = 0L;
-                        if (this.Myself.ID != 0 && this.Myself.ReadyToAttack && this.IsAIEnabled)
-                        {
-                          if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.MyFlag.inYTOStamp <= 600000L && this.Myself.HP == 0 && this.Myself.MaxHP > 0 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.HoiSinhStamp >= 3000L)
-                          {
-                            this.Myself.HoiSinhStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                            this.CallHoiSinh();
-                          }
-                          if (this.Settings.AfterDeathSetting == AllEnums.AfterDeathSettings.BackToTrainSpot)
-                          {
-                            this.Myself.StopTrain = false;
-                            if (this.Myself.HP == 0 && this.Myself.MaxHP > 0)
-                            {
-                              bool flag = false;
-                              if (this.Myself.isBachHoaDuyen || this.Myself.isQSM || this.Myself.IsTrungAc || this.Myself.isDaoBTD || this.Myself.IsKhaiKhoang || this.Myself.isTanThu || this.Myself.IsXayDung)
-                                flag = true;
-                              if (this.Settings.cboxChoHoiSinh || flag)
-                              {
-                                if (!this.Myself.TriedHoiSinh)
-                                {
-                                  this.Myself.HoiSinhStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                  this.Myself.TriedHoiSinh = true;
-                                  this.CallHoiSinh();
-                                }
-                                if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.DiedStamp >= (long) (this.Settings.numChoHoiSinh * 1000) || flag)
-                                {
-                                  if (this.Myself.LogLastAction != AllEnums.LogActions.ChetDiaPhu)
-                                  {
-                                    GA.WriteUserLog(frmMain.langCharDied, this);
-                                    this.Myself.LogLastAction = AllEnums.LogActions.ChetDiaPhu;
-                                  }
-                                  this.CallThoatXac();
-                                  Thread.Sleep(4000);
-                                }
-                              }
-                            }
-                          }
-                          else if (this.Settings.AfterDeathSetting == AllEnums.AfterDeathSettings.ExitGame)
-                          {
-                            if (Math.Abs(frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.CheckExitGameStamp) >= 3000L)
-                            {
-                              this.Myself.CheckExitGameStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                              if (this.Myself.HP == 0 && this.Myself.MaxHP > 0)
-                              {
-                                if (!this.Myself.TriedHoiSinh)
-                                {
-                                  this.Myself.HoiSinhStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                  this.Myself.TriedHoiSinh = true;
-                                  this.CallHoiSinh();
-                                }
-                                if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.DiedStamp >= (long) (this.Settings.numChoHoiSinh * 1000) && this.Settings.cboxChoHoiSinh)
-                                {
-                                  if (this.Myself.LogLastAction != AllEnums.LogActions.ChetDiaPhu)
-                                  {
-                                    GA.WriteUserLog(frmMain.langCharDied60s, this);
-                                    this.Myself.LogLastAction = AllEnums.LogActions.ChetDiaPhu;
-                                  }
-                                  this.CallThoatXac();
-                                  Thread.Sleep(1500);
-                                }
-                              }
-                            }
-                            if (this.isInDiaPhu())
-                            {
-                              if (this.Myself.ThoatGameStamp == 0L)
-                                this.Myself.ThoatGameStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                              if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.ThoatGameStamp >= 60000L)
-                                this.CallOutGame();
-                            }
-                            else if (this.IsInCity())
-                              this.Myself.ThoatGameStamp = 0L;
-                          }
-                          else if (this.Settings.AfterDeathSetting == AllEnums.AfterDeathSettings.HappyTea)
-                          {
-                            if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.DiedStamp >= (long) (this.Settings.numChoHoiSinh * 1000) && !this.isInDiaPhu() && this.Myself.HPPercent <= 0.0 && this.Myself.MaxHP > 0 && this.Settings.cboxChoHoiSinh)
-                            {
-                              if (this.Myself.LogLastAction != AllEnums.LogActions.ChetDiaPhu)
-                              {
-                                GA.WriteUserLog(frmMain.langCharDied2, this);
-                                this.Myself.LogLastAction = AllEnums.LogActions.ChetDiaPhu;
-                              }
-                              this.CallThoatXac();
-                              Thread.Sleep(2000);
-                            }
-                            if (this.isInDiaPhu())
-                            {
-                              if (this.Target.VersionNum == 3)
-                              {
-                                this.Myself.StopTrain = true;
-                                this.Myself.Status = AllEnums.CharStatuses.VETHANH;
-                                this.Myself.SavedStatus = AllEnums.CharStatuses.VETHANH;
-                                this.Myself.LongMoveX = 0;
-                                this.Myself.LongMoveY = 0;
-                                this.Myself.LongMoveMapID = -1;
-                                this.Myself.IsLongMove = false;
-                                this.Myself.MoveLongTrigger = false;
-                              }
-                              else
-                              {
-                                if (this.Settings.AIMode != AllEnums.AIModes.NHIEMVU && this.Settings.AIMode != AllEnums.AIModes.KHAIKHOANG_HAIDUOC)
-                                  this.IsAIEnabled = false;
-                                this.Myself.StopTrain = true;
-                                if (GA.CalculateDistance((double) this.Myself.PosX, (double) this.Myself.PosY, 15.0, 25.0) > 3.0)
-                                {
-                                  this.CallMoveFlashPos(15, 25);
-                                }
-                                else
-                                {
-                                  this.Myself.MoveAcrossMap = false;
-                                  this.Myself.Status = AllEnums.CharStatuses.IDLE;
-                                  if (this.Myself.isQuestFrameShow == 0)
-                                    this.CallTalkNPC(0, 0, 0);
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                      this.AutoAcceptPTInvite();
-                      if (this.Myself.IsMoveTest)
-                      {
-                        int tempX1 = 44;
-                        int tempY1 = 60;
-                        int tempX2 = 32 /*0x20*/;
-                        int tempY2 = 132;
-                        if (this.Myself.flagMoveForward)
-                          this.CallInMapMove(tempX2, tempY2, true);
-                        else if (!this.Myself.flagMoveForward)
-                          this.CallInMapMove(tempX1, tempY1, true);
-                        if (this.Myself.flagMoveForward)
-                        {
-                          if ((double) Math.Abs(this.Myself.PosX - (float) tempX2) <= 2.0 && (double) Math.Abs(this.Myself.PosY - (float) tempY2) <= 2.0)
-                            this.Myself.flagMoveForward = false;
-                        }
-                        else if (!this.Myself.flagMoveForward && (double) Math.Abs(this.Myself.PosX - (float) tempX1) <= 2.0 && (double) Math.Abs(this.Myself.PosY - (float) tempY1) <= 2.0)
-                          this.Myself.flagMoveForward = true;
-                      }
-                      if (this.Target.DLLPatchedValue != 6971548U && this.Target.DLLRead && (this.Myself.checkDLLStamp == 0L || frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.checkDLLStamp > 5000L))
-                        this.Myself.checkDLLStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                      int num1 = 0;
-                      if (GA.isVipMember() && this.Myself.MapID > 2 && !this.IsInCity() && !this.IsInPhaiMap() && !GA.IsBangMapID(this.Myself.MapID) && !GA.IsInPhuBan(this.Myself.MapID, this) && num1 == 999 && this.Settings.numPKThoatGame > 1 && this.Myself.HPPercent > 0.0 && this.Myself.HPPercent < (double) this.Settings.numPKThoatGame)
-                      {
-                        if (this.Myself.MapID == 39)
-                          this.CallOutMapMove(277, 295, 0);
-                        else if (this.Target.VersionNum == 1 || this.Target.VersionNum == 2)
-                        {
-                          GA.WriteUserLog($"Úm ba la biến, máu còn {this.Myself.HPPercent.ToString("0.00")}%", this);
-                          MyDLL.PostMessage(this.Target.MainWindowHandle, frmLogin.GAuto.Settings.WM_CALLHVD, (IntPtr) 0, (IntPtr) 0);
-                          Thread.Sleep(2000);
-                        }
-                      }
-                      if (this.MyFlag.tuyenChienFlag)
-                      {
-                        this.MyFlag.tuyenChienFlag = false;
-                        if (this.MyQuai != null && this.MyQuai.TargetIDforPK > 0)
-                        {
-                          this.CallTuyenChien(this.MyQuai.TargetIDforPK);
-                          this.AttackPlayer(this.MyQuai.TargetIDforPK);
-                        }
-                      }
-                      if (this.MyFlag.donDameFlag)
-                      {
-                        this.MyFlag.donDameFlag = false;
-                        if (this.MyQuai != null && this.MyQuai.TargetIDforPK > 0)
-                        {
-                          this.CallTuyenChien(this.MyQuai.TargetIDforPK);
-                          this.AttackPlayer(this.MyQuai.TargetIDforPK);
-                          GA.PartyDoSomething(this, mode: 28, param1: this.MyQuai.TargetIDforPK);
-                        }
-                      }
-                      if (this.Myself.ID != 0 && this.IsAIEnabled && this.Settings.AIMode == AllEnums.AIModes.NHIEMVU)
-                      {
-                        if (this.Myself.isYTO && frmLogin.GAuto.Settings.IsPro2)
-                          this.NhiemVuYTO();
-                        else if (this.Myself.isPMP && frmLogin.GAuto.Settings.IsPro2)
-                          this.NhiemVuPMP();
-                      }
-                      if (this.Myself.ID != 0 && this.Myself.ReadyToAttack && this.IsAIEnabled && this.Myself.HPPercent > 0.0)
-                      {
-                        if (this.Settings.cboxCanX2 && !this.HasPK() && frmLogin.GAuto.Settings.IsPro2 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.LastReceiveExpStamp <= 30000L && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.X2TimeStamp >= 15000L)
-                        {
-                          this.Myself.X2TimeStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                          bool flag = false;
-                          if (this.Myself.Lastx2UsedStamp == 0L)
-                            flag = true;
-                          else if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.Lastx2UsedStamp >= 3540000L)
-                            flag = true;
-                          if (flag)
-                          {
-                            for (int index = 0; index < 30; ++index)
-                            {
-                              InventoryItem allItem = this.MyInventory.AllItems[index];
-                              if (allItem.ItemName == "thiên linh đan" || allItem.ItemID == 30505214 || allItem.ItemID == 30008002 || allItem.ItemID == 30008027)
-                              {
-                                this.CallUseItem(index, this.Myself.ID);
-                                Thread.Sleep(500);
-                                break;
-                              }
-                            }
-                          }
-                        }
-                        if (this.Settings.cboxCanX4 && !this.HasPK() && frmLogin.GAuto.Settings.IsPro2 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.LastReceiveExpStamp <= 30000L && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.X4TimeStamp >= 15000L)
-                        {
-                          this.Myself.X4TimeStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                          bool flag = false;
-                          if (this.Myself.Lastx4UsedStamp == 0L)
-                            flag = true;
-                          else if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.Lastx4UsedStamp >= 3540000L)
-                            flag = true;
-                          if (flag)
-                          {
-                            for (int index = 0; index < 30; ++index)
-                            {
-                              InventoryItem allItem = this.MyInventory.AllItems[index];
-                              if (allItem.ItemName == "huyền linh đan" || allItem.ItemID == 30008130 || allItem.ItemID == 38000654 || allItem.ItemID == 30008117)
-                              {
-                                this.CallUseItem(index, this.Myself.ID);
-                                Thread.Sleep(500);
-                                this.MyFlag.ClickYesStamp = frmLogin.GlobalTimer.ElapsedMilliseconds + 15000L;
-                                break;
-                              }
-                            }
-                          }
-                        }
-                        if (this.Myself.PreviousIsPK && !this.Myself.IsPK && !this.Myself.IsTrader)
-                        {
-                          bool flag = true;
-                          if (this.Myself.Menpai != AllEnums.Menpais.NGAMI && !this.Settings.cboxDanhQuai || !this.Settings.cboxPKTuVe || this.Settings.cboxPKEnable)
-                            flag = false;
-                          if (this.isInDiaPhu())
-                          {
-                            this.Myself.Status = AllEnums.CharStatuses.VETHANH;
-                            this.Myself.SavedStatus = AllEnums.CharStatuses.VETHANH;
-                            flag = false;
-                          }
-                          if (this.Myself.PKReturnStamp.ElapsedMilliseconds >= 2000L && this.Settings.AIMode == AllEnums.AIModes.DANHQUANHDIEM && flag)
-                          {
-                            this.Myself.PKReturnStamp.Reset();
-                            this.Myself.PKReturnStamp.Start();
-                            if (this.Myself.LogLastAction == AllEnums.LogActions.SavePKName)
-                              this.Myself.LogLastAction = AllEnums.LogActions.None;
-                            float num2 = 0.0f;
-                            float num3 = 0.0f;
-                            int num4 = 0;
-                            if (this.MyParty != null && this.MyParty.PartyNumbers > 0 && this.MyParty.PartyNumbers < 6)
-                            {
-                              PartyMember allMember = this.MyParty.AllMembers[0];
-                              if (allMember.Name != this.Myself.Name && allMember.Name != "")
-                              {
-                                num2 = allMember.PosX;
-                                num3 = allMember.PosY;
-                                num4 = allMember.MapID;
-                              }
-                            }
-                            if ((double) num2 == 0.0)
-                            {
-                              num2 = (float) this.Settings.CenterX;
-                              num3 = (float) this.Settings.CenterY;
-                              num4 = this.Settings.MapID;
-                            }
-                            if (num4 >= 0 && (double) num2 != 0.0 && (double) num3 != 0.0)
-                            {
-                              if (num4 == this.Myself.MapID)
-                              {
-                                this.Myself.TargetX = num2;
-                                this.Myself.TargetY = num3;
-                                this.CallMoveTo((int) this.Myself.TargetX, (int) this.Myself.TargetY);
-                                this.Myself.MoveFlashPos = true;
-                                this.Myself.Status = AllEnums.CharStatuses.GOGOGO;
-                                this.Myself.LastTimeMove.Reset();
-                                this.Myself.LastTimeMove.Start();
-                              }
-                              else if (num4 != this.Myself.MapID)
-                              {
-                                this.Myself.TargetX = num2;
-                                this.Myself.TargetY = num3;
-                                this.Myself.TargetMapID = num4;
-                                this.Settings.SavedPosX = num2;
-                                this.Settings.SavedPosY = num3;
-                                this.Settings.SavedMapID = num4;
-                                this.Myself.MoveFlashPos = true;
-                                this.Myself.LongMoveMapID = num4;
-                                this.Myself.LongMoveX = (int) num2;
-                                this.Myself.LongMoveY = (int) num3;
-                                this.Myself.MoveLongTrigger = true;
-                              }
-                            }
-                          }
-                        }
-                        if (this.Myself.IsHaiDua && this.Myself.MapID == 0 && this.Myself.IsHaiDuaChet)
-                        {
-                          this.ScriptEngine.IsOn = false;
-                          GScriptCommand cmd = new GScriptCommand();
-                          this.GoToBang(cmd);
-                          if (cmd.Status == AllEnums.ScriptStatuses.FINISHED)
-                          {
-                            this.ScriptEngine.IsOn = true;
-                            this.Myself.IsHaiDuaChet = false;
-                            this.ScriptEngine.Index = 17;
-                            this.Myself.MoveLongTrigger = false;
-                            this.Myself.MoveAcrossMap = false;
-                            this.Myself.Status = AllEnums.CharStatuses.IDLE;
-                          }
-                        }
-                        if (frmLogin.GAuto.Settings.IsPro2)
-                        {
-                          if (this.isInDiaPhu())
-                          {
-                            this.Myself.LongMoveX = 0;
-                            this.Myself.LongMoveY = 0;
-                            this.Myself.LongMoveMapID = -1;
-                            this.Myself.IsLongMove = false;
-                            this.Myself.MoveLongTrigger = false;
-                            if (this.Settings.AfterDeathSetting == AllEnums.AfterDeathSettings.BackToTrainSpot || this.Settings.AfterDeathSetting == AllEnums.AfterDeathSettings.HappyTea)
-                            {
-                              this.Myself.Status = AllEnums.CharStatuses.VETHANH;
-                              this.Myself.SavedStatus = AllEnums.CharStatuses.VETHANH;
-                              if (-1 >= 0)
-                              {
-                                this.CallUseItem(0, this.Myself.ID);
-                                this.MyFlag.dungphuStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                Thread.Sleep(5000);
-                              }
-                              else if (this.Settings.HealMapID == 480)
-                                this.CallMoveTo(12, 24);
-                              else if (GA.CalculateDistance((double) this.Myself.PosX, (double) this.Myself.PosY, 15.0, 25.0) > 3.0)
-                                this.CallMoveTo(15, 25);
-                              else if (this.Myself.isQuestFrameShow == 0)
-                              {
-                                this.CallTalkNPC(0, 0, 0);
-                                Thread.Sleep(500);
-                                bool flag = false;
-                                if (this.isInDiaPhu())
-                                  flag = true;
-                                if (flag)
-                                {
-                                  if (this.Myself.MapID == 463 || this.Myself.MapID == 586)
-                                    this.CallTalkNPC(505072, 1, 0);
-                                  else if (this.Target.VersionNum == 3 && (this.Target.SubVersion == 4 || this.Target.SubVersion == 12))
-                                  {
-                                    if (this.Settings.HealMapID == 0)
-                                      this.CallTalkNPC(12009, 1, 0);
-                                    else if (this.Settings.HealMapID == 1)
-                                      this.CallTalkNPC(12009, 3, 0);
-                                    else if (this.Settings.HealMapID == 2)
-                                      this.CallTalkNPC(12009, 5, 0);
-                                    else if (this.Settings.HealMapID == 186)
-                                      this.CallTalkNPC(12009, 6, 0);
-                                    else if (this.Settings.HealMapID == 420)
-                                      this.CallTalkNPC(12009, 7, 0);
-                                  }
-                                  else if (this.Settings.HealMapID == 0)
-                                    this.CallTalkNPC(77001, 0, 0);
-                                  else if (this.Settings.HealMapID == 1)
-                                    this.CallTalkNPC(77001, 1, 0);
-                                  else if (this.Settings.HealMapID == 2)
-                                    this.CallTalkNPC(77001, 2, 0);
-                                  else if (this.Settings.HealMapID == 186)
-                                    this.CallTalkNPC(77001, 5, 0);
-                                  else if (this.Settings.HealMapID == 420)
-                                    this.CallTalkNPC(77001, 4, 0);
-                                  Thread.Sleep(2000);
-                                }
-                              }
-                            }
-                          }
-                          if (this.Myself.MapID == 151)
-                          {
-                            this.Myself.LongMoveX = 0;
-                            this.Myself.LongMoveY = 0;
-                            this.Myself.LongMoveMapID = -1;
-                            this.Myself.IsLongMove = false;
-                            this.Myself.MoveLongTrigger = false;
-                            if (GA.CalculateDistance((double) this.Myself.PosX, (double) this.Myself.PosY, 44.0, 31.0) > 3.0)
-                            {
-                              this.CallMoveTo(44, 31 /*0x1F*/);
-                            }
-                            else
-                            {
-                              int NPCID = 0;
-                              int menuTypeID = 77011;
-                              int menuIndex1 = 11;
-                              int menuIndex2 = 0;
-                              if (this.Myself.isQuestFrameShow == 0)
-                              {
-                                this.CallTalkNPC(0, 0, NPCID);
-                                Thread.Sleep(500);
-                                this.CallTalkNPC(menuTypeID, menuIndex1, NPCID);
-                                Thread.Sleep(700);
-                                this.CallTalkNPC(menuTypeID, menuIndex2, NPCID);
-                              }
-                            }
-                          }
-                        }
-                        if (frmLogin.GAuto.Settings.IsPro2 && (!this.Settings.cboxNoTheoSau || this.Settings.cboxNoTheoSau && !this.IsInCity()) && this.Settings.cboxTheoSau && !this.Myself.IsPK && !this.IsNhatBoc() && this.Myself.IsPartyFollowed == (byte) 0 && !this.Myself.IsKhaiKhoang && !this.Myself.IsTrungAc && !this.Myself.IsLuyenKim && !this.Myself.IsXayDung && !this.Myself.IsTBB && !this.Myself.isBachHoaDuyen && !this.Myself.IsTuDuongCon && !this.Myself.isQSM && !this.Myself.isCauPhuc && !this.Myself.isCauNguyen && !this.Myself.isDoatBaoRuong && !this.Myself.isBuonDuaHau)
-                          this.TheoSauAiDo();
-                        if (this.Myself.IsHaiDua && this.Myself.Status == AllEnums.CharStatuses.VETHANH)
-                          this.Myself.Status = AllEnums.CharStatuses.IDLE;
-                        if (this.Myself.Status != AllEnums.CharStatuses.NMBUFFMAU && this.Myself.Status != AllEnums.CharStatuses.NHATBOC && this.Myself.ActionStatus != (byte) 5 && this.Myself.ActionStatus != (byte) 6 && (this.Myself.SavedStatus != AllEnums.CharStatuses.VETHANH || this.Myself.MinorStatus2 == AllEnums.CharStatuses.TRIEUTAP) && this.Myself.SavedStatus != AllEnums.CharStatuses.BUYING_NPC && this.Myself.SavedStatus != AllEnums.CharStatuses.SELLING_NPC)
-                          this.LongMoveTrigger();
-                        if (this.IsInCity() && (this.Myself.SavedStatus == AllEnums.CharStatuses.VETHANH || this.Myself.Status == AllEnums.CharStatuses.VETHANH) && this.Myself.IsPartyFollowed == (byte) 0)
-                        {
-                          if (this.Target.VersionNum != 3)
-                            this.Myself.Status = AllEnums.CharStatuses.VETHANH;
-                          if (!this.Settings.cboxDuY || this.Myself.isMuaDoTrain || this.ForceHoiMau(true))
-                            this.MuaDoDiTrain();
-                        }
-                        if (this.IsInCity() && this.Myself.Status == AllEnums.CharStatuses.LENLAIBAITRAIN && this.Myself.IsPartyFollowed == (byte) 0)
-                          this.BackToTrainSpot();
-                        if (this.Myself.IsLongMove)
-                          this.AutoIsLongMove();
-                        if (!this.IsInCity() && this.Myself.Status != AllEnums.CharStatuses.VETHANH && this.Myself.MinorStatus != AllEnums.CharStatuses.MOVE_LONG_PATH && this.Myself.Status != AllEnums.CharStatuses.NMBUFFMAU && this.Myself.ActionStatus != (byte) 5 && this.Myself.ActionStatus != (byte) 6 && this.Myself.IsPartyFollowed == (byte) 0 && !this.Myself.IsPK && !GA.IsInPhuBan(this.Myself.MapID, this) && (!this.Settings.cboxTheoSau || this.Settings.cboxTheoSau && this.TheoSauAiDo(false) == null) && this.Settings.AIMode == AllEnums.AIModes.DANHQUANHDIEM && this.Settings.cboxBanKinh)
-                        {
-                          bool flag = this.NotTransitioning();
-                          if (this.Myself.Status != AllEnums.CharStatuses.GOGOGO && this.Settings.CenterX != 0.0 && this.Settings.CenterY != 0.0 && this.Settings.MapID == this.Myself.MapID && flag)
-                          {
-                            double distance = GA.CalculateDistance((double) this.Myself.PosX, (double) this.Myself.PosY, this.Settings.CenterX, this.Settings.CenterY);
-                            if (distance > this.Settings.MoveRange && !this.IsNhatBoc() && this.Myself.LastTimeMove.ElapsedMilliseconds >= 2000L)
-                            {
-                              this.Myself.TargetX = (float) this.Settings.CenterX;
-                              this.Myself.TargetY = (float) this.Settings.CenterY;
-                              if (distance - this.Settings.MoveRange > 4.0)
-                              {
-                                if (this.Myself.ActionStatus == (byte) 7)
-                                {
-                                  this.CallAttackTarget(-1, 34, 0, 0);
-                                  this.CallAttackTarget(-1, this.GetKhinhCongID(), 0, 0);
-                                  Thread.Sleep(200);
-                                }
-                                this.CallInMapMove((int) this.Myself.TargetX, (int) this.Myself.TargetY, true);
-                                this.Myself.IDLEStamp = frmLogin.GlobalTimer.ElapsedMilliseconds + 2000L;
-                              }
-                              else
-                                this.CallInMapMove((int) this.Myself.TargetX, (int) this.Myself.TargetY);
-                              this.Myself.LastTimeMove.Reset();
-                              this.Myself.LastTimeMove.Start();
-                            }
-                          }
-                        }
-                        if (this.Myself.Status != AllEnums.CharStatuses.NMBUFFMAU && this.Myself.ActionStatus != (byte) 5)
-                          this.ProcessRegularMove();
-                        if (this.Settings.cboxTuUpLevel && frmLogin.GAuto.Settings.IsPro1 && this.Myself.ExpPercent >= 100.0 && this.Myself.Level < this.Settings.numUpLevel)
-                        {
-                          if (this.Myself.UpLevelStamp == 0L || this.Target.SubVersion != 4 && this.Target.SubVersion != 12)
-                          {
-                            this.CallUpLevelPacket();
-                            Thread.Sleep(100);
-                            this.Myself.UpLevelStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                          }
-                          else if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.UpLevelStamp >= 12000L)
-                            this.Myself.UpLevelStamp = 0L;
-                        }
-                        bool flag8 = this.NotTransitioning();
-                        if (this.Myself.Status != AllEnums.CharStatuses.NMBUFFMAU && flag8 && frmLogin.GAuto.Settings.IsPro1 && !GA.IsInPhuBan(this.Myself.MapID, this) && !GA.IsBangMapID(this.Myself.MapID) && this.Myself.IsPartyFollowed == (byte) 0 && this.Settings.AIMode != AllEnums.AIModes.NHIEMVU)
-                          this.WarpingToCity(needVeThuHoach);
-                        int partyFollowRequest1 = (int) this.Myself.FlagPartyFollowRequest;
-                        bool flag9 = false;
-                        if (this.Settings.cboxPKEnable && !this.WantMoveNow() && !this.IsInCity() && !this.isInDiaPhu())
-                          flag9 = this.AttackPlayer();
-                        if (!flag9 && frmLogin.GAuto.Settings.IsPro2)
-                        {
-                          if (this.Settings.cboxPKThoatGame && this.Settings.numPKThoatGame > 0 && this.Myself.HPPercent > 0.0 && this.Myself.HPPercent < (double) this.Settings.numPKThoatGame && (!GA.isVipMember() || this.Myself.MapID == 480 || this.Myself.MapID == 186 || this.Myself.MapID == 420 || this.Myself.MapID <= 2 || GA.IsInPhuBan(this.Myself.MapID, this)) && this.Myself.IsPK)
-                          {
-                            GA.WriteUserLog(string.Format(frmMain.langEmergencyExitPK, (object) this.Myself.HPPercent.ToString("0.00")), this);
-                            this.CallOutGame();
-                            this.Settings.AIWhileLoop = false;
-                            goto label_1076;
-                          }
-                          if (this.Myself.IsPK && (double) this.MyQuai.TargetHPPercent <= 0.0 && this.Myself.HasTarget && this.Myself.LogLastAction != AllEnums.LogActions.PKKilled)
-                          {
-                            if (this.MyPlayers.AllPlayers.Count > 0)
-                            {
-                              try
-                              {
-                                for (int index = this.MyPlayers.AllPlayers.Count - 1; index >= 0; --index)
-                                {
-                                  if (this.MyPlayers.AllPlayers[index].ID == this.MyQuai.TargetID)
-                                    break;
-                                }
-                              }
-                              catch (Exception ex)
-                              {
-                              }
-                            }
-                            this.Myself.LogLastAction = AllEnums.LogActions.PKKilled;
-                          }
-                          if (this.Settings.cboxPKTuVe && !this.WantMoveNow())
-                          {
-                            int num5 = this.Myself.IsPK ? 1 : 0;
-                            PlayerIndividual playerIndividual3 = (PlayerIndividual) null;
-                            PlayerIndividual playerIndividual4 = (PlayerIndividual) null;
-                            double num6 = 999.0;
-                            for (int index5 = 0; index5 < 30; ++index5)
-                            {
-                              int green = this.Myself.GreenList[index5];
-                              if (green > 0)
-                              {
-                                if (this.MyPlayers.AllPlayers.Count > 0)
-                                {
-                                  try
-                                  {
-                                    for (int index6 = this.MyPlayers.AllPlayers.Count - 1; index6 >= 0; --index6)
-                                    {
-                                      PlayerIndividual allPlayer = this.MyPlayers.AllPlayers[index6];
-                                      int databaseId = allPlayer.DatabaseID;
-                                      if (databaseId == green && databaseId > 0 && (double) allPlayer.HPPercent > 0.0)
-                                      {
-                                        playerIndividual3 = allPlayer;
-                                        break;
-                                      }
-                                    }
-                                  }
-                                  catch (Exception ex)
-                                  {
-                                  }
-                                }
-                                if (playerIndividual3 != null && playerIndividual3.MapID == this.Myself.MapID && (double) playerIndividual3.PosX != 0.0 && (double) playerIndividual3.PosY != 0.0)
-                                {
-                                  double distance = GA.CalculateDistance((double) playerIndividual3.PosX, (double) playerIndividual3.PosY, (double) this.Myself.PosX, (double) this.Myself.PosY);
-                                  if (distance < num6)
-                                  {
-                                    num6 = distance;
-                                    playerIndividual4 = playerIndividual3;
-                                    playerIndividual3 = (PlayerIndividual) null;
-                                  }
-                                }
-                              }
-                            }
-                            if (playerIndividual4 != null)
-                            {
-                              if (!this.IsInCity())
-                              {
-                                this.CallXuongNgua();
-                                if (frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.LastActionTimeStamp >= (long) frmLogin.GAuto.Settings.ActionDelay)
-                                {
-                                  this.CallSelectTarget(playerIndividual4.ID);
-                                  this.Myself.LastPKStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                  if (this.Settings.SkillPKList.Count > 0)
-                                  {
-                                    foreach (SkillPlayItem skillPk in (List<SkillPlayItem>) this.Settings.SkillPKList)
-                                    {
-                                      if (this.PlayMySkill(skillPk, playerIndividual4.ID))
-                                        break;
-                                    }
-                                  }
-                                  this.CallAttackTarget(playerIndividual4.ID, this.MySkills.AllSkills[0].ID, 0, 0, true);
-                                  if (!this.Myself.IsPK)
-                                  {
-                                    this.Myself.IsPK = true;
-                                    this.Myself.LastPKStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                  }
-                                }
-                              }
-                              else if (this.Myself.IsPK)
-                                this.Myself.IsPK = false;
-                            }
-                          }
-                          else
-                            this.Myself.IsPK = false;
-                        }
-                        if (this.MyQuai.TargetID >= 0 && !this.Myself.IsPK && !flag9 && this.Myself.ActionStatus == (byte) 0 && this.IsPlayer() && this.Settings.cboxDanhQuai && this.MyQuai.AllQuai.Count > 0 && frmLogin.GlobalTimer.ElapsedMilliseconds - this.Myself.TargetLagStamp >= 30000L)
-                        {
-                          bool flag10 = false;
-                          try
-                          {
-                            for (int index = this.MyQuai.AllQuai.Count - 1; index >= 0; --index)
-                            {
-                              if (this.CanAttack(this.MyQuai.AllQuai[index]))
-                              {
-                                flag10 = true;
-                                break;
-                              }
-                            }
-                          }
-                          catch (Exception ex)
-                          {
-                          }
-                          if (flag10)
-                            this.CallSelectTarget(-1);
-                        }
-                        int partyFollowRequest2 = (int) this.Myself.FlagPartyFollowRequest;
-                        double targetHpPercent = (double) this.MyQuai.TargetHPPercent;
-                        if (!this.IsInCity() && !flag9)
-                        {
-                          if (this.Settings.AIMode == AllEnums.AIModes.DANHQUANHDIEM || this.Settings.AIMode == AllEnums.AIModes.DANHTUDO)
-                            this.AttackQuai();
-                          if (this.GCTimeStamp.ElapsedMilliseconds >= 30000L)
-                          {
-                            GC.Collect();
-                            this.GCTimeStamp.Reset();
-                            this.GCTimeStamp.Start();
-                          }
-                        }
-                        if (this.Settings.AIMode == AllEnums.AIModes.THUONGNHAN)
-                        {
-                          if (frmLogin.GAuto.Settings.IsPro1)
-                            this.RunningTrade();
-                        }
-                        else if (this.Settings.AIMode == AllEnums.AIModes.KHAIKHOANG_HAIDUOC)
-                        {
-                          if (this.Myself.IsKhaiKhoang && frmLogin.GAuto.Settings.IsPro2)
-                            this.KhaiKhoangHaiDuoc();
-                        }
-                        else if (this.Settings.AIMode != AllEnums.AIModes.SCRIPTING && this.Settings.AIMode == AllEnums.AIModes.NHIEMVU)
-                        {
-                          bool flag11 = false;
-                          if (this.Myself.IsTrungAc && frmLogin.GAuto.Settings.IsPro1)
-                          {
-                            this.NhiemVuTrungAc();
-                            flag11 = true;
-                          }
-                          else if (this.Myself.IsAcTac && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            if (this.Settings.cboATMaps == -1)
-                              this.Settings.cboATMaps = 4;
-                            if (this.Myself.MapID != this.Settings.cboATMaps && !GA.IsInPhuBan(this.Myself.MapID, this))
-                            {
-                              int num7 = 0;
-                              int num8 = 0;
-                              int num9 = 0;
-                              if (this.Settings.cboATMaps == 6)
-                              {
-                                num7 = 45;
-                                num8 = 170;
-                                num9 = 6;
-                              }
-                              else if (this.Settings.cboATMaps == 4)
-                              {
-                                if (this.Myself.MapID == 3)
-                                {
-                                  num7 = 115;
-                                  num8 = 52;
-                                  num9 = 4;
-                                }
-                                else
-                                {
-                                  num7 = 98;
-                                  num8 = 167;
-                                  num9 = 11;
-                                }
-                              }
-                              else if (this.Settings.cboATMaps == 3)
-                              {
-                                num7 = 45;
-                                num8 = 50;
-                                num9 = 3;
-                              }
-                              else if (this.Settings.cboATMaps == 8)
-                              {
-                                num7 = 263;
-                                num8 = 147;
-                                num9 = 8;
-                              }
-                              else if (this.Settings.cboATMaps == 7)
-                              {
-                                num7 = 45;
-                                num8 = 274;
-                                num9 = 7;
-                              }
-                              else if (this.Settings.cboATMaps == 5)
-                              {
-                                num7 = 265;
-                                num8 = 44;
-                                num9 = 5;
-                              }
-                              ++this.Myself.actionCounter;
-                              if (this.Myself.actionCounter == 1)
-                                GA.TrieuTapToMyPos(this, num7, num8, num9);
-                              else if (this.Myself.actionCounter >= 4)
-                                this.Myself.actionCounter = 0;
-                              if (this.Myself.MapID == 11)
-                              {
-                                if (this.Target.VersionNum == 3 || this.Target.VersionNum == 4)
-                                {
-                                  this.CallMoveTo(97, 173);
-                                  GA.TrieuTapToMyPos(this, 97, 173, this.Myself.MapID);
-                                  Thread.Sleep(3000);
-                                }
-                                else
-                                  this.GoToMyPos(279, 226, 4);
-                              }
-                              else if (this.Myself.MapID == 1)
-                              {
-                                if (this.Settings.cboATMaps == 4)
-                                  this.GoToMyPos(279, 226, 4);
-                                else if (this.Settings.cboATMaps == 5)
-                                  this.GoToMyPos(num7, num8, num9);
-                                else
-                                  this.GoToMyPos(num7, num8, num9);
-                              }
-                              else
-                                this.GoToMyPos(num7, num8, num9);
-                            }
-                            else
-                            {
-                              if (this.Myself.actionCounter == 0)
-                              {
-                                ++this.Myself.actionCounter;
-                                GA.TrieuTapCaNhom(this, true);
-                              }
-                              this.PhuBanATAB(this.Settings.cboATMaps, 50013, -1, frmLogin.GAuto.Settings.AcTacNames);
-                            }
-                          }
-                          else if (this.Myself.IsTestNPC)
-                            this.PhuBanATAB(16 /*0x10*/, 16035, 0, frmLogin.GAuto.Settings.TestNPCNames);
-                          else if (this.Myself.IsAcBa && frmLogin.GAuto.Settings.IsPro1)
-                          {
-                            flag11 = true;
-                            if (this.Settings.cboABMenuID == 0 && this.Settings.cboABMaps == -1 || this.Myself.NhiemVuPosX == 0 && this.Myself.NhiemVuPosY == 0)
-                            {
-                              if (this.Myself.Menpai == AllEnums.Menpais.MODUNG)
-                              {
-                                this.Settings.cboABMenuID = 808043;
-                                this.Settings.cboABMaps = 195;
-                                this.CallSetUpNhiemVuData(29, 137);
-                              }
-                              else if (this.Myself.Menpai == AllEnums.Menpais.THIEULAM)
-                              {
-                                this.Settings.cboABMenuID = 808027;
-                                this.Settings.cboABMaps = 9;
-                                this.CallSetUpNhiemVuData(95, 137);
-                              }
-                              else if (this.Myself.Menpai == AllEnums.Menpais.TINHTUC)
-                              {
-                                this.Settings.cboABMenuID = 808028;
-                                this.Settings.cboABMaps = 16 /*0x10*/;
-                                this.CallSetUpNhiemVuData(96 /*0x60*/, 152);
-                              }
-                              else if (this.Myself.Menpai == AllEnums.Menpais.VODANG)
-                              {
-                                this.Settings.cboABMenuID = 808033;
-                                this.Settings.cboABMaps = 12;
-                                this.CallSetUpNhiemVuData(103, 140);
-                              }
-                              else if (this.Myself.Menpai == AllEnums.Menpais.THIENSON)
-                              {
-                                this.Settings.cboABMenuID = 808030;
-                                this.Settings.cboABMaps = 17;
-                                this.CallSetUpNhiemVuData(95, 120);
-                              }
-                              else if (this.Myself.Menpai == AllEnums.Menpais.MINHGIAO)
-                              {
-                                this.Settings.cboABMenuID = 808031;
-                                this.Settings.cboABMaps = 11;
-                                this.CallSetUpNhiemVuData(98, 167);
-                              }
-                              else if (this.Myself.Menpai == AllEnums.Menpais.NGAMI)
-                              {
-                                this.Settings.cboABMenuID = 808034;
-                                this.Settings.cboABMaps = 15;
-                                this.CallSetUpNhiemVuData(89, 144 /*0x90*/);
-                              }
-                              else if (this.Myself.Menpai == AllEnums.Menpais.TIEUDAO)
-                              {
-                                this.Settings.cboABMenuID = 808016;
-                                this.Settings.cboABMaps = 14;
-                                this.CallSetUpNhiemVuData(68, 144 /*0x90*/);
-                              }
-                              else if (this.Myself.Menpai == AllEnums.Menpais.THIENLONG)
-                              {
-                                this.Settings.cboABMenuID = 808029;
-                                this.Settings.cboABMaps = 13;
-                                this.CallSetUpNhiemVuData(96 /*0x60*/, 120);
-                              }
-                              else if (this.Myself.Menpai == AllEnums.Menpais.DUONGMON)
-                              {
-                                this.Settings.cboABMenuID = 808044;
-                                this.Settings.cboABMaps = 521;
-                                this.CallSetUpNhiemVuData(126, 69);
-                              }
-                              else if (this.Myself.Menpai == AllEnums.Menpais.CAIBANG)
-                              {
-                                this.Settings.cboABMenuID = 808032;
-                                this.Settings.cboABMaps = 10;
-                                this.CallSetUpNhiemVuData(91, 116);
-                              }
-                            }
-                            if (this.Myself.MapID != this.Settings.cboABMaps && !GA.IsInPhuBan(this.Myself.MapID, this))
-                            {
-                              if (this.Myself.NhiemVuPosX > 0 && this.Myself.NhiemVuPosY > 0)
-                              {
-                                ++this.Myself.actionCounter;
-                                if (this.Myself.actionCounter == 1)
-                                  GA.TrieuTapToMyPos(this, this.Myself.NhiemVuPosX, this.Myself.NhiemVuPosY, this.Settings.cboABMaps);
-                                else if (this.Myself.actionCounter >= 5)
-                                  this.Myself.actionCounter = 0;
-                                this.GoToMyPos(this.Myself.NhiemVuPosX, this.Myself.NhiemVuPosY, this.Settings.cboABMaps);
-                              }
-                            }
-                            else if (this.Myself.actionCounter == 0)
-                            {
-                              ++this.Myself.actionCounter;
-                              GA.TrieuTapCaNhom(this, true);
-                            }
-                            if (this.Settings.cboABMaps != -1 && this.Settings.cboABMenuID != 0)
-                              this.PhuBanATAB(this.Settings.cboABMaps, this.Settings.cboABMenuID, 0, frmLogin.GAuto.Settings.AcBaNames);
-                          }
-                          else if (this.Myself.IsLinhThu && frmLogin.GAuto.Settings.IsPro1)
-                          {
-                            flag11 = true;
-                            if (this.Myself.MapID != 158 && !GA.IsInPhuBan(this.Myself.MapID, this))
-                            {
-                              int num10 = 275;
-                              int num11 = 292;
-                              int num12 = 0;
-                              int NPCID = 148;
-                              int menuTypeID = 400963;
-                              int menuIndex = 1;
-                              ++this.Myself.actionCounter;
-                              if (this.Myself.actionCounter == 1)
-                                GA.TrieuTapToMyPos(this, num10, num11, num12);
-                              else if (this.Myself.actionCounter >= 4)
-                                this.Myself.actionCounter = 0;
-                              if (this.GoToMyPos(num10, num11, num12))
-                              {
-                                this.Myself.PhoBanTheoSau = this.ForcePartyFollow();
-                                if (!this.Myself.PhoBanTheoSau)
-                                {
-                                  GA.TrieuTapCaNhom(this, true);
-                                  long elapsedMilliseconds1 = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                  long elapsedMilliseconds2 = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                  while (this.IsAIEnabled)
-                                  {
-                                    bool flag12 = this.CheckMemberDistance(6.0);
-                                    if (!flag12)
-                                      elapsedMilliseconds1 = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                    if (flag12)
-                                      this.Myself.PhoBanTheoSau = this.ForcePartyFollow();
-                                    Thread.Sleep(500);
-                                    if (this.Myself.PhoBanTheoSau)
-                                    {
-                                      Thread.Sleep(1500);
-                                      break;
-                                    }
-                                    if (frmLogin.GlobalTimer.ElapsedMilliseconds - elapsedMilliseconds1 > 15000L)
-                                    {
-                                      this.ForcePartyFollow();
-                                      this.Myself.PhoBanTheoSau = true;
-                                      break;
-                                    }
-                                    if (frmLogin.GlobalTimer.ElapsedMilliseconds - elapsedMilliseconds2 > 10000L)
-                                    {
-                                      GA.TrieuTapCaNhom(this, true);
-                                      elapsedMilliseconds2 = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                      string waitForTeamMembers = frmMain.langWaitForTeamMembers;
-                                      if (this.Myself.LogString != waitForTeamMembers)
-                                      {
-                                        GA.WriteUserLog(waitForTeamMembers, this);
-                                        this.Myself.LogString = waitForTeamMembers;
-                                      }
-                                    }
-                                  }
-                                }
-                                if (this.Myself.PhoBanTheoSau)
-                                {
-                                  this.CallTalkNPC(0, 0, NPCID);
-                                  Thread.Sleep(300);
-                                  this.CallTalkNPC(menuTypeID, menuIndex, NPCID);
-                                  Thread.Sleep(1500);
-                                  if (this.Myself.isMessageBox_Self == 1)
-                                    this.CallStartAutoMoveClick();
-                                }
-                              }
-                            }
-                            else
-                            {
-                              if (this.Myself.actionCounter == 0)
-                              {
-                                ++this.Myself.actionCounter;
-                                GA.TrieuTapCaNhom(this, true);
-                              }
-                              this.NhiemVuLinhThu();
-                            }
-                          }
-                          else if (this.Myself.IsLuyenKim && frmLogin.GAuto.Settings.IsPro1)
-                          {
-                            this.NhiemVuLuyenKim();
-                            flag11 = true;
-                          }
-                          else if (this.Myself.IsMuaKNB && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            this.NhiemVuMuaKNB();
-                            flag11 = true;
-                          }
-                          else if (this.Myself.IsXayDung && frmLogin.GAuto.Settings.IsPro1)
-                          {
-                            this.NhiemVuXayDung();
-                            flag11 = true;
-                          }
-                          else if (this.Myself.IsTBB && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            this.NhiemVuTBB();
-                            flag11 = true;
-                          }
-                          else if (this.Myself.IsTuDuongCon && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            this.NhiemVuTuDuongCon();
-                            flag11 = true;
-                          }
-                          else if (this.Myself.IsTKC && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            int cboTkcMaps = this.Settings.cboTKCMaps;
-                            if (this.Myself.MapID != cboTkcMaps && !GA.IsInPhuBan(this.Myself.MapID, this))
-                            {
-                              int num13 = 0;
-                              int num14 = 0;
-                              int num15 = 0;
-                              if (cboTkcMaps == 30)
-                              {
-                                num13 = 42;
-                                num14 = 60;
-                                num15 = 30;
-                              }
-                              if (cboTkcMaps == 24)
-                              {
-                                num13 = 264;
-                                num14 = 42;
-                                num15 = 24;
-                              }
-                              if (cboTkcMaps == 18)
-                              {
-                                num13 = 272;
-                                num14 = 273;
-                                num15 = 18;
-                              }
-                              ++this.Myself.actionCounter;
-                              if (this.Myself.actionCounter == 1)
-                                GA.TrieuTapToMyPos(this, num13, num14, num15);
-                              else if (this.Myself.actionCounter >= 4)
-                                this.Myself.actionCounter = 0;
-                              this.GoToMyPos(num13, num14, num15);
-                            }
-                            else
-                            {
-                              if (this.Myself.actionCounter == 0)
-                              {
-                                ++this.Myself.actionCounter;
-                                GA.TrieuTapCaNhom(this, true);
-                              }
-                              this.NhiemVuTangKinhCac();
-                            }
-                          }
-                          else if (this.Myself.isDaoBTD && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuDaoBTD();
-                          }
-                          else if (this.Myself.isBachHoaDuyen && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuBachHoaDuyen();
-                          }
-                          else if (this.Myself.isQSM && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuSuMon();
-                          }
-                          else if (this.Myself.IsPHLM && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.PhungHoangLangMo();
-                          }
-                          else if (this.Myself.IsKyCuoc && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuKyCuoc();
-                          }
-                          else if (this.Myself.isCauPhuc && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuCauPhuc();
-                          }
-                          else if (this.Myself.isCauNguyen && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuCauNguyen();
-                          }
-                          else if (this.Myself.isDoatBaoRuong && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuDoatBaoRuong();
-                          }
-                          else if (this.Myself.IsCheDo)
-                          {
-                            flag11 = true;
-                            this.NhiemVuCheDo_New();
-                          }
-                          else if (this.Myself.IsQ1 && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuDietGon();
-                          }
-                          else if (this.Myself.IsQ2 && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuTruHai();
-                          }
-                          else if (this.Myself.isTrongHoa && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuTrongHoa();
-                          }
-                          else if (this.Myself.isBonHoa && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuBonHoa();
-                          }
-                          else if (this.Myself.isThuHoach && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuThuHoachHoa();
-                          }
-                          else if (this.Myself.isNhatTuyet && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuNhatTuyet();
-                          }
-                          else if (this.Myself.isYTO && frmLogin.GAuto.Settings.IsPro2)
-                            flag11 = true;
-                          else if (this.Myself.isPMP && frmLogin.GAuto.Settings.IsPro2)
-                            flag11 = true;
-                          else if (this.Myself.isTanThu && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuTanThu();
-                          }
-                          else if (this.Myself.isDoiKimTamTi && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuDoiKimTamTi();
-                          }
-                          else if (this.Myself.isDoiChiTonCH && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuDoiChiTonCH();
-                          }
-                          else if (this.Myself.isThuTaiVanMay && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuThuTaiVanMay();
-                          }
-                          else if (this.Myself.isThienLongTueHong && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuThienLongTueHong();
-                          }
-                          else if (this.Myself.isNguHanhPhapThiep && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuNguHanhPhapThiep();
-                          }
-                          else if (this.Myself.isLoLyHoa && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuLoLyHoa();
-                          }
-                          else if (this.Myself.isDoiKimTinhThach && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuDoiKimTinhThach();
-                          }
-                          else if (this.Myself.isBuonDuaHau && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuBuonDuaHau();
-                          }
-                          else if (this.Myself.isHuyItemNhiemVu && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuHuyItemNhiemVu();
-                          }
-                          else if (this.Myself.isDoiThoiVang && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuDoiThoiVang();
-                          }
-                          else if (this.Myself.isDoiLinhHonToaiPhien && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuDoiLinhHonToaiPhien(this.Myself.DoiLinhHonToaiPhienMode);
-                          }
-                          else if (this.Myself.isDoiPhieuTienVang && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuDoiPhieuTienVang(this.Myself.DoiPhieuTienVangMode);
-                          }
-                          else if (this.Myself.isDoiThanBinhPhu && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuDoiThanBinhPhu();
-                          }
-                          else if (this.Myself.isNhanX2EXP && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuNhanX2EXP();
-                          }
-                          else if (this.Myself.isLLTB && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuLLTamBao();
-                          }
-                          else if (this.Myself.isThuyLao && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuThuyLao();
-                          }
-                          else if (this.Myself.isThuBiChienMinh && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuThuBiChienMinh();
-                          }
-                          else if (this.Myself.isNhanLeBao && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuNhanLeBao();
-                          }
-                          else if (this.Myself.isNhanBongCauPhuc && frmLogin.GAuto.Settings.IsPro2)
-                          {
-                            flag11 = true;
-                            this.NhiemVuNhanBongCauPhuc();
-                          }
-                          if (GA.isShitMember())
-                          {
-                            Random random = new Random();
-                            if (random.Next(0, 10000) <= 7000)
-                            {
-                              random.Next(30, 220);
-                              this.Myself.EventString = "";
-                            }
-                          }
-                          int num16 = this.Myself.IsHaiDua ? 1 : 0;
-                          if (!flag11)
-                            this.Settings.AIMode = AllEnums.AIModes.DANHTUDO;
-                        }
-                        if (this.IsAIEnabled)
-                        {
-                          if (this.Settings.cboxKhoangDuoc)
-                          {
-                            try
-                            {
-                              for (int index = this.MyBoc.AllBocs.Count - 1; index >= 0; --index)
-                              {
-                                NewBoc allBoc = this.MyBoc.AllBocs[index];
-                                if (allBoc.BocID != 0 && (double) allBoc.PosX != 0.0 && (double) allBoc.PosY != 0.0)
-                                {
-                                  bool flag13 = false;
-                                  if (allBoc.BocType >= 1 && allBoc.BocType <= 10 || allBoc.BocType == 809)
-                                  {
-                                    if (this.Settings.cboxKhaiKhoang)
-                                      flag13 = true;
-                                  }
-                                  else if (allBoc.BocType >= 101 && allBoc.BocType <= 126 && this.Settings.cboxHaiDuoc)
-                                    flag13 = true;
-                                  if (flag13)
-                                  {
-                                    KhoangDuocEntry khoangDuocEntry = new KhoangDuocEntry();
-                                    khoangDuocEntry.MapID = this.Myself.MapID;
-                                    khoangDuocEntry.PosX = (int) allBoc.PosX;
-                                    khoangDuocEntry.PosY = (int) allBoc.PosY;
-                                    bool flag14 = false;
-                                    foreach (KhoangDuocEntry khoangDuoc in this.Myself.KhoangDuocList)
-                                    {
-                                      if (khoangDuoc.MapID == khoangDuocEntry.MapID && khoangDuoc.PosX == khoangDuocEntry.PosX && khoangDuoc.PosY == khoangDuocEntry.PosY)
-                                      {
-                                        flag14 = true;
-                                        break;
-                                      }
-                                    }
-                                    if (!flag14)
-                                    {
-                                      AutoAccount.DisPlayClass disPlayClass = new AutoAccount.DisPlayClass();
-                                      this.Myself.KhoangDuocList.Add(khoangDuocEntry);
-                                      string path = $"{AppDomain.CurrentDomain.BaseDirectory}log\\{frmLogin.GAuto.Settings.AdminKhoangFile}";
-                                      AutoAccount.DisPlayClass arg_73AD_0 = disPlayClass;
-                                      string format = "{0},{1},{2},{3}";
-                                      object[] objArray = new object[4]
-                                      {
-                                        (object) this.Myself.MapID.ToString(),
-                                        (object) allBoc.PosX.ToString("0"),
-                                        (object) allBoc.PosY.ToString("0"),
-                                        (object) allBoc.BocType.ToString("0")
-                                      };
-                                      arg_73AD_0.log = string.Format(format, objArray);
-                                      StreamWriter streamWriter = File.AppendText(path);
-                                      if (streamWriter != null)
-                                      {
-                                        try
-                                        {
-                                          frmMain.frmMainInstance.richLog.Invoke((Delegate) (() =>
-                                          {
-                                            frmMain.frmMainInstance.richLog.AppendText(arg_73AD_0.log + "\r\n");
-                                            frmMain.frmMainInstance.richLog.SelectionStart = frmMain.frmMainInstance.richLog.Text.Length;
-                                            frmMain.frmMainInstance.richLog.ScrollToCaret();
-                                          }));
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                        }
-                                        streamWriter.WriteLine(arg_73AD_0.log);
-                                        streamWriter.Close();
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                            catch (Exception ex)
-                            {
-                            }
-                          }
-                        }
-                        if (this.IsAIEnabled && this.Settings.cboxATAB && this.MyQuai.AllQuai.Count > 0)
-                        {
-                          for (int index = this.MyQuai.AllQuai.Count - 1; index >= 0; --index)
-                          {
-                            QuaiIndividual quaiIndividual = this.MyQuai.AllQuai[index];
-                            if ((double) quaiIndividual.PosX != 0.0 && (double) quaiIndividual.PosY != 0.0 && !string.IsNullOrEmpty(quaiIndividual.Name) && (quaiIndividual.Name.ToLower() == "ác tặc tạo phản" || quaiIndividual.Name.ToLower() == "giang hồ tà đạo" || quaiIndividual.Name.ToLower() == "tà đạo lâu la" || quaiIndividual.Name.ToLower() == "ác bá" || quaiIndividual.Name.ToLower() == "lâu la" || quaiIndividual.Name.ToLower() == "niên thú" || quaiIndividual.Name.ToLower() == "kỳ lân" || quaiIndividual.Name.ToLower() == "anh chiêu" || quaiIndividual.Name.ToLower() == "long quy" || quaiIndividual.Name.ToLower() == "hoàng điểu" || quaiIndividual.Name.ToLower() == "mô kim hiệu úy" || quaiIndividual.Name.ToLower() == "shishimai" || quaiIndividual.Name.ToLower() == "kylin" || quaiIndividual.Name.ToLower() == "pegasus" || quaiIndividual.Name.ToLower() == "tarasque" || quaiIndividual.Name.ToLower() == "phoenix"))
-                            {
-                              KhoangDuocEntry khoangDuocEntry = new KhoangDuocEntry();
-                              khoangDuocEntry.MapID = this.Myself.MapID;
-                              khoangDuocEntry.PosX = (int) quaiIndividual.PosX;
-                              khoangDuocEntry.PosY = (int) quaiIndividual.PosY;
-                              khoangDuocEntry.NPCName = quaiIndividual.Name;
-                              khoangDuocEntry.NPCID = quaiIndividual.ID;
-                              bool flag15 = false;
-                              foreach (KhoangDuocEntry khoangDuoc in this.Myself.KhoangDuocList)
-                              {
-                                if (khoangDuoc.MapID == khoangDuocEntry.MapID && khoangDuoc.PosX == khoangDuocEntry.PosX && khoangDuoc.PosY == khoangDuocEntry.PosY && khoangDuoc.NPCName == khoangDuocEntry.NPCName)
-                                {
-                                  flag15 = true;
-                                  break;
-                                }
-                                if (khoangDuoc.MapID == khoangDuocEntry.MapID && khoangDuoc.NPCID == khoangDuocEntry.NPCID)
-                                {
-                                  flag15 = true;
-                                  break;
-                                }
-                              }
-                              if (!flag15)
-                              {
-                                this.Myself.KhoangDuocList.Add(khoangDuocEntry);
-                                string str = $"{AppDomain.CurrentDomain.BaseDirectory}log\\{frmLogin.GAuto.Settings.AdminNPCFile}";
-                              }
-                            }
-                          }
-                        }
-                        bool flag16 = true;
-                        if (this.ScriptEngine.IsOn && this.ScriptEngine.Script != null)
-                        {
-                          List<int> intList1 = new List<int>();
-                          List<int> intList2 = new List<int>();
-                          if (this.ScriptEngine2 != null)
-                          {
-                            GScriptEngine gscriptEngine1 = this.ScriptEngine;
-                            GScriptEngine gscriptEngine2 = this.ScriptEngine2;
-                            if (!this.IsMainScript)
-                            {
-                              GScriptEngine gscriptEngine3 = gscriptEngine2;
-                              gscriptEngine2 = gscriptEngine1;
-                              gscriptEngine1 = gscriptEngine3;
-                            }
-                            for (int index = 1; index < 10; ++index)
-                            {
-                              object option = gscriptEngine2.Script.GetOption("mapid" + index.ToString());
-                              if (option != null)
-                              {
-                                int num17 = (int) option;
-                                intList1.Add(num17);
-                              }
-                              else
-                                break;
-                            }
-                            for (int index = 1; index < 10; ++index)
-                            {
-                              object option = gscriptEngine1.Script.GetOption("mapid" + index.ToString());
-                              if (option != null)
-                              {
-                                int num18 = (int) option;
-                                intList2.Add(num18);
-                              }
-                              else
-                                break;
-                            }
-                          }
-                          if (this.IsMainScript)
-                          {
-                            if (intList1.Contains(this.Myself.MapID))
-                            {
-                              this.Myself.TargetX = 0.0f;
-                              this.Myself.TargetY = 0.0f;
-                              this.Myself.Status = AllEnums.CharStatuses.IDLE;
-                              this.SwapScriptEngine();
-                              Thread.Sleep(3000);
-                              lock (this.Myself.JustWarpedLock)
-                              {
-                                this.Myself.JustWarped = true;
-                                this.Myself.WarpStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                this.Myself.JustWarpedStamp.Reset();
-                                this.Myself.JustWarpedStamp.Start();
-                                this.SetJustWarpedFlag(1);
-                                goto label_1076;
-                              }
-                            }
-                            object option = this.ScriptEngine.Script.GetOption("ptfollow");
-                            if (option != null)
-                            {
-                              bool result = false;
-                              bool.TryParse(option.ToString(), out result);
-                              if (this.MyParty.PartyNumbers > 0 && result)
-                                flag16 = this.ForcePartyFollow();
-                            }
-                          }
-                          else if (!this.IsMainScript)
-                          {
-                            if (intList2.Contains(this.Myself.MapID))
-                            {
-                              this.ScriptEngine.Reset();
-                              this.SwapScriptEngine();
-                              Thread.Sleep(3000);
-                              lock (this.Myself.JustWarpedLock)
-                              {
-                                this.Myself.JustWarped = true;
-                                this.Myself.WarpStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                                this.Myself.JustWarpedStamp.Reset();
-                                this.Myself.JustWarpedStamp.Start();
-                                this.SetJustWarpedFlag(1);
-                                goto label_1076;
-                              }
-                            }
-                            if (this.Myself.IsPartyFollowed == (byte) 1)
-                              this.CallRemovePartyFollow();
-                          }
-                        }
-                        if (this.ScriptEngine.IsOn && this.ScriptEngine.Script != null && flag16 && this.Myself.LastScriptStamp.ElapsedMilliseconds >= 1000L)
-                        {
-                          this.Myself.LastScriptStamp.Reset();
-                          this.Myself.LastScriptStamp.Start();
-                          if (this.ScriptEngine.Script.Count > 0 && this.ScriptEngine.CanCallCurrent)
-                          {
-                            GScriptCommand cmd;
-                            if (this.ScriptEngine.SingleCommand != null)
-                            {
-                              if (this.ScriptEngine.SingleCommand.Status == AllEnums.ScriptStatuses.FINISHED)
-                              {
-                                this.ScriptEngine.SingleCommand = (GScriptCommand) null;
-                                cmd = this.ScriptEngine.GetCurrentCommand();
-                              }
-                              else
-                                cmd = this.ScriptEngine.SingleCommand;
-                            }
-                            else
-                              cmd = this.ScriptEngine.GetCurrentCommand();
-                            if (cmd != null && cmd.Status == AllEnums.ScriptStatuses.FINISHED)
-                            {
-                              if (this.ScriptEngine.CanCallNext)
-                              {
-                                this.ScriptEngine.IndexInc();
-                              }
-                              else
-                              {
-                                int num19 = -1;
-                                object option = this.ScriptEngine.Script.GetOption("REPEAT");
-                                if (option != null)
-                                  num19 = (int) option;
-                                if (num19 == -1 || num19 > 0 && this.ScriptEngine.RunTimes < num19)
-                                  this.ScriptEngine.Reset();
-                              }
-                              cmd = this.ScriptEngine.GetCurrentCommand();
-                            }
-                            bool flag17 = false;
-                            if (cmd.Status != AllEnums.ScriptStatuses.FINISHED)
-                              flag17 = true;
-                            if (!flag17 && this.ScriptEngine.Index == 0 && cmd.Status != AllEnums.ScriptStatuses.FINISHED)
-                              flag17 = true;
-                            if (!flag17 && this.ScriptEngine.SingleCommand != null && this.ScriptEngine.SingleCommand.Status != AllEnums.ScriptStatuses.FINISHED)
-                              flag17 = true;
-                            if (flag17)
-                            {
-                              cmd.Status = AllEnums.ScriptStatuses.RUNNING;
-                              this.ScriptEngine.CurrentCommand = cmd;
-                              switch (cmd.Command.ToLower())
-                              {
-                                case "moveto":
-                                case "move":
-                                case "dichuyen":
-                                  this.MoveToScript(cmd);
-                                  break;
-                                case "gotobang":
-                                  this.GoToBang(cmd);
-                                  break;
-                                case "getthanhbangid":
-                                  this.GetThanhBangID(cmd);
-                                  break;
-                                case "playsound":
-                                  string soundLocation = "event.wav";
-                                  if (cmd.Params.Count > 0)
-                                    soundLocation = "alert.wav";
-                                  try
-                                  {
-                                    new SoundPlayer(soundLocation).Play();
-                                  }
-                                  catch (Exception ex)
-                                  {
-                                  }
-                                  cmd.Status = AllEnums.ScriptStatuses.FINISHED;
-                                  break;
-                                case "pickallboc":
-                                  this.PickAllBoc(cmd);
-                                  break;
-                                case "portalconfirm":
-                                  if (this.Myself.isAcceptBox == 1)
-                                  {
-                                    this.CallSendPortalConfirmationClick();
-                                    break;
-                                  }
-                                  Thread.Sleep(500);
-                                  cmd.Status = AllEnums.ScriptStatuses.FINISHED;
-                                  break;
-                                case "unmount":
-                                  if (this.Myself.HorseType != -1)
-                                    this.CallMounting();
-                                  cmd.Status = AllEnums.ScriptStatuses.FINISHED;
-                                  break;
-                                case "mount":
-                                  if (this.Myself.HorseType == -1)
-                                    this.CallMounting();
-                                  cmd.Status = AllEnums.ScriptStatuses.FINISHED;
-                                  break;
-                                case "haiduoc":
-                                case "khaikhoang":
-                                  this.MoveHaiDuocScript(cmd);
-                                  break;
-                                case "ptfollow":
-                                  if (this.ForcePartyFollow())
-                                  {
-                                    cmd.Status = AllEnums.ScriptStatuses.FINISHED;
-                                    break;
-                                  }
-                                  break;
-                                case "removeptfollow":
-                                  if (this.Myself.IsPartyFollowed == (byte) 1)
-                                    this.CallRemovePartyFollow();
-                                  cmd.Status = AllEnums.ScriptStatuses.FINISHED;
-                                  break;
-                                case "delay":
-                                case "sleep":
-                                  if (cmd.Params.Count > 0)
-                                  {
-                                    int result = 0;
-                                    int.TryParse(cmd.Params[0].ToString(), out result);
-                                    Thread.Sleep(result);
-                                  }
-                                  cmd.Status = AllEnums.ScriptStatuses.FINISHED;
-                                  break;
-                                case "wait":
-                                  break;
-                                case "movetalknpc":
-                                  this.MoveTalkNPCScript(cmd);
-                                  break;
-                                case "nhanquestduahau":
-                                  this.NhanQuestDuaHau(cmd, this.Myself.DuaNPCID);
-                                  break;
-                                case "movetalknpcname":
-                                  this.MoveTalkNPCByNameScript(cmd);
-                                  break;
-                                case "moveattack":
-                                  this.MoveAttackScript(cmd);
-                                  break;
-                                default:
-                                  cmd.Status = AllEnums.ScriptStatuses.FINISHED;
-                                  break;
-                              }
-                            }
-                          }
-                        }
-                        if (this.IsAIEnabled && this.Myself.Status == AllEnums.CharStatuses.DUNGPHUDIVE)
-                        {
-                          if (this.Myself.MapID == this.Myself.dungphudiveMapID)
-                          {
-                            this.Myself.Status = AllEnums.CharStatuses.IDLE;
-                            this.CallMoveFlashPos((int) this.Myself.PosX, (int) this.Myself.PosY);
-                            this.Myself.dungphudiveMapID = -1;
-                            this.Myself.dungphudivePosX = -1;
-                            this.Myself.dungphudivePosY = -1;
-                          }
-                          else if (!this.DungPhuWithMap(this.Myself.dungphudiveMapID))
-                          {
-                            if (this.Myself.dungphudivePosX > 0 && this.Myself.dungphudivePosY > 0)
-                            {
-                              this.Myself.Status = AllEnums.CharStatuses.IDLE;
-                              if (GA.IsInPhuBan(this.Myself.MapID, this))
-                              {
-                                this.CallLenNgua();
-                                this.CallMoveFlashPos(this.Myself.dungphudivePosX, this.Myself.dungphudivePosY);
-                              }
-                              else
-                                this.CallOutMapMove(this.Myself.dungphudivePosX, this.Myself.dungphudivePosY, this.Myself.dungphudiveMapID);
-                              this.Myself.dungphudiveMapID = -1;
-                              this.Myself.dungphudivePosX = -1;
-                              this.Myself.dungphudivePosY = -1;
-                            }
-                          }
-                          else
-                          {
-                            this.Myself.Status = AllEnums.CharStatuses.IDLE;
-                            this.Myself.dungphudiveMapID = -1;
-                            this.Myself.dungphudivePosX = -1;
-                            this.Myself.dungphudivePosY = -1;
-                          }
-                        }
-                        if (this.Settings.ListItemToUse.Count > 0)
-                        {
-                          try
-                          {
-                            List<int> intList = new List<int>();
-                            for (int index = 0; index < this.Settings.ListItemToUse.Count; ++index)
-                            {
-                              long lastUseStamp = this.Settings.ListItemToUse[index].LastUseStamp;
-                              int delaySeconds = this.Settings.ListItemToUse[index].DelaySeconds;
-                              if (frmLogin.GlobalTimer.ElapsedMilliseconds - lastUseStamp >= (long) (delaySeconds * 1000))
-                                intList.Add(index);
-                            }
-                            if (intList.Count > 0)
-                            {
-                              for (int index7 = 0; index7 < intList.Count; ++index7)
-                              {
-                                int index8 = intList[index7];
-                                string name = this.Settings.ListItemToUse[index8].Name;
-                                for (int index9 = 0; index9 < 30; ++index9)
-                                {
-                                  if (string.Compare(this.MyInventory.AllItems[index9].ItemName, name, true) == 0)
-                                  {
-                                    this.CallUseItem(index9, this.Myself.ID);
-                                    break;
-                                  }
-                                }
-                                this.Settings.ListItemToUse[index8].LastUseStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-                              }
-                            }
-                          }
-                          catch (Exception ex)
-                          {
-                            GA.WriteUserLog(frmMain.langErrorUseItemDelay, this);
-                          }
-                        }
+                        else
+                          break;
                       }
                     }
-                  }
-label_1076:
-                  if (this.Myself.IsPKStamp.ElapsedMilliseconds >= 2000L)
-                  {
-                    this.Myself.IsPKStamp.Reset();
-                    this.Myself.IsPKStamp.Start();
-                    this.Myself.PreviousIsPK = this.Myself.IsPK;
-                  }
-                  if (this.Myself.NotTransitioningStamp.ElapsedMilliseconds >= 1000L)
-                  {
-                    this.Myself.NotTransitioningStamp.Reset();
-                    this.Myself.NotTransitioningStamp.Start();
-                    if (this.Myself.isSceneTrans == 1)
-                      this.Myself.prevNotTransitioning = this.Myself.isSceneTrans;
-                  }
-                  if (this.Myself.JustWarped)
-                    this.Myself.PathHistory.Clear();
-                  if (this.Myself.MovingDirectionStamp.ElapsedMilliseconds >= 2000L && !this.Myself.JustWarped)
-                  {
-                    MovingPoint movingPoint = (MovingPoint) null;
-                    if (this.Myself.PathHistory.Count > 0)
-                      movingPoint = this.Myself.PathHistory.MovingPoints[this.Myself.PathHistory.Count - 1];
-                    double num = 2.0;
-                    if (movingPoint != null)
-                      num = GA.CalculateDistance((double) this.Myself.PosX, (double) this.Myself.PosY, (double) movingPoint.X, (double) movingPoint.Y);
-                    if (num >= 1.0)
-                      this.Myself.PathHistory.AddPoint(new MovingPoint()
-                      {
-                        X = this.Myself.PosX,
-                        Y = this.Myself.PosY,
-                        TimeStamp = frmLogin.GlobalTimer.ElapsedMilliseconds
-                      });
-                    this.Myself.MovingDirectionStamp.Reset();
-                    this.Myself.MovingDirectionStamp.Start();
-                  }
-                  if (this.Myself.PartyFollowStamp.ElapsedMilliseconds >= 2000L)
-                  {
-                    this.Myself.PartyFollowStamp.Reset();
-                    this.Myself.PartyFollowStamp.Start();
-                    this.Myself.PreviousIsPartyFollowed = (int) this.Myself.IsPartyFollowed;
-                  }
-                }
-                if (!this.MyFlag.IsInGame)
-                {
-                  if (this.MyFlag.NeedAutoLogin)
-                  {
-                    if ((this.Target.VersionNum != 3 || this.Target.SubVersion != 4 && this.Target.SubVersion != 6 || frmLogin.TKServers.Count <= 0) && (this.Target.VersionNum != 3 || this.Target.SubVersion == 4) && (this.Target.VersionNum != 1 && this.Target.VersionNum != 2 || frmLogin.VNGServers.Count <= 0))
+                    if (this.IsMainScript)
                     {
-                      if (this.Target.VersionNum == 4)
+                      if (intList1.Contains(this.Myself.MapID))
                       {
-                        if (frmLogin.TLUSServers.Count <= 0)
-                          goto label_1105;
+                        this.Myself.TargetX = 0.0f;
+                        this.Myself.TargetY = 0.0f;
+                        this.Myself.Status = AllEnums.CharStatuses.IDLE;
+                        this.SwapScriptEngine();
+                        Thread.Sleep(3000);
+                        lock (this.Myself.JustWarpedLock)
+                        {
+                          this.Myself.JustWarped = true;
+                          this.Myself.WarpStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                          this.Myself.JustWarpedStamp.Reset();
+                          this.Myself.JustWarpedStamp.Start();
+                          this.SetJustWarpedFlag(1);
+                          goto label_1076;
+                        }
+                      }
+                      object option = this.ScriptEngine.Script.GetOption("ptfollow");
+                      if (option != null)
+                      {
+                        bool result = false;
+                        bool.TryParse(option.ToString(), out result);
+                        if (this.MyParty.PartyNumbers > 0 && result)
+                          flag16 = this.ForcePartyFollow();
+                      }
+                    }
+                    else if (!this.IsMainScript)
+                    {
+                      if (intList2.Contains(this.Myself.MapID))
+                      {
+                        this.ScriptEngine.Reset();
+                        this.SwapScriptEngine();
+                        Thread.Sleep(3000);
+                        lock (this.Myself.JustWarpedLock)
+                        {
+                          this.Myself.JustWarped = true;
+                          this.Myself.WarpStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                          this.Myself.JustWarpedStamp.Reset();
+                          this.Myself.JustWarpedStamp.Start();
+                          this.SetJustWarpedFlag(1);
+                          goto label_1076;
+                        }
+                      }
+                      if (this.Myself.IsPartyFollowed == (byte)1)
+                        this.CallRemovePartyFollow();
+                    }
+                  }
+                  if (this.ScriptEngine.IsOn && this.ScriptEngine.Script != null && flag16 && this.Myself.LastScriptStamp.ElapsedMilliseconds >= 1000L)
+                  {
+                    this.Myself.LastScriptStamp.Reset();
+                    this.Myself.LastScriptStamp.Start();
+                    if (this.ScriptEngine.Script.Count > 0 && this.ScriptEngine.CanCallCurrent)
+                    {
+                      GScriptCommand cmd;
+                      if (this.ScriptEngine.SingleCommand != null)
+                      {
+                        if (this.ScriptEngine.SingleCommand.Status == AllEnums.ScriptStatuses.FINISHED)
+                        {
+                          this.ScriptEngine.SingleCommand = (GScriptCommand)null;
+                          cmd = this.ScriptEngine.GetCurrentCommand();
+                        }
+                        else
+                          cmd = this.ScriptEngine.SingleCommand;
                       }
                       else
-                        goto label_1105;
+                        cmd = this.ScriptEngine.GetCurrentCommand();
+                      if (cmd != null && cmd.Status == AllEnums.ScriptStatuses.FINISHED)
+                      {
+                        if (this.ScriptEngine.CanCallNext)
+                        {
+                          this.ScriptEngine.IndexInc();
+                        }
+                        else
+                        {
+                          int num19 = -1;
+                          object option = this.ScriptEngine.Script.GetOption("REPEAT");
+                          if (option != null)
+                            num19 = (int)option;
+                          if (num19 == -1 || num19 > 0 && this.ScriptEngine.RunTimes < num19)
+                            this.ScriptEngine.Reset();
+                        }
+                        cmd = this.ScriptEngine.GetCurrentCommand();
+                      }
+                      bool flag17 = false;
+                      if (cmd.Status != AllEnums.ScriptStatuses.FINISHED)
+                        flag17 = true;
+                      if (!flag17 && this.ScriptEngine.Index == 0 && cmd.Status != AllEnums.ScriptStatuses.FINISHED)
+                        flag17 = true;
+                      if (!flag17 && this.ScriptEngine.SingleCommand != null && this.ScriptEngine.SingleCommand.Status != AllEnums.ScriptStatuses.FINISHED)
+                        flag17 = true;
+                      if (flag17)
+                      {
+                        cmd.Status = AllEnums.ScriptStatuses.RUNNING;
+                        this.ScriptEngine.CurrentCommand = cmd;
+                        switch (cmd.Command.ToLower())
+                        {
+                          case "moveto":
+                          case "move":
+                          case "dichuyen":
+                            this.MoveToScript(cmd);
+                            break;
+                          case "gotobang":
+                            this.GoToBang(cmd);
+                            break;
+                          case "getthanhbangid":
+                            this.GetThanhBangID(cmd);
+                            break;
+                          case "playsound":
+                            string soundLocation = "event.wav";
+                            if (cmd.Params.Count > 0)
+                              soundLocation = "alert.wav";
+                            try
+                            {
+                              new SoundPlayer(soundLocation).Play();
+                            }
+                            catch (Exception ex)
+                            {
+                            }
+                            cmd.Status = AllEnums.ScriptStatuses.FINISHED;
+                            break;
+                          case "pickallboc":
+                            this.PickAllBoc(cmd);
+                            break;
+                          case "portalconfirm":
+                            if (this.Myself.isAcceptBox == 1)
+                            {
+                              this.CallSendPortalConfirmationClick();
+                              break;
+                            }
+                            Thread.Sleep(500);
+                            cmd.Status = AllEnums.ScriptStatuses.FINISHED;
+                            break;
+                          case "unmount":
+                            if (this.Myself.HorseType != -1)
+                              this.CallMounting();
+                            cmd.Status = AllEnums.ScriptStatuses.FINISHED;
+                            break;
+                          case "mount":
+                            if (this.Myself.HorseType == -1)
+                              this.CallMounting();
+                            cmd.Status = AllEnums.ScriptStatuses.FINISHED;
+                            break;
+                          case "haiduoc":
+                          case "khaikhoang":
+                            this.MoveHaiDuocScript(cmd);
+                            break;
+                          case "ptfollow":
+                            if (this.ForcePartyFollow())
+                            {
+                              cmd.Status = AllEnums.ScriptStatuses.FINISHED;
+                              break;
+                            }
+                            break;
+                          case "removeptfollow":
+                            if (this.Myself.IsPartyFollowed == (byte)1)
+                              this.CallRemovePartyFollow();
+                            cmd.Status = AllEnums.ScriptStatuses.FINISHED;
+                            break;
+                          case "delay":
+                          case "sleep":
+                            if (cmd.Params.Count > 0)
+                            {
+                              int result = 0;
+                              int.TryParse(cmd.Params[0].ToString(), out result);
+                              Thread.Sleep(result);
+                            }
+                            cmd.Status = AllEnums.ScriptStatuses.FINISHED;
+                            break;
+                          case "wait":
+                            break;
+                          case "movetalknpc":
+                            this.MoveTalkNPCScript(cmd);
+                            break;
+                          case "nhanquestduahau":
+                            this.NhanQuestDuaHau(cmd, this.Myself.DuaNPCID);
+                            break;
+                          case "movetalknpcname":
+                            this.MoveTalkNPCByNameScript(cmd);
+                            break;
+                          case "moveattack":
+                            this.MoveAttackScript(cmd);
+                            break;
+                          default:
+                            cmd.Status = AllEnums.ScriptStatuses.FINISHED;
+                            break;
+                        }
+                      }
                     }
-                    this.HandleGLogin();
+                  }
+                  if (this.IsAIEnabled && this.Myself.Status == AllEnums.CharStatuses.DUNGPHUDIVE)
+                  {
+                    if (this.Myself.MapID == this.Myself.dungphudiveMapID)
+                    {
+                      this.Myself.Status = AllEnums.CharStatuses.IDLE;
+                      this.CallMoveFlashPos((int)this.Myself.PosX, (int)this.Myself.PosY);
+                      this.Myself.dungphudiveMapID = -1;
+                      this.Myself.dungphudivePosX = -1;
+                      this.Myself.dungphudivePosY = -1;
+                    }
+                    else if (!this.DungPhuWithMap(this.Myself.dungphudiveMapID))
+                    {
+                      if (this.Myself.dungphudivePosX > 0 && this.Myself.dungphudivePosY > 0)
+                      {
+                        this.Myself.Status = AllEnums.CharStatuses.IDLE;
+                        if (GA.IsInPhuBan(this.Myself.MapID, this))
+                        {
+                          this.CallLenNgua();
+                          this.CallMoveFlashPos(this.Myself.dungphudivePosX, this.Myself.dungphudivePosY);
+                        }
+                        else
+                          this.CallOutMapMove(this.Myself.dungphudivePosX, this.Myself.dungphudivePosY, this.Myself.dungphudiveMapID);
+                        this.Myself.dungphudiveMapID = -1;
+                        this.Myself.dungphudivePosX = -1;
+                        this.Myself.dungphudivePosY = -1;
+                      }
+                    }
+                    else
+                    {
+                      this.Myself.Status = AllEnums.CharStatuses.IDLE;
+                      this.Myself.dungphudiveMapID = -1;
+                      this.Myself.dungphudivePosX = -1;
+                      this.Myself.dungphudivePosY = -1;
+                    }
+                  }
+                  if (this.Settings.ListItemToUse.Count > 0)
+                  {
+                    try
+                    {
+                      List<int> intList = new List<int>();
+                      for (int index = 0; index < this.Settings.ListItemToUse.Count; ++index)
+                      {
+                        long lastUseStamp = this.Settings.ListItemToUse[index].LastUseStamp;
+                        int delaySeconds = this.Settings.ListItemToUse[index].DelaySeconds;
+                        if (frmLogin.GlobalTimer.ElapsedMilliseconds - lastUseStamp >= (long)(delaySeconds * 1000))
+                          intList.Add(index);
+                      }
+                      if (intList.Count > 0)
+                      {
+                        for (int index7 = 0; index7 < intList.Count; ++index7)
+                        {
+                          int index8 = intList[index7];
+                          string name = this.Settings.ListItemToUse[index8].Name;
+                          for (int index9 = 0; index9 < 30; ++index9)
+                          {
+                            if (string.Compare(this.MyInventory.AllItems[index9].ItemName, name, true) == 0)
+                            {
+                              this.CallUseItem(index9, this.Myself.ID);
+                              break;
+                            }
+                          }
+                          this.Settings.ListItemToUse[index8].LastUseStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
+                        }
+                      }
+                    }
+                    catch (Exception ex)
+                    {
+                      GA.WriteUserLog(frmMain.langErrorUseItemDelay, this);
+                    }
                   }
                 }
               }
             }
+          label_1076:
+            if (this.Myself.IsPKStamp.ElapsedMilliseconds >= 2000L)
+            {
+              this.Myself.IsPKStamp.Reset();
+              this.Myself.IsPKStamp.Start();
+              this.Myself.PreviousIsPK = this.Myself.IsPK;
+            }
+            if (this.Myself.NotTransitioningStamp.ElapsedMilliseconds >= 1000L)
+            {
+              this.Myself.NotTransitioningStamp.Reset();
+              this.Myself.NotTransitioningStamp.Start();
+              if (this.Myself.isSceneTrans == 1)
+                this.Myself.prevNotTransitioning = this.Myself.isSceneTrans;
+            }
+            if (this.Myself.JustWarped)
+              this.Myself.PathHistory.Clear();
+            if (this.Myself.MovingDirectionStamp.ElapsedMilliseconds >= 2000L && !this.Myself.JustWarped)
+            {
+              MovingPoint movingPoint = (MovingPoint)null;
+              if (this.Myself.PathHistory.Count > 0)
+                movingPoint = this.Myself.PathHistory.MovingPoints[this.Myself.PathHistory.Count - 1];
+              double num = 2.0;
+              if (movingPoint != null)
+                num = GA.CalculateDistance((double)this.Myself.PosX, (double)this.Myself.PosY, (double)movingPoint.X, (double)movingPoint.Y);
+              if (num >= 1.0)
+                this.Myself.PathHistory.AddPoint(new MovingPoint()
+                {
+                  X = this.Myself.PosX,
+                  Y = this.Myself.PosY,
+                  TimeStamp = frmLogin.GlobalTimer.ElapsedMilliseconds
+                });
+              this.Myself.MovingDirectionStamp.Reset();
+              this.Myself.MovingDirectionStamp.Start();
+            }
+            if (this.Myself.PartyFollowStamp.ElapsedMilliseconds >= 2000L)
+            {
+              this.Myself.PartyFollowStamp.Reset();
+              this.Myself.PartyFollowStamp.Start();
+              this.Myself.PreviousIsPartyFollowed = (int)this.Myself.IsPartyFollowed;
+            }
           }
         }
-        catch (Exception ex)
-        {
-          if (ex.Message == "Thread was being aborted.")
-          {
-            if (GA.isVipMember())
-              GA.WriteUserLog("Thread abort, không quan tâm", this);
-          }
-          else
-            GA.WriteUserLog($"{frmMain.langAIError}{this.Target.NeedToAbort.ToString()}/{this.Target.NeedToAbort2.ToString()}/{this.Target.NeedToAbort3.ToString()} id: {this.Target.NeedToAbort4.ToString()} Message: {ex.Message}\n{ex.StackTrace}", this);
-          this.Myself.Status = AllEnums.CharStatuses.IDLE;
-        }
-label_1105:
-        Thread.Sleep(frmLogin.GAuto.Settings.numDelayTrue + 80 /*0x50*/);
+      }
+    }
+    catch (Exception ex)
+    {
+      if (ex.Message == "Thread was being aborted.")
+      {
+        if (GA.isVipMember())
+          GA.WriteUserLog("Thread abort, không quan tâm", this);
       }
       else
-        break;
+        GA.WriteUserLog($"{frmMain.langAIError}{this.Target.NeedToAbort.ToString()}/{this.Target.NeedToAbort2.ToString()}/{this.Target.NeedToAbort3.ToString()} id: {this.Target.NeedToAbort4.ToString()} Message: {ex.Message}\n{ex.StackTrace}", this);
+      this.Myself.Status = AllEnums.CharStatuses.IDLE;
     }
-    this.MyFlag.EndAI = true;
   }
 
   public static void CreatePseudo(AutoAccount account)
@@ -30344,15 +30318,13 @@ label_94:
     }
   }
 
-  public void OnTimerElapsed(object sender, ElapsedEventArgs e)
+  public void OnBGThreadTimerElapsed(object sender, ElapsedEventArgs e)
   {
     BGHandler();
   }
 
   public void BGHandler()
   {
-    if (this == null)
-      return;
     if (this != null)
     {
       try
@@ -30586,20 +30558,6 @@ label_94:
       }
       catch (Exception ex)
       {
-      }
-    }
-    if (frmLogin.LastGLoginThread.Contains(this.BGThread.ManagedThreadId) && frmLogin.GAuto.AllAutoAccounts.Count == 0)
-    {
-      if (this.AIThread == null)
-      {
-        try
-        {
-          frmLogin.LastGLoginThread.Clear();
-          this.Target.BGRunner = false;
-        }
-        catch (Exception ex)
-        {
-        }
       }
     }
     Thread.Sleep(frmLogin.GAuto.Settings.numDelayTrue);
