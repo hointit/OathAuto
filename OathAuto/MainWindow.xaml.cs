@@ -1,4 +1,5 @@
-﻿using OathAuto.Tools.Services;
+﻿using OathAuto.AppState;
+using OathAuto.Tools.Services;
 using OathAuto.ViewModels;
 using System.ComponentModel;
 using System.Windows;
@@ -15,6 +16,10 @@ namespace OathAuto
     public MainWindow()
     {
       InitializeComponent();
+
+      // Initialize SettingState singleton early to load all settings into memory
+      var settingState = SettingState.Instance;
+
       _viewModel = new MainWindowViewModel();
       DataContext = _viewModel;
     }

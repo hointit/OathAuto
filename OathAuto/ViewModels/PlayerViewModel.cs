@@ -25,17 +25,19 @@ namespace OathAuto.ViewModels
   public partial class PlayerViewModel : INotifyPropertyChanged
   {
     private Player _player;
-    private DatabaseService _databaseService;
+    private DatabaseService _databaseService; // Only used for loading skills
     private ICommand _skillCheckedChangedCommand;
     private ICommand _getCurrentPositionCommand;
     private ICommand _clearFixedPositionCommand;
     private ICommand _clearSelectedPetCommand;
+    private ICommand _saveSettingsCommand;
 
     #region Commands
     public ICommand SkillCheckedChangedCommand => _skillCheckedChangedCommand;
     public ICommand GetCurrentPositionCommand => _getCurrentPositionCommand;
     public ICommand ClearFixedPositionCommand => _clearFixedPositionCommand;
     public ICommand ClearSelectedPetCommand => _clearSelectedPetCommand;
+    public ICommand SaveSettingsCommand => _saveSettingsCommand;
     #endregion
     private readonly LockStatus _lockRunAction = new LockStatus() { Status = "Lock Action" };
 
@@ -65,6 +67,7 @@ namespace OathAuto.ViewModels
       _getCurrentPositionCommand = new RelayCommand(ExecuteGetCurrentPosition);
       _clearFixedPositionCommand = new RelayCommand(ExecuteClearFixedPosition);
       _clearSelectedPetCommand = new RelayCommand(ExecuteClearSelectedPet);
+      _saveSettingsCommand = new RelayCommand(ExecuteSaveSettings);
       Debug.WriteLine("--------------------------------INIT PLAYER VIEWMODLE----------------------");
     }
 
@@ -213,10 +216,8 @@ namespace OathAuto.ViewModels
       {
         if (_playerMode != value)
         {
-          var oldMode = _playerMode;
           _playerMode = value;
 
-          // Update settings
           if (_settings != null)
           {
             _settings.Mode = value;
@@ -272,7 +273,7 @@ namespace OathAuto.ViewModels
         {
           if (isChangeMap)
           {
-            Thread.Sleep(2500);
+            Thread.Sleep(5000);
           }
           if (_playerMode == PlayerMode.Training)
           {
@@ -317,14 +318,13 @@ namespace OathAuto.ViewModels
         }
         else
         {
-          SetTrainingState(false);
+          SetTrainingState(true);
         }
 
         // Notify Mode property
         OnPropertyChanged(nameof(Mode));
       }
-      // Save settings when any property changes
-      SaveSettings();
+      // Auto-save removed - user must click Save button
     }
 
     public void LoadSkills()
@@ -547,9 +547,17 @@ namespace OathAuto.ViewModels
 
     #region Settings Persistence
 
+    /// <summary>
+    /// Execute command to save settings manually
+    /// </summary>
+    private void ExecuteSaveSettings(object parameter)
+    {
+      SaveSettings();
+    }
+
     private void SaveSettings()
     {
-      if (_databaseService == null || _player == null || _settings == null)
+      if (_player == null || _settings == null)
         return;
       try
       {
@@ -560,7 +568,8 @@ namespace OathAuto.ViewModels
           _player.InventoryItems.Where(i => i.IsSelected).Select(i => i.Id).ToList()
         );
 
-        _databaseService.SavePlayerSettings(_settings, Player.Name);
+        // Save using SettingState instead of DatabaseService directly
+        SettingState.Instance.SaveSettings(_settings, Player.Name);
         Debug.WriteLine($"Settings saved for player {_player.DatabaseId}");
       }
       catch (Exception ex)
@@ -570,14 +579,16 @@ namespace OathAuto.ViewModels
     }
     public void LoadSettings()
     {
-      if (_databaseService == null || _player == null || _player.DatabaseId <= 0 || 
+      Debug.WriteLine($"-----------------Load setting for player {Player.Name}");
+      if (_player == null || _player.DatabaseId <= 0 ||
         ( _player.Skills != null && _player.Skills.Count > 0))
       {
         return;
       }
       try
       {
-        var loadedSettings = _databaseService.LoadPlayerSettings(_player.DatabaseId, _player.Name);
+        // Load settings from SettingState (will load from DB if not cached)
+        var loadedSettings = SettingState.Instance.GetSettings(_player.DatabaseId, _player.Name);
         if (loadedSettings != null)
         {
           // Set the Settings property with loaded data
@@ -587,13 +598,13 @@ namespace OathAuto.ViewModels
           _playerMode = _settings.Mode;
 
           // Update training state based on mode
-          if (_playerMode == PlayerMode.Training)
+          if (_playerMode == PlayerMode.None)
           {
-            SetTrainingState(true);
+            SetTrainingState(false);
           }
           else
           {
-            SetTrainingState(false);
+            SetTrainingState(true);
           }
 
           // Load checked inventory items
@@ -615,9 +626,7 @@ namespace OathAuto.ViewModels
               Debug.WriteLine($"Error loading item selections: {ex.Message}");
             }
           }
-
           Debug.WriteLine($"Settings loaded for player {_player.DatabaseId}");
-
           // Call SetPetActive to activate the selected pet
           SetPetActive();
         }
@@ -659,7 +668,7 @@ namespace OathAuto.ViewModels
     {
       if (e.PropertyName == nameof(InventoryItem.IsSelected))
       {
-        SaveSettings();
+        // Auto-save removed - user must click Save button
       }
 
       if (e.PropertyName == nameof(Skill.IsSelected))
@@ -669,7 +678,7 @@ namespace OathAuto.ViewModels
         {
           HandleSkillCheckedChanged(item.Id);
         }
-        SaveSettings();
+        // Auto-save removed - user must click Save button
       }
     }
 

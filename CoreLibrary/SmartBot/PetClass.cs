@@ -233,7 +233,6 @@ public class PetClass
     }
   }
 
-  private string GetTableName() => GADB.GetCharTableName(this.CharDBID);
 
   public void SaveSingleSetting(
     string keyName,
@@ -241,6 +240,5 @@ public class PetClass
     string desc = "",
     params string[] parameters)
   {
-    GADB.SaveSingleSetting(this.GetTableName(), keyName, value, desc, parameters);
   }
 }

@@ -31,7 +31,19 @@
          VerticalAlignment="Center"
          Margin="10,0"/>
 
-        <CheckBox  Content="Tự dùng x2.5" IsChecked="{Binding Settings.IsAutoUseX2Exp, Mode=TwoWay}" Margin="40,5"/>
+        <CheckBox  Content="Tự dùng x2.5" IsChecked="{Binding Settings.IsAutoUseX2Exp, Mode=TwoWay}" Margin="20,5, 0, 0"/>
+        <Button Content="💾"
+                Command="{Binding SaveSettingsCommand}"
+                Margin="10,0,0,0"
+                Padding="2"
+                FontFamily="Segoe UI Emoji"
+                FontSize="14"
+                Width="26"
+                Height="22"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                ToolTip="Save Settings"/>
       </StackPanel>
 
       <CheckBox Grid.Row="2" Grid.Column="0" Content="Tự reset khi đủ cấp" IsChecked="{Binding Settings.IsAutoUseResetLevelItem, Mode=TwoWay}" Margin="0,5"/>
@@ -46,8 +58,8 @@
         <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding Settings.FixedY, StringFormat={}{0:F0}}"/>
         <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" Text="Map:"/>
         <TextBlock VerticalAlignment="Center" Margin="0,0,15,0" Text="{Binding Settings.FixedMapName}"/>
-        <Button Content="⊕" Width="24" Height="22" Padding="0" Command="{Binding GetCurrentPositionCommand}" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ToolTip="Get Current Position" FontSize="16" />
-        <Button Content="✖" Width="24" Height="22" Padding="0" Margin="5,0,15,0" Command="{Binding ClearFixedPositionCommand}" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ToolTip="Clear Position" Foreground="Red" FontWeight="Bold" />
+        <Button Content="🎯" Width="26" Height="22" Padding="0" Command="{Binding GetCurrentPositionCommand}" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ToolTip="Get Current Position" FontFamily="Segoe UI Emoji" FontSize="14" />
+        <Button Content="❌" Width="26" Height="22" Padding="0" Margin="5,0,15,0" Command="{Binding ClearFixedPositionCommand}" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ToolTip="Clear Position" FontFamily="Segoe UI Emoji" FontSize="14" />
       </StackPanel>
       <!-- Pet Selection -->
       <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,5">
@@ -58,7 +70,7 @@
                   DisplayMemberPath="Name"
                   SelectedValue="{Binding Settings.SelectedPetId, Mode=TwoWay}"
                   VerticalAlignment="Center" />
-        <Button Content="✖" Width="24" Height="22" Padding="0" Margin="5,0,0,0" Command="{Binding ClearSelectedPetCommand}" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ToolTip="Clear Pet Selection" Foreground="Red" FontWeight="Bold" />
+        <Button Content="❌" Width="26" Height="22" Padding="0" Margin="5,0,0,0" Command="{Binding ClearSelectedPetCommand}" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ToolTip="Clear Pet Selection" FontFamily="Segoe UI Emoji" FontSize="14" />
       </StackPanel>
       <GroupBox Header="Sử dụng vật phẩm" Grid.Row="5" Grid.ColumnSpan="2">
         <ScrollViewer Grid.Row="4" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Auto" >

@@ -3749,7 +3749,7 @@ label_44:
           account.Settings.AIWhileLoop = true;
           if (account.AIThreadTimer == null)
           {
-            account.AIThreadTimer = new System.Timers.Timer();
+            account.AIThreadTimer = new System.Timers.Timer(300);
             account.AIThreadTimer.Elapsed += account.OnAIThreadTimerElapsed;
             account.AIThreadTimer.AutoReset = true;
             account.AIThreadTimer.Start();
@@ -7272,19 +7272,7 @@ label_17:
   }
 
   private void btnXoaDuLieuTN_Click(object sender, EventArgs e)
-  {
-    if (frmLogin.GAuto.CurrentAuto == null || frmLogin.GAuto.CurrentAuto.Settings.tboxIDBang == 0 || frmLogin.GAuto.CurrentAuto.Settings.tBoxIDFriend == 0 || !System.IO.File.Exists(frmLogin.GAuto.Settings.SettingDB))
-      return;
-    SQLiteConnection connection = new SQLiteConnection("Data Source=" + frmLogin.GAuto.Settings.SettingDB);
-    connection.Open();
-    if (connection.State != ConnectionState.Open)
-      return;
-    SQLiteCommand sqLiteCommand = new SQLiteCommand($"DELETE FROM tnprices2 WHERE bangid = '{frmLogin.GAuto.CurrentAuto.Settings.tboxIDBang}' AND friendid = '{frmLogin.GAuto.CurrentAuto.Settings.tBoxIDFriend}';", connection);
-    lock (frmLogin.settingDB)
-      sqLiteCommand.ExecuteScalar();
-    connection.Close();
-    int num = (int) MessageBox.Show(string.Format(frmMain.langDelTNPath, (object) frmLogin.GAuto.CurrentAuto.Settings.tboxIDBang, (object) frmLogin.GAuto.CurrentAuto.Settings.tBoxIDFriend), frmMain.langDelData, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-  }
+  {}
 
   private void cboxChayNhanh_CheckedChanged(object sender, EventArgs e)
   {

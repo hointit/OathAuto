@@ -1020,7 +1020,6 @@ public class frmLogin : Form
           KeyMessage = defaultHotKey.KeyMessage,
           NotDefault = false
         });
-      GADB.LoadGlobalSettings();
       frmLogin.GAuto.Settings.AllInformationLoaded = true;
     })).Start();
   }
@@ -1851,137 +1850,11 @@ label_97:
 
   private void btnLoginClick()
   {
-    bool flag = false;
-    this.txtUserID.Text = "CodeCrack";
-    this.txtUserPassword.Text = "FUCKGAUTO";
-    if (GA.CheckForSQLInjection(this.txtUserID.Text))
-      flag = true;
-    if (flag)
-    {
-      int num = (int) MessageBox.Show("Tên đăng nhập của bạn có ký tự đặc biệt, vui lòng tạo tài khoản mới", "Lỗi đăng nhập", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-    }
-    if (string.IsNullOrEmpty(this.txtUserID.Text) || string.IsNullOrEmpty(this.txtUserPassword.Text) || flag)
-      return;
-    this.lblStatus.ForeColor = Color.Green;
-    this.lblStatus.Text = frmMain.langLoggingIn;
-    frmLogin.SwitchURL = string.Compare(this.txtUserID.Text, "gautofree", StringComparison.CurrentCulture) == 0;
-    if (this.cboxSavePass.Checked && (this.passwordChanged || this.usernameChanged))
-    {
-      DBInfoClass info1 = new DBInfoClass();
-      info1.Key = "autousername";
-      info1.Value = this.txtUserID.Text;
-      info1.Description = "Tên đăng nhập vào auto";
-      GADB.ProcessInfoDB("", true, info1.Key, info1);
-      DBInfoClass info2 = new DBInfoClass()
-      {
-        Key = "autopassword",
-        Value = GA.XOREncrypt(this.txtUserPassword.Text, frmLogin.GAuto.Settings.PasswordEncKey)
-      };
-      info2.Value = Convert.ToBase64String(Encoding.UTF8.GetBytes(info2.Value));
-      GADB.ProcessInfoDB("", true, info2.Key, info2);
-      DBInfoClass info3 = new DBInfoClass();
-      info3.Key = "savepass";
-      info3.Value = "1";
-      GADB.ProcessInfoDB("", true, info3.Key, info3);
-    }
-    else if (!this.cboxSavePass.Checked)
-    {
-      DBInfoClass info4 = new DBInfoClass();
-      info4.Key = "autousername";
-      info4.Value = "";
-      info4.Description = "Tên đăng nhập vào auto";
-      GADB.ProcessInfoDB("", true, info4.Key, info4);
-      DBInfoClass info5 = new DBInfoClass();
-      info5.Key = "autopassword";
-      info5.Value = "";
-      GADB.ProcessInfoDB("", true, info5.Key, info5);
-      DBInfoClass info6 = new DBInfoClass();
-      info6.Key = "savepass";
-      info6.Value = "0";
-      GADB.ProcessInfoDB("", true, info6.Key, info6);
-    }
-    if (frmLogin.CompilingLanguage == "VN")
-    {
-      DBInfoClass info = new DBInfoClass();
-      info.Key = "chedoonly";
-      info.Value = this.cboxOnlyCheDo.Checked ? "1" : "0";
-      GADB.ProcessInfoDB("", true, info.Key, info);
-      info.Key = "cboxMoThuongNhan";
-      info.Value = this.cboxMoThuongNhan.Checked ? "1" : "0";
-      GADB.ProcessInfoDB("", true, info.Key, info);
-    }
-    if (!this.backgroundWorker1.IsBusy)
-    {
-      LoginParams loginParams = new LoginParams();
-      loginParams.Username = this.txtUserID.Text;
-      loginParams.Password = this.txtUserPassword.Text;
-      loginParams.ShowForm = true;
-      loginParams.Action = "login";
-      this.btnLogin.Enabled = false;
-      this.flagLoginCount = frmLogin.GlobalTimer.ElapsedMilliseconds;
-      this.backgroundWorker1.RunWorkerAsync((object) loginParams);
-    }
-    else
-      GA.ShowMessage("Hệ thống đang bận, vui lòng bấm đăng nhập lần nữa.", "Hệ thống bận");
+    
   }
 
   private void frmLogin_Load(object sender, EventArgs e)
   {
-    this.cboxOnlyCheDo.Visible = false;
-    if (!System.IO.File.Exists(".\\System.Data.SQLite.dll"))
-    {
-      int num = (int) MessageBox.Show(frmMain.langLackofFiles1, frmMain.langNeedFiles, MessageBoxButtons.OK, MessageBoxIcon.Hand);
-      GA.ExitAndCleanup();
-    }
-    else
-    {
-      frmLogin.GAuto.Settings.Account.EncryptionTime = Math.Abs(Environment.TickCount);
-      frmLogin.GAuto.Settings.Account.TrafficKey = GA.ConvertToSecureString(frmLogin.GAuto.Settings.Account.EncryptionTime.ToString("0") + "fuckTDT-TL");
-      this.ProcessToolTip();
-      DBInfoClass info1 = new DBInfoClass();
-      GADB.ProcessInfoDB((string) null, false, "savepass", info1);
-      if (info1.Value == "1")
-      {
-        this.cboxSavePass.Checked = true;
-        GADB.ProcessInfoDB((string) null, false, "autousername", info1);
-        this.txtUserID.Text = info1.Value;
-        GADB.ProcessInfoDB((string) null, false, "autopassword", info1);
-        byte[] bytes = Convert.FromBase64String(info1.Value);
-        info1.Value = Encoding.UTF8.GetString(bytes);
-        info1.Value = GA.XOREncrypt(info1.Value, frmLogin.GAuto.Settings.PasswordEncKey);
-        this.txtUserPassword.Text = info1.Value;
-      }
-      else
-        this.cboxSavePass.Checked = false;
-      if (frmLogin.CompilingLanguage == "VN")
-      {
-        DBInfoClass info2 = new DBInfoClass();
-        GADB.ProcessInfoDB((string) null, false, "chedoonly", info2);
-        if (info2.Value == "1")
-        {
-          this.cboxOnlyCheDo.Checked = true;
-          frmLogin.GAuto.Settings.cboxOnlyCheDo = true;
-        }
-        else
-        {
-          this.cboxOnlyCheDo.Checked = false;
-          frmLogin.GAuto.Settings.cboxOnlyCheDo = false;
-        }
-        GADB.ProcessInfoDB((string) null, false, "cboxMoThuongNhan", info2);
-        if (info2.Value == "1")
-        {
-          this.cboxMoThuongNhan.Checked = true;
-          frmLogin.GAuto.Settings.cboxMoThuongNhan = true;
-        }
-        else
-        {
-          this.cboxMoThuongNhan.Checked = false;
-          frmLogin.GAuto.Settings.cboxMoThuongNhan = false;
-        }
-      }
-      this.checkPasswordChanged = true;
-      this.checkUserNameChanged = true;
-    }
   }
 
   private void ProcessToolTip()

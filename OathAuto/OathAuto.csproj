@@ -79,6 +79,7 @@
     <Compile Include="AppState\BaseHashState.cs" />
     <Compile Include="AppState\Constant.cs" />
     <Compile Include="AppState\PositionClickState.cs" />
+    <Compile Include="AppState\SettingState.cs" />
     <Compile Include="AppState\StringConverterState.cs" />
     <Compile Include="Models\LockStatus.cs" />
     <Compile Include="Models\PlayerSettings.cs" />
@@ -185,7 +186,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="settings.dat" />
+    <None Include="settings.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="TLBB.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -301,7 +301,6 @@ public class GlobalSettings
   public string tabThuongNhanName = "tabThuongNhan";
   public float TNNPC_X = 149f;
   public float TNNPC_Y = 56f;
-  public string SettingDB = "settings.dat";
   public string SettingTable = "gauto";
   public string PasswordEncKey = "mariaOzawa1";
   public uint WM_ENABLETHREAD;
@@ -742,7 +741,6 @@ public class GlobalSettings
     string desc = "",
     params string[] parameters)
   {
-    GADB.SaveSingleSetting("gauto", keyName, value, desc, parameters);
   }
 
   public bool IsPro2 => this.AppMode2 == AllEnums.AutoModes.Pro;

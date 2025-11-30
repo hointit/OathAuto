@@ -535,7 +535,6 @@ public class GA
     }
     if (!flag || str == null)
       return;
-    GADB.SaveSingleSetting("gauto", "hotkey", str, frmMain.langHotKeyAuto, (string[]) null);
   }
 
   public static void LoadHotKeys()
@@ -5931,82 +5930,6 @@ label_239:
       }
     }
     return "";
-  }
-
-  internal static void GetItemSpread(TNNPCShopItem shopItem, int myBangID, int friendBangID)
-  {
-    if (myBangID == -1 || friendBangID == -1 || shopItem == null || !System.IO.File.Exists(frmLogin.GAuto.Settings.SettingDB))
-      return;
-    SQLiteConnection connection = new SQLiteConnection("Data Source=" + frmLogin.GAuto.Settings.SettingDB);
-    connection.Open();
-    if (connection.State != ConnectionState.Open)
-      return;
-    if (GADB.CheckAndCreateTable(frmLogin.GAuto.Settings.TNTable))
-    {
-      SQLiteDataReader reader = new SQLiteCommand($"SELECT * FROM tnprices2 WHERE itemid = '{shopItem.ItemID}' AND bangid = '{myBangID}' AND friendid = {friendBangID};", connection).ExecuteReader();
-      DataTable dataTable = new DataTable();
-      dataTable.Load((IDataReader) reader);
-      if (dataTable.Rows.Count > 0)
-      {
-        DataRow row = dataTable.Rows[0];
-        shopItem.HistSpread = !string.IsNullOrEmpty(row["spread"].ToString()) ? double.Parse(row["spread"].ToString()) : 0.0;
-        shopItem.MidPrice = !string.IsNullOrEmpty(row["midprice"].ToString()) ? double.Parse(row["midprice"].ToString()) : 0.0;
-        shopItem.HighPrice = !string.IsNullOrEmpty(row["highprice"].ToString()) ? double.Parse(row["highprice"].ToString()) : 0.0;
-        shopItem.LowPrice = !string.IsNullOrEmpty(row["lowprice"].ToString()) ? double.Parse(row["lowprice"].ToString()) : 0.0;
-        shopItem.FromBangID = myBangID;
-        shopItem.ToBangID = friendBangID;
-      }
-      else
-      {
-        shopItem.HistSpread = 0.0;
-        shopItem.MidPrice = 0.0;
-        shopItem.HighPrice = 0.0;
-        shopItem.LowPrice = 0.0;
-        shopItem.FromBangID = myBangID;
-        shopItem.ToBangID = friendBangID;
-      }
-    }
-    connection.Close();
-  }
-
-  internal static void GetItemSpread(InventoryItem invenItem, int p1, int p2)
-  {
-    if (invenItem.ItemID < 0 || p1 == -1 || p2 == -1)
-      return;
-    TNNPCShopItem shopItem = new TNNPCShopItem();
-    shopItem.ItemID = invenItem.ItemID;
-    GA.GetItemSpread(shopItem, p1, p2);
-    if (shopItem.MidPrice == 0.0)
-      return;
-    invenItem.MidSpread = shopItem.MidPrice;
-    invenItem.HighSpread = shopItem.HistSpread;
-    invenItem.HighSpread = shopItem.HighPrice;
-    invenItem.LowSpread = shopItem.LowPrice;
-    invenItem.HasHistory = true;
-  }
-
-  internal static void UpdateTNItem(
-    int itemID,
-    int fromBangID,
-    int toBangID,
-    double midSpread,
-    double highSpread,
-    double lowSpread,
-    double highSpread2)
-  {
-    if (fromBangID == -1 || toBangID == -1 || !System.IO.File.Exists(frmLogin.GAuto.Settings.SettingDB))
-      return;
-    SQLiteConnection connection = new SQLiteConnection("Data Source=" + frmLogin.GAuto.Settings.SettingDB);
-    connection.Open();
-    if (connection.State != ConnectionState.Open)
-      return;
-    SQLiteCommand sqLiteCommand;
-    if (new SQLiteCommand($"SELECT itemid FROM tnprices2 WHERE itemid = '{itemID}' AND bangid = '{fromBangID}' AND friendid = '{toBangID}';", connection).ExecuteScalar() == null)
-      sqLiteCommand = new SQLiteCommand($"INSERT INTO tnprices2 ('bangid', 'friendid', 'spread', 'itemid', 'mytype', 'midprice', 'lowprice', 'highprice' ) VALUES ('{fromBangID}', '{toBangID}', '{highSpread.ToString("0.00")}', '{itemID}', '{1}', '{midSpread.ToString("0.00")}', '{lowSpread.ToString("0.00")}', '{highSpread2.ToString("0.00")}');", connection);
-    else
-      sqLiteCommand = new SQLiteCommand($"UPDATE tnprices2 SET spread = '{highSpread.ToString("0.00")}', midprice = '{midSpread.ToString("0.00")}' WHERE itemid = '{itemID}' AND bangid = '{fromBangID}' AND friendid = '{toBangID}'", connection);
-    sqLiteCommand.ExecuteNonQuery();
-    connection.Close();
   }
 
   internal static string ConvertToVISCII(string myString, int versionNum = 1)

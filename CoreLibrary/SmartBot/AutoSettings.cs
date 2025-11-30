@@ -849,7 +849,7 @@ public class AutoSettings : AllEnums
     string desc = "",
     params string[] parameters)
   {
-    GADB.SaveSingleSetting(this.GetTableName(), keyName, value, desc, parameters);
+    return;
   }
 
   public string AIModeDisplay
@@ -1067,8 +1067,6 @@ public class AutoSettings : AllEnums
       this._CharDBID = value;
     }
   }
-
-  private string GetTableName() => GADB.GetCharTableName(this.CharDBID);
 
   public bool cboxCaptchaReset
   {

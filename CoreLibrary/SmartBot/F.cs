@@ -179,9 +179,7 @@ public class F
     try
     {
       long elapsedMilliseconds = frmLogin.GlobalTimer.ElapsedMilliseconds;
-      
       account.BGThreadTimer.Stop();
-      account.BGThreadTimer = null;
     }
     catch (Exception ex)
     {
@@ -212,7 +210,6 @@ public class F
     try
     {
       account.AIThreadTimer.Stop();
-      account.AIThreadTimer = null;
     }
     catch (Exception ex)
     {

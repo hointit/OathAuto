@@ -6830,7 +6830,6 @@ public class SmartClass
                         F.UnhookProcess(allAutoAccount, true);
                         if (allAutoAccount.AIThreadTimer != null)
                         {
-                          allAutoAccount.AIThreadTimer = null;
                           allAutoAccount.AIThreadTimer.Stop();
                         }
                         
@@ -7324,7 +7323,6 @@ label_330:
       if (unhook && frmLogin.GAuto.AllAutoAccounts[i].BGThreadTimer != null && unhook)
         frmLogin.GAuto.AllAutoAccounts[i].BGThreadTimer.Stop();
 
-      Debug.WriteLine("AICreated 1");
       frmLogin.GAuto.AllAutoAccounts[i].Target.AICreated = false;
       if (!unhook)
       {
@@ -7345,7 +7343,11 @@ label_330:
       if (!unhook)
         return;
       if (frmLogin.GAuto.AllAutoAccounts[i].AIThreadTimer != null)
+      {
+        Debug.WriteLine("Stop  AIThreadTimer ---- from SmartClass line 7348");
         frmLogin.GAuto.AllAutoAccounts[i].AIThreadTimer.Stop();
+
+      }
       frmLogin.GAuto.AllAutoAccounts[i].Target.NeedToAbort2 = true;
       if (unhook)
         frmLogin.GAuto.Settings.ProcessList.Remove(frmLogin.GAuto.AllAutoAccounts[i].Target.ProcessID);
@@ -7440,16 +7442,10 @@ label_330:
       this.AllAutoAccounts.Add(newAccount);
     if (titleCheck == 1 || titleCheck == 99)
       newAccount.Target.CyberStamp = frmLogin.GlobalTimer.ElapsedMilliseconds;
-
-    newAccount.BGThreadTimer = new System.Timers.Timer(300); // 300ms interval
+    newAccount.BGThreadTimer = new System.Timers.Timer(300);
     newAccount.BGThreadTimer.Elapsed += newAccount.OnBGThreadTimerElapsed;
     newAccount.BGThreadTimer.AutoReset = true;
     newAccount.BGThreadTimer.Start();
-
-
-    //newAccount.BGThread = new Thread(new ThreadStart(newAccount.BGHandler));
-    //newAccount.BGThread.IsBackground = true;
-    //newAccount.BGThread.Start();
   }
 
   private static HashAddressPatch GetMyPatch(AutoAccount newAccount)

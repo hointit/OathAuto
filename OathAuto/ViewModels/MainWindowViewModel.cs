@@ -96,8 +96,6 @@ namespace OathAuto.ViewModels
           .Where(vm => !updatedPlayers.Any(p => p.ProcessID == vm.Player.ProcessID && vm.Player.ProcessID != 0))
           .ToList();
 
-        
-
         foreach (var playerToRemove in playersToRemove)
         {
           Debug.WriteLine($"updatedPlayers: {updatedPlayers.Count}-----playersToRemove---{playersToRemove.Count}----PID: {playerToRemove.Player.ProcessID}-----CharID: {playerToRemove.Player.Id}");
@@ -121,6 +119,8 @@ namespace OathAuto.ViewModels
             var isChangeMempai = existingViewModel.Player.Menpai != updatedPlayer.Menpai;
             existingViewModel.LoadSkills();
             existingViewModel.LoadPets();
+            existingViewModel.LoadPlayerInventory();
+            existingViewModel.LoadSettings();
           }
           else
           {
@@ -129,10 +129,6 @@ namespace OathAuto.ViewModels
             {
               newPlayerViewModel.LoadSettings();
               newPlayerViewModel.LoadSkills();
-            }
-            else
-            {
-              newPlayerViewModel.Settings = null;
             }
 
             newPlayerViewModel.LoadPlayerInventory();
@@ -178,6 +174,7 @@ namespace OathAuto.ViewModels
       existingPlayer.ProcessID = newData.ProcessID;
       existingPlayer.Monsters = newData.Monsters;
       existingPlayer.DatabaseId = newData.DatabaseId;
+      existingPlayer.AutoAccount = newData.AutoAccount;
     }
 
     #endregion

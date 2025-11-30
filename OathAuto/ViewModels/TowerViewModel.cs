@@ -31,10 +31,18 @@ namespace OathAuto.ViewModels
 
     private ObservableCollection<TowerPosition> _towerPositions = new()
       {
+        new ()
+        {
+          Id = 0,
+          Name = "Trung tâm",
+          Position = new () { X = 31, Y = 34 },
+          MiddlePosition = new () { X = 47, Y = 22 },
+          IsSelected = false
+        },
         // vị trí đầu tiên khi vào map, 46,35
         new () {
-          Id = 1, 
-          Name = "Vị trí 1", 
+          Id = 1,
+          Name = "Vị trí 1",
           Position = new () { X = 26, Y = 36 },
           SubPostion = new () { X = 25, Y = 38},
           IsSelected = false
@@ -104,7 +112,6 @@ namespace OathAuto.ViewModels
             SetTrainingState(true);
             return;
           }
-
           var target = _towerPositions.FirstOrDefault(p => p.Id == _settings.TowerPositionId);
           var distance = GA.CalculateDistance(_player.PosX, _player.PosY, target.Position.X, target.Position.Y);
           switch (_movingStatus)
@@ -161,11 +168,11 @@ namespace OathAuto.ViewModels
                   }
                   else
                   {
-                    if (target.SubPostion != null)
-                    {
-                      _player.AutoAccount.CallMoveTo((int)target.SubPostion.X, (int)target.SubPostion.Y);
-                      Thread.Sleep(2000);
-                    }
+                    //if (target.SubPostion != null)
+                    //{
+                    //  _player.AutoAccount.CallMoveTo((int)target.SubPostion.X, (int)target.SubPostion.Y);
+                    //  Thread.Sleep(2000);
+                    //}
                     _movingStatus = MovingStatus.ToPosition;
                   }
                   // TODO: check xem nếu quá lâu không thấy quái thì làm gì

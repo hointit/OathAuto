@@ -307,7 +307,6 @@ public class frmHotKeys : Form
     }
     if (!flag)
       return;
-    GADB.SaveSingleSetting("gauto", "hotkey", "", "Hotkey dùng trong auto", (string[]) null);
   }
 
   public int MyTest { get; set; }
