@@ -24223,6 +24223,7 @@ label_104:
 
   public void OnAIThreadTimerElapsed(object sender, ElapsedEventArgs e)
   {
+    return;
     if (this.Myself.MapID == 2)
     {
       return;
@@ -29920,7 +29921,10 @@ label_94:
               this.MyFlag.Slow1MinRead = true;
             }
           }
-          SmartClass.ReadMemory(this);
+          lock (lockReadMem)
+          {
+            SmartClass.ReadMemory(this);
+          }
           SmartClass.ProcessBocRing(this);
           SmartClass.ProcessMsgRing(this);
           SmartClass.ProcessNguoiRing(this);
@@ -30074,7 +30078,7 @@ label_94:
     Thread.Sleep(frmLogin.GAuto.Settings.numDelayTrue);
     this.MyFlag.EndBG = true;
   }
-
+  private object lockReadMem = new object();
   public static unsafe void SendPatchInfoPattern(AutoAccount account)
   {
     Stopwatch stopwatch = new Stopwatch();

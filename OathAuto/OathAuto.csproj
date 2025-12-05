@@ -80,6 +80,7 @@
     <Compile Include="AppState\Constant.cs" />
     <Compile Include="AppState\PositionClickState.cs" />
     <Compile Include="AppState\SettingState.cs" />
+    <Compile Include="AppState\SkillState.cs" />
     <Compile Include="AppState\StringConverterState.cs" />
     <Compile Include="Models\LockStatus.cs" />
     <Compile Include="Models\PlayerSettings.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Services\MouseInputService.cs" />
     <Compile Include="Services\SmartClassService.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\PlayerActionViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\TowerViewModel.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />

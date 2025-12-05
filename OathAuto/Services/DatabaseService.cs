@@ -19,46 +19,10 @@ namespace OathAuto.Services
         throw new FileNotFoundException($"Database file not found: {dbPath}");
       }
       _connectionString = $"Data Source={dbPath};Version=3;";
-
-      // Ensure settings table exists
-      CreateSettingsTableIfNotExists();
     }
 
-    private void CreateSettingsTableIfNotExists()
-    {
-      using (var connection = new SQLiteConnection(_connectionString))
-      {
-        connection.Open();
 
-        string createTableQuery = @"
-          CREATE TABLE IF NOT EXISTS PlayerSettings (
-            PlayerId INTEGER PRIMARY KEY,
-            PlayerName TEXT DEFAULT '',
-            Mode INTEGER DEFAULT 0,
-            IsAutoUpLevel INTEGER DEFAULT 0,
-            IsAutoUseX2Exp INTEGER DEFAULT 0,
-            IsAutoUseResetLevelItem INTEGER DEFAULT 0,
-            IsAutoUseAddPointItem INTEGER DEFAULT 0,
-            MaxLevel INTEGER DEFAULT 130,
-            FixedX INTEGER DEFAULT 0,
-            FixedY INTEGER DEFAULT 0,
-            FixedMapId INTEGER DEFAULT 0,
-            FixedMapName TEXT DEFAULT '',
-            IsAutoMoveEnabled INTEGER DEFAULT 1,
-            TowerPositionId TEXT DEFAULT '',
-            SelectedSkillIdsJson TEXT DEFAULT '',
-            CheckedItemIdsJson TEXT DEFAULT '',
-            SelectedPetId INTEGER DEFAULT 0
-          )";
-
-        using (var command = new SQLiteCommand(createTableQuery, connection))
-        {
-          command.ExecuteNonQuery();
-        }
-      }
-    }
-
-    public List<Skill> GetSkillsByMenpai(string menpai)
+    public List<Skill> GetAllSkills()
     {
       var skills = new List<Skill>();
 
@@ -69,13 +33,10 @@ namespace OathAuto.Services
         string query = @"SELECT menpai, skillbook, bookslot, skillid, skillname,
                                ragerequired, pkslot, trainslot, buffperiod,
                                isattack, isbuff, special, comment
-                        FROM Skillset
-                        WHERE menpai = @menpai";
+                        FROM Skillset";
 
         using (var command = new SQLiteCommand(query, connection))
         {
-          command.Parameters.AddWithValue("@menpai", menpai);
-
           using (var reader = command.ExecuteReader())
           {
             while (reader.Read())
@@ -84,7 +45,8 @@ namespace OathAuto.Services
               {
                 Id = reader["skillid"] != DBNull.Value ? Convert.ToInt32(reader["skillid"]) : 0,
                 Name = reader["skillname"]?.ToString() ?? string.Empty,
-                IsSelected = false
+                Mempai = reader["menpai"]?.ToString() ?? string.Empty,
+                IsSelected = false,
               };
               skills.Add(skill);
             }

@@ -47,6 +47,7 @@ public class QuaiIndividual
   public long LastHitStamp;
   public long LastTimeSeen;
   public long noAttackStamp;
+  public double Distance;
 
   public string IDHex => GA.ConvertIntToHex(this.ID, true);
 

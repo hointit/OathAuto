@@ -6048,7 +6048,8 @@ public class SmartClass
       SmartClass.ReadMyValueString(account, ref myref3, int10);
       if (myref3.Contains("#"))
         myref3 = myref3.Split('#')[0];
-      account.MyQuai.AllQuai.Add(new QuaiIndividual()
+
+      var m = new QuaiIndividual()
       {
         ID = tempmsg.int7,
         PosX = tempmsg.float1,
@@ -6057,13 +6058,20 @@ public class SmartClass
         LastTimeSeen = account.nowStamp(),
         HPPointer = int3,
         Level = (int)tempmsg.byte1,
-        QuaiType = (byte) 1,
-        CanAttack = (byte) tempmsg.int5,
+        QuaiType = (byte)1,
+        CanAttack = (byte)tempmsg.int5,
         IsBossValue = tempmsg.int6,
         Name = myref1,
         DanhHieu = myref3,
-        HPPercent = num
-      });
+        HPPercent = num,
+      };
+      // Bỏ con pet của mình ra khỏi danh sách quái vật
+      if (m.ID == account.MyPet.ActivePetID)
+      {
+        return;
+      }
+      m.Distance = GA.CalculateDistance(m.PosX, m.PosY, account.Myself.PosX, account.Myself.PosX);
+      account.MyQuai.AllQuai.Add(m);
     }
     if ((double) num <= 0.0 || tempmsg.int7 != account.MyQuai.TargetID)
       return;
@@ -7374,6 +7382,18 @@ label_330:
             for (int index = frmLogin.GAuto.AllAutoAccounts.Count - 1; index >= 0; --index)
             {
               AutoAccount allAutoAccount = frmLogin.GAuto.AllAutoAccounts[index];
+
+              if (allAutoAccount.BGThreadTimer != null)
+              {
+                allAutoAccount.BGThreadTimer.Start();
+              }
+              else
+              {
+                allAutoAccount.BGThreadTimer = new System.Timers.Timer(300);
+                allAutoAccount.BGThreadTimer.Elapsed += allAutoAccount.OnBGThreadTimerElapsed;
+                allAutoAccount.BGThreadTimer.AutoReset = true;
+                allAutoAccount.BGThreadTimer.Start();
+              }
               if (allAutoAccount != null && !allAutoAccount.Target.ThreadDied)
                 allAutoAccount.Target.SelfAutoRef = 1;
             }

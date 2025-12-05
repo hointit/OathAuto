@@ -65,6 +65,7 @@ namespace OathAuto.Services
         if (isNotValid)
         {
           Thread.Sleep(300);
+          Debug.WriteLine($"Account -------------- isNotValid");
           continue;
         }
         else
@@ -105,7 +106,7 @@ namespace OathAuto.Services
           };
           account.Settings.cboxTuNhatVatPham = false;
           account.Settings.cboxTuClickYes2 = true;
-          account.IsAIEnabled = true;
+          account.IsAIEnabled = false;
           // set feed pet
           account.Settings.numPetHPPercent = 99;
           result.Add(newPlayer);

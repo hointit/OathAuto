@@ -178,8 +178,8 @@ namespace OathAuto.AppState
         FixedMapName = "",
         IsAutoMoveEnabled = true,
         TowerPositionId = 0,
-        SelectedSkillIdsJson = "",
-        CheckedItemIdsJson = "",
+        SelectedSkillIdsJson = "[]",
+        CheckedItemIdsJson = "[]",
         SelectedPetId = 0
       };
     }

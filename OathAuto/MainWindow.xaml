@@ -20,9 +20,9 @@
     <!-- Tools Menu Bar -->
     <Menu Grid.Row="0" Background="#F0F0F0">
       <MenuItem Header="Tools">
-        <MenuItem Header="Dừng tất cả auto" Click="PositionFinder_Click">
+        <MenuItem Header="Dừng tất cả auto" Command="{Binding StopAllAutoCommand}">
           <MenuItem.Icon>
-            <TextBlock Text="🎯" FontSize="14" FontFamily="Segoe UI Symbol"/>
+            <TextBlock Text="🛑" FontSize="14" FontFamily="Segoe UI Emoji"/>
           </MenuItem.Icon>
         </MenuItem>
         <MenuItem Header="Position Finder..." Click="PositionFinder_Click">

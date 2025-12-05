@@ -20,7 +20,7 @@
           </ItemsControl.ItemsPanel>
           <ItemsControl.ItemTemplate>
             <DataTemplate>
-              <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Margin="2" Content="{Binding Name}"/>
+              <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Margin="2" Content="{Binding Name}" IsEnabled="{Binding IsEnabled}" />
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>

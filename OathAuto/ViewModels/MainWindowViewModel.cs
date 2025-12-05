@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using System.Windows;
+using System.Windows.Input;
 using OathAuto.Models;
 using OathAuto.Services;
 
@@ -16,6 +17,7 @@ namespace OathAuto.ViewModels
     private readonly SmartClassService _smartClassService;
     private PlayerViewModel _selectedPlayer;
     private Timer _updateTimer;
+    private ICommand _stopAllAutoCommand;
 
     public MainWindowViewModel()
     {
@@ -23,9 +25,11 @@ namespace OathAuto.ViewModels
 
       // Initialize SmartClassService
       _smartClassService = new SmartClassService();
-
       // Initialize timer for background updates
       InitializeTimer();
+
+      // Initialize commands
+      _stopAllAutoCommand = new RelayCommand(ExecuteStopAllAuto);
     }
 
     private void InitializeTimer()
@@ -62,7 +66,7 @@ namespace OathAuto.ViewModels
     /// <summary>
     /// Collection of all player view models
     /// </summary>
-    
+
     /// <summary>
     /// Currently selected player for detail view and actions
     /// </summary>
@@ -77,6 +81,17 @@ namespace OathAuto.ViewModels
           OnPropertyChanged("SelectedPlayer");
         }
       }
+    }
+
+    #endregion
+
+    #region Commands
+
+    public ICommand StopAllAutoCommand => _stopAllAutoCommand;
+
+    private void ExecuteStopAllAuto(object parameter)
+    {
+      StopAllAuto();
     }
 
     #endregion
@@ -124,7 +139,7 @@ namespace OathAuto.ViewModels
           }
           else
           {
-            var newPlayerViewModel = new PlayerViewModel(updatedPlayer, _smartClassService, i);
+            var newPlayerViewModel = new PlayerViewModel(updatedPlayer, _smartClassService);
             if (updatedPlayer.DatabaseId > 0)
             {
               newPlayerViewModel.LoadSettings();
@@ -182,14 +197,72 @@ namespace OathAuto.ViewModels
     #region Cleanup
 
     /// <summary>
+    /// Stops all automation timers across all players and the main update timer
+    /// </summary>
+    public void StopAllAuto()
+    {
+      try
+      {
+        Debug.WriteLine("Stopping all automation timers...");
+
+        // Stop all AutoAccount timers (BGThreadTimer, AIThreadTimer)
+        var allPlayers = _smartClassService.GetAllAccountsData();
+        if (allPlayers != null)
+        {
+          foreach (var player in allPlayers)
+          {
+            if (player.AutoAccount != null)
+            {
+              // Stop AI Thread Timer (training automation)
+              if (player.AutoAccount.AIThreadTimer != null)
+              {
+                player.AutoAccount.AIThreadTimer.Stop();
+                Debug.WriteLine($"Stopped AIThreadTimer for player {player.Name}");
+              }
+
+              // Stop BG Thread Timer (background monitoring)
+              if (player.AutoAccount.BGThreadTimer != null)
+              {
+                player.AutoAccount.BGThreadTimer.Stop();
+                Debug.WriteLine($"Stopped BGThreadTimer for player {player.Name}");
+              }
+            }
+          }
+        }
+
+        // Stop PlayerViewModel timers if any exist
+        foreach (var playerViewModel in Players)
+        {
+          // Set player mode to None to stop any training
+          playerViewModel.Mode = PlayerMode.None;
+        }
+
+        // Stop main update timer
+        if (_updateTimer != null)
+        {
+          _updateTimer.Stop();
+          Debug.WriteLine("Stopped MainWindowViewModel update timer");
+        }
+
+        Debug.WriteLine("All automation stopped successfully");
+      }
+      catch (Exception ex)
+      {
+        Debug.WriteLine($"Error stopping automation: {ex.Message}");
+      }
+    }
+
+    /// <summary>
     /// Cleanup resources when ViewModel is disposed
     /// </summary>
     public void Cleanup()
     {
+      // Stop all automation before cleanup
+      StopAllAuto();
+
       // Stop and dispose timer
       if (_updateTimer != null)
       {
-        _updateTimer.Stop();
         _updateTimer.Elapsed -= OnTimerElapsed;
         _updateTimer.Dispose();
         _updateTimer = null;

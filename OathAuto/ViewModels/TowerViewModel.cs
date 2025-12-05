@@ -126,7 +126,7 @@ namespace OathAuto.ViewModels
               else
               {
                 // nếu chưa tới thì tiếp tục di chuyển
-                _player.AutoAccount.CallMoveTo((int)target.MiddlePosition.X, (int)target.MiddlePosition.Y);
+                MoveToPosition(target.MiddlePosition);
                 Thread.Sleep(5000);
                 _movingStatus = MovingStatus.ToPosition;
               }
@@ -138,7 +138,7 @@ namespace OathAuto.ViewModels
               }
               else
               {
-                _player.AutoAccount.CallMoveTo((int)target.Position.X, (int)target.Position.Y);
+                MoveToPosition(target.Position);
                 Thread.Sleep(6000);
                 _movingStatus = MovingStatus.Arrived;
               }
@@ -181,7 +181,7 @@ namespace OathAuto.ViewModels
               else
               {
                 _movingStatus = MovingStatus.ToPosition;
-                _player.AutoAccount.CallMoveTo((int)target.Position.X, (int)target.Position.Y);
+                MoveToPosition(target.Position);
                 Thread.Sleep(1000);
               }
               break;

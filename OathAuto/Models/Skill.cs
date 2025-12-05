@@ -9,6 +9,8 @@ namespace OathAuto.Models
     private int _id;
     private bool _isSelected;
     private string _name = string.Empty;
+    private bool _isEnabled = true;
+    public string Mempai { get; set; } 
 
     public int Id
     {
@@ -47,6 +49,19 @@ namespace OathAuto.Models
         {
           _isSelected = value;
           OnPropertyChanged(nameof(IsSelected));
+        }
+      }
+    }
+
+    public bool IsEnabled
+    {
+      get => _isEnabled;
+      set
+      {
+        if (_isEnabled != value)
+        {
+          _isEnabled = value;
+          OnPropertyChanged(nameof(IsEnabled));
         }
       }
     }

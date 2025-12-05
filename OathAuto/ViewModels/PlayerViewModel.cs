@@ -46,7 +46,7 @@ namespace OathAuto.ViewModels
 
     // Settings - bound directly to UI
     private PlayerSettings _settings;
-    public PlayerViewModel(Player player, SmartClassService smartClassService, int accountIndex)
+    public PlayerViewModel(Player player, SmartClassService smartClassService)
     {
       _player = player ?? new Player();
       _player.PropertyChanged += OnPlayerPropertyChanged;
@@ -68,7 +68,8 @@ namespace OathAuto.ViewModels
       _clearFixedPositionCommand = new RelayCommand(ExecuteClearFixedPosition);
       _clearSelectedPetCommand = new RelayCommand(ExecuteClearSelectedPet);
       _saveSettingsCommand = new RelayCommand(ExecuteSaveSettings);
-      Debug.WriteLine("--------------------------------INIT PLAYER VIEWMODLE----------------------");
+      _autoFarmTimer.Elapsed += OnAutoFarmTimerElapsed;
+      _autoFarmTimer.AutoReset = true;
     }
 
     public void LoadPlayerInventory()
@@ -247,9 +248,6 @@ namespace OathAuto.ViewModels
       }
     }
 
-
-    
-
     public event PropertyChangedEventHandler PropertyChanged;
 
     protected void OnPropertyChanged(string propertyName)
@@ -263,7 +261,6 @@ namespace OathAuto.ViewModels
     {
       OnPropertyChanged(e.PropertyName);
     }
-
 
     public void RunAction(bool isChangeMap = false)
     {
@@ -336,12 +333,18 @@ namespace OathAuto.ViewModels
       {
         try
         {
-          // Load skills from database
-          var skills = _databaseService.GetSkillsByMenpai(_player.Menpai.ToString());
+          var skills = SkillState.Instance.GetSkillsByMenpai(_player.Menpai);
           
-          // Clear existing skills and add new ones
           _player.Skills.Clear();
           var skillIdSeleted = JsonConvert.DeserializeObject<List<int>>(_settings.SelectedSkillIdsJson) ?? new List<int>();
+          _player.Skills.Add(
+            new Skill()
+            {
+              Id = this.GetBasicSkillId(),
+              Name = "Mặc định",
+              IsSelected = true,
+              IsEnabled = false,
+            });
           foreach (var skill in skills)
           {
             var newSkill = new Skill()
@@ -453,18 +456,15 @@ namespace OathAuto.ViewModels
     /// <param name="enabled">True to enable training, false to disable</param>
     private void SetTrainingState(bool enabled)
     {
-      if (_player?.AutoAccount != null && _player.AutoAccount.AIThreadTimer != null)
+      if (_autoFarmTimer.Enabled != enabled)
       {
-        if (_player.AutoAccount.AIThreadTimer.Enabled != enabled)
+        if (enabled)
         {
-          if (enabled)
-          {
-            _player.AutoAccount.AIThreadTimer.Start();
-          }
-          else
-          {
-            _player.AutoAccount.AIThreadTimer.Stop();
-          }
+          this._autoFarmTimer.Start();
+        }
+        else
+        {
+          this._autoFarmTimer.Stop();
         }
       }
     }
@@ -579,7 +579,6 @@ namespace OathAuto.ViewModels
     }
     public void LoadSettings()
     {
-      Debug.WriteLine($"-----------------Load setting for player {Player.Name}");
       if (_player == null || _player.DatabaseId <= 0 ||
         ( _player.Skills != null && _player.Skills.Count > 0))
       {
@@ -639,7 +638,6 @@ namespace OathAuto.ViewModels
       {
       }
     }
-
     /// <summary>
     /// Activates the selected pet based on SelectedPetId in settings.
     /// This method will be implemented with the logic to call the appropriate pet activation method.
@@ -668,48 +666,8 @@ namespace OathAuto.ViewModels
     {
       if (e.PropertyName == nameof(InventoryItem.IsSelected))
       {
-        // Auto-save removed - user must click Save button
+        _settings.CheckedItemIdsJson
       }
-
-      if (e.PropertyName == nameof(Skill.IsSelected))
-      {
-        Player.AutoAccount.Settings.SkillPlayList = new GAutoList<SkillPlayItem>();
-        foreach (var item in Player.Skills.Where(s => s.IsSelected))
-        {
-          HandleSkillCheckedChanged(item.Id);
-        }
-        // Auto-save removed - user must click Save button
-      }
-    }
-
-    private void HandleSkillCheckedChanged(int skillId)
-    {
-      SkillPlayItem skillPlayItem = new SkillPlayItem();
-      SingleSkill singleSkill = new SingleSkill();
-      var skillBook = frmLogin.GAuto.SkillBookDB.FirstOrDefault(s => s.SkillID == skillId);
-      singleSkill.ID = skillBook.SkillID;
-      singleSkill.Name = skillBook.SkillName;
-      singleSkill.Special = skillBook.Special;
-      singleSkill.BookSlot = skillBook.BookSlot;
-      singleSkill.BuffPeriod = skillBook.BuffPeriod;
-      singleSkill.RageRequired = skillBook.RageRequired;
-      singleSkill.SkillBook = skillBook.SkillBook;
-      singleSkill.Special = skillBook.Special;
-      skillPlayItem.SkillItem = singleSkill;
-      skillPlayItem.IsEnabled = true;
-      skillPlayItem.SkillDelayInSecond = 1;
-      var a = skillId;
-      var skill = Player.AutoAccount.MySkills.AllSkills.FirstOrDefault(s => s.ID == a);
-      if (skill != null)
-      {
-        // có 1 trường hợp skill của võ đang không hiển thị.
-        skillPlayItem.SkillItem.KeyDesc = skill.KeyDesc;
-      } else
-      {
-        //if (skillId == "")
-        skillPlayItem.SkillItem.KeyDesc = "F8";
-      }
-      Player.AutoAccount.Settings.SkillPlayList.Add(skillPlayItem);
     }
     #endregion
   }

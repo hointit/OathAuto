@@ -37,6 +37,7 @@ namespace OathAuto.Models
     private double _expPercent;
     public bool _isLoadedOldSetting = false;
     private int _databaseId = 0;
+    private int _petActiveIndex = -1;
 
     public AutoAccount AutoAccount { get; set; }
 
@@ -409,6 +410,7 @@ namespace OathAuto.Models
         }
       }
     }
+
 
     public event PropertyChangedEventHandler PropertyChanged;
 
